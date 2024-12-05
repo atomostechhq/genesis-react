@@ -59,5 +59,19 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "description": "test",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atomostechhq/genesis-react.git"
+  },
+  "keywords": [
+    "test"
+  ],
+  "author": "riya",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/atomostechhq/genesis-react/issues"
+  },
+  "homepage": "https://github.com/atomostechhq/genesis-react#readme"
 }
