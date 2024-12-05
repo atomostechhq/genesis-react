@@ -1,5 +1,5 @@
 import { cn } from "../utils";
-import React, { InputHTMLAttributes, forwardRef } from "react";
+import { InputHTMLAttributes, forwardRef } from "react";
 
 interface InputProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
@@ -24,16 +24,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           className
         )}
       >
-        <span
-          className={cn(
-            startIcon
-              ? "group-hover:text-gray-600 group-focus-within:text-gray-600"
-              : "hidden",
-            disabled === true && "text-gray-900"
-          )}
-        >
-          {startIcon}
-        </span>
+        {startIcon && (
+          <span
+            className={cn(
+              "group-hover:text-gray-600 group-focus-within:text-gray-600",
+              disabled === true && "text-gray-900"
+            )}
+          >
+            {startIcon}
+          </span>
+        )}
         <input
           {...props}
           ref={ref}
@@ -44,16 +44,16 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             size
           )}
         />
-        <span
-          className={cn(
-            endIcon
-              ? "group-hover:text-gray-600 group-focus-within:text-gray-600"
-              : "hidden",
-            disabled === true && "text-gray-900"
-          )}
-        >
-          {endIcon}
-        </span>
+        {endIcon && (
+          <span
+            className={cn(
+              "group-hover:text-gray-600 group-focus-within:text-gray-600",
+              disabled === true && "text-gray-900"
+            )}
+          >
+            {endIcon}
+          </span>
+        )}
       </div>
     );
   }

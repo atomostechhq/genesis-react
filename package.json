@@ -1,7 +1,7 @@
 {
   "name": "atomos_genesis_react",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.3",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build:css": "postcss src/index.css -o dist/index.css",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "preview": "vite preview"
   },
@@ -26,6 +27,8 @@
     "@remixicon/react": "^4.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "react-day-picker": "^9.4.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.5"
   },
