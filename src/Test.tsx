@@ -1,11 +1,15 @@
 import Button from "./components/Button";
 import {
   RiAlertFill,
+  RiCircleFill,
   RiFilterLine,
   RiGlobalLine,
+  RiInformation2Line,
   RiListCheck,
+  RiLogoutBoxRLine,
   RiMailLine,
   RiSearch2Line,
+  RiStackLine,
 } from "@remixicon/react";
 import Chip from "./components/Chip";
 import Divider from "./components/Divider";
@@ -16,7 +20,7 @@ import HelperText from "./components/HelperText";
 import Radio from "./components/Radio";
 import Input from "./components/Input";
 import { cn } from "./utils";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Dropdown from "./components/Dropdown";
 import DropdownWithIcon from "./components/DropdownWithIcon";
 import TabsContainer, { Tab, TabList, TabPanel } from "./components/Tabs";
@@ -24,6 +28,14 @@ import Modal from "./components/Modal";
 import Notice from "./components/Notice";
 import FileUpload from "./components/FileUpload";
 import ProgressBar from "./components/Progress";
+import Tooltip from "./components/Tooltip";
+import Skeleton from "./components/Skeleton";
+import Stepper from "./components/Stepper";
+import Textarea from "./components/Textarea";
+import Loading from "./components/Loading";
+import Sidebar from "./components/Sidebar";
+import Breadcrumbs from "./components/Breadcrumbs";
+import { Link } from "react-router-dom";
 
 interface Option {
   label: string;
@@ -92,8 +104,15 @@ const Test = () => {
   // notice
   const [open, setOpen] = useState(false);
 
+  const [loadingState, setLoadingState] = useState(false);
+  // progress bar
+  const [progress, setProgress] = useState(0);
+
   // single file upload
   const [selectedSingleFiles, setSelectedSingleFiles] = useState<File[]>([]);
+
+  // sidebar
+  const [collapsed, setCollapsed] = useState(true);
 
   const handleFileChangeSingle = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -122,6 +141,186 @@ const Test = () => {
   const handleDeleteFile = (file: string | File) => {
     setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
   };
+
+  // Stepper
+  const [currentStep, setCurrentStep] = useState<number>(1);
+  const [isComplete, setIsComplete] = useState<boolean>(false);
+
+  const stepsConfig = [
+    {
+      name: "Step Name One",
+      helperName: "step1",
+      Component: () => <div>Step 1 Component</div>,
+    },
+    {
+      name: "Step Name Two",
+      helperName: "step2",
+      Component: () => <div>Step 2 Component</div>,
+    },
+    {
+      name: "Step Name Three",
+      helperName: "step3",
+      Component: () => <div>Step 3 Component</div>,
+    },
+    {
+      name: "Step Name Four",
+      helperName: "step4",
+      Component: () => <div>Step 4 Component</div>,
+    },
+  ];
+
+  const navItems = [
+    {
+      label: "Page",
+      items: [
+        {
+          label: "Home",
+          href: "/",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Team",
+          href: "/pages/team",
+          icon: <RiAlertFill size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Page",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/pages/dashboard",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Team",
+          href: "/pages/team",
+          icon: <RiAlertFill size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Page",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/pages/dashboard",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Team",
+          href: "/pages/team",
+          icon: <RiAlertFill size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Page",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/pages/dashboard",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Team",
+          href: "/pages/team",
+          icon: <RiAlertFill size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Page",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/pages/dashboard",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Team",
+          href: "/pages/team",
+          icon: <RiAlertFill size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Settings",
+      items: [
+        {
+          label: "Setting 1",
+          href: "/setting1",
+          icon: <RiAlertFill size={18} />,
+        },
+        {
+          label: "Setting 2",
+          href: "/setting2",
+          icon: <RiCircleFill size={18} />,
+        },
+      ],
+    },
+    {
+      label: "Settings",
+      items: [
+        {
+          label: "Setting 1",
+          href: "/setting1",
+          icon: <RiAlertFill size={18} />,
+        },
+        {
+          label: "Subitem 2",
+          href: "/subitem2",
+          icon: <RiAlertFill size={18} />,
+        },
+        {
+          label: "Setting 2",
+
+          href: "/setting2",
+          icon: <RiCircleFill size={18} />,
+        },
+      ],
+    },
+  ];
+
+  const footerItems = [
+    {
+      label: "Footer Item 1",
+      items: [
+        {
+          label: "Subitem 3",
+          href: "/subitem3",
+          icon: <RiAlertFill size={18} />,
+        },
+      ],
+    },
+  ];
+
+  const handleNext = () => {
+    setCurrentStep((prevStep) => {
+      if (prevStep === stepsConfig.length) {
+        setIsComplete(true);
+        return prevStep;
+      } else {
+        return prevStep + 1;
+      }
+    });
+  };
+
+  const handlePrev = () => {
+    setCurrentStep((prevStep) => prevStep - 1);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoadingState(true);
+    }, 2000);
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setProgress(80), 2000);
+    return () => clearTimeout(timer);
+  }, [progress]);
 
   return (
     <div className="m-4">
@@ -813,6 +1012,224 @@ const Test = () => {
         >
           <ProgressBar progressColor="bg-primary-600" progress={50} />
         </FileUpload>
+      </section>
+
+      {/* Tooltip */}
+      <section className="flex items-center gap-5 my-5">
+        <h1 className="text-display-sm text-primary-400">Tooltip:</h1>
+        <Tooltip
+          position="top"
+          className="text-red-500"
+          content="Tooltips are used to describe or identify an element. In most scenarios, tooltips help the user understand the meaning, function or alt-text of an element."
+        >
+          Top
+        </Tooltip>
+        <Tooltip
+          position="right"
+          content=" Lorem ipsum dolor sit amet
+                consectetur adipisicing elit. Laborum incidunt perferendis
+                sapiente eos? Error aut accusamus odio officiis eaque
+                consectetur obcaecati doloribus, inventore ut reiciendis maiores
+                facere veritatis, corrupti autem illo deleniti eveniet
+                repudiandae iste harum. Voluptate minima ab tenetur veritatis
+                neque dolorem voluptates, praesentium a, velit doloremque
+                impedit facilis vel exercitationem assumenda. Esse labore
+                mollitia enim beatae officia? Delectus exercitationem voluptatem
+                consectetur quae veniam odit ut explicabo voluptas. Doloremque
+                nesciunt deleniti aliquam quibusdam nulla ipsa repudiandae
+                aspernatur placeat fuga officia. Natus itaque inventore eligendi
+                eveniet, nemo saepe voluptatum et ducimus provident suscipit
+                dolore, incidunt esse est iusto consequatur reprehenderit."
+        >
+          Right
+        </Tooltip>
+        <Tooltip
+          position="right"
+          content={
+            <div>
+              <h1 className="font-semibold text-xs">This is a tooltip</h1>
+              <p className="font-normal text-xs">
+                Tooltips are used to describe or identify an element. In most
+                scenarios, tooltips help the user understand the meaning,
+                function or alt-text of an element.
+              </p>
+            </div>
+          }
+        >
+          <RiInformation2Line size={15} />
+        </Tooltip>
+        <Tooltip
+          position="bottom"
+          content="Tooltips are used to describe or identify an element. In most scenarios"
+        >
+          Bottom
+        </Tooltip>
+        <Tooltip position="left" content="Tooltips are used">
+          Left
+        </Tooltip>
+      </section>
+
+      {/* skeleton */}
+      <section className="my-5">
+        <h1 className="text-display-sm text-primary-400">Skeleton:</h1>
+        <div className="flex flex-col gap-2">
+          {/* in percent */}
+          <div className="w-[400px] h-[200px]">
+            <Skeleton width="100%" height="100%" />
+          </div>
+          <Skeleton width="80px" height="80px" circle />
+          <Skeleton width="167px" height="14px" />
+          <Skeleton width="138px" height="42px" />
+        </div>
+      </section>
+
+      {/* stepper */}
+      <section>
+        <h1 className="text-display-sm text-primary-400">Stepper:</h1>
+        <div className="w-[50%] mx-auto">
+          <Stepper
+            stepsConfig={stepsConfig}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+            isComplete={isComplete}
+            setIsComplete={setIsComplete}
+            // position="vertical"
+            position="horizontal"
+          />
+          <section className="my-5 flex justify-end items-center gap-4">
+            <Button
+              variant="outlined"
+              onClick={handlePrev}
+              disabled={currentStep === 1}
+            >
+              Prev
+            </Button>
+            <Button variant="filled" onClick={handleNext}>
+              {currentStep === stepsConfig.length ? "Finish" : "Next"}
+            </Button>
+          </section>
+        </div>
+        <div className="w-[50%] mx-auto">
+          <Stepper
+            stepsConfig={stepsConfig}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
+            isComplete={isComplete}
+            setIsComplete={setIsComplete}
+            position="vertical"
+          />
+          <section className="my-5 flex justify-end items-center gap-4">
+            <Button
+              variant="outlined"
+              onClick={handlePrev}
+              disabled={currentStep === 1}
+            >
+              Prev
+            </Button>
+            <Button variant="filled" onClick={handleNext}>
+              {currentStep === stepsConfig.length ? "Finish" : "Next"}
+            </Button>
+          </section>
+        </div>
+      </section>
+
+      {/* Textarea */}
+      <section className="flex flex-col gap-1">
+        <h1 className="text-display-sm text-primary-400">Textarea</h1>
+        <section className="flex items-center gap-4">
+          <h1>States</h1>
+          <Textarea
+            placeholder="This is a placeholder"
+            rows={4}
+            size="lg"
+          ></Textarea>
+          <Textarea
+            placeholder="This is a placeholder"
+            size="sm"
+            disabled
+          ></Textarea>
+        </section>
+      </section>
+
+      {/* Loading State */}
+      <section className="flex flex-col items-center justify-center gap-2">
+        <h1 className="text-display-sm text-primary-400">Loading</h1>
+        <Loading width="50px" height="50px" loaderColor="green" />
+        <span className="font-bold">Hold On ...</span>
+        <p className="text-sm text-gray-500">
+          We are running into some issues :&#40;
+        </p>
+        <Button>
+          Loading <Loading width="15px" height="15px" variant="light" />
+        </Button>
+        <Button variant="outlined">
+          Loading <Loading width="15px" height="15px" variant="heavy" />
+        </Button>
+      </section>
+
+      {/* Sidebar */}
+      <div className="relative flex gap-3 bg-white">
+        <section className=" bg-white">
+          <Sidebar collapsed={collapsed} setCollapsed={setCollapsed}>
+            <Sidebar.Header collapsed={collapsed} setCollapsed={setCollapsed}>
+              <span onClick={() => setCollapsed((prev) => !prev)}>Logo</span>
+            </Sidebar.Header>
+            <Sidebar.Menu
+              scroll
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+              navItems={navItems}
+            />
+            <Sidebar.Footer
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
+              navItems={footerItems}
+            >
+              <Divider className="mb-3" />
+              <Button
+                className="w-full"
+                variant="outlined"
+                intent="default-outlined"
+                startIcon={<RiLogoutBoxRLine size={20} />}
+              >
+                {!collapsed ? "" : "Logout"}
+              </Button>
+            </Sidebar.Footer>
+          </Sidebar>
+        </section>
+        <section className="flex-grow ml-[80px] transition-all duration-300 ease-in-out">
+          <h1>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Repellendus, fugiat.
+          </h1>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Consequuntur nesciunt adipisci modi culpa voluptas accusamus
+            corporis.
+          </p>
+        </section>
+      </div>
+
+      {/* Breadcrumbs */}
+      <section className="my-5">
+        <h1 className="text-display-sm text-primary-400">Breadcrumbs</h1>
+        <Breadcrumbs aria-label="breadcrumb" separator="/">
+          <Link to="/">
+            <RiStackLine size={18} />
+          </Link>
+          <Link
+            to="/pages/dashboard"
+            // style={{ textDecoration: "none", color: "inherit" }}
+          >
+            Dashboard
+          </Link>
+          <Link
+            to="/pages/team"
+            // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+          >
+            Team
+          </Link>
+        </Breadcrumbs>
       </section>
     </div>
   );
