@@ -18,6 +18,17 @@
       "@/*": ["src/*"]
     }
   },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./style": {
+      "import": "./dist/index.css",
+      "require": "./dist/index.css"
+    }
+  },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
