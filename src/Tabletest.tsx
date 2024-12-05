@@ -1,8 +1,6 @@
-
-import React from "react";
 import TableSorting from "./components/Table/TableSorting";
-import TableFixedColumn from "./components/Table/tableFixedColumn";
 import TableExpanding from "./components/Table/TableExpanding";
+import TableFixedColumn from "./components/Table/TableFixedColumn";
 
 const Tabletest = () => {
   return (
