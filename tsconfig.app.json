@@ -30,5 +30,5 @@
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["src/**/__docs__", "src/**/__test__"]
 }
