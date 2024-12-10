@@ -8,11 +8,11 @@ import React, {
   useImperativeHandle,
 } from "react";
 import { RiErrorWarningLine, RiSearchLine } from "@remixicon/react";
+import { cn } from "../utils";
 import Input from "./Input";
 import Label from "./Label";
 import Checkbox from "./Checkbox";
 import Tooltip from "./Tooltip";
-import { cn } from "../utils";
 
 type Option = {
   label: string;
@@ -59,7 +59,7 @@ interface DropdownProps {
 }
 
 const defaultRenderItem = (option: Option) => {
-  return <MenuItem label={option?.label} value={option?.value} />;
+  return <MenuItem label={option.label} value={option.value} />;
 };
 
 const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(

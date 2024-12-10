@@ -1,4 +1,3 @@
-"use client";
 import React, { ReactNode } from "react";
 import { RiArrowLeftSLine } from "@remixicon/react";
 import { cn } from "../utils";
@@ -88,18 +87,6 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     >
       <div className="flex justify-between items-center mb-4">
         <span className="whitespace-nowrap">{children}</span>
-        {collapsed && (
-          <button
-            className={cn({
-              "grid place-content-center": true,
-              "hover:bg-gray-100 ": true,
-              "rounded-full": true,
-            })}
-            onClick={() => setCollapsed(!collapsed)}
-          >
-            <RiArrowLeftSLine color="#101828" />
-          </button>
-        )}
       </div>
     </div>
   );
@@ -125,7 +112,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
             <p
               className={cn({
                 "text-[14px] text-gray-500": true,
-                "w-[37px] text-ellipsis text-white whitespace-nowrap overflow-hidden":
+                "w-[37px] text-ellipsis invisible whitespace-nowrap overflow-hidden":
                   !collapsed,
               })}
             >

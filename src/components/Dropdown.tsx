@@ -1,4 +1,3 @@
-"use client";
 import React, {
   useEffect,
   useState,
@@ -13,9 +12,9 @@ import {
   RiSearchLine,
   RiErrorWarningLine,
 } from "@remixicon/react";
-import Checkbox from "./Checkbox";
 import Input from "./Input";
 import Label from "./Label";
+import Checkbox from "./Checkbox";
 import Tooltip from "./Tooltip";
 import { cn } from "../utils";
 
@@ -67,7 +66,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       setSelected,
       search = false,
       multiple = false,
-      dropdownText = "Select...",
+      dropdownText = "Select",
       renderItem = defaultRenderItem,
       children,
       icon,
@@ -171,6 +170,11 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       }
     };
 
+    // width adjustment
+
+    const numericWidth = width ? parseInt(width, 10) : 0;
+    const adjustedWidth = numericWidth - 50;
+
     return (
       <div
         ref={dropdownRef}
@@ -193,10 +197,17 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             disabled && "bg-gray-300 hover:bg-gray-300 cursor-not-allowed"
           )}
         >
-          <section className="flex items-center gap-2">
+          <section
+            className={cn(
+              "flex items-center gap-2 text-ellipsis overflow-hidden"
+            )}
+            style={{ width: `${adjustedWidth}px` }}
+          >
             {icon && <span>{icon}</span>}
             {multiple
-              ? `${`${selected?.length} Selected` || dropdownText}`
+              ? (selected?.length ?? 0) > 0
+                ? `${selected?.length} Selected`
+                : dropdownText
               : selected?.[0]?.label
               ? selected?.[0]?.label
               : dropdownText}
@@ -225,7 +236,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             <section className="py-[6px] px-[14px] flex justify-between items-center">
               <p
                 onClick={handleSelectAll}
-                className="text-text-sm  hover:text-primary-700  text-primary-600 cursor-pointer"
+                className="text-text-sm  hover:text-primary-700 text-primary-600 cursor-pointer"
               >
                 Select all
               </p>
