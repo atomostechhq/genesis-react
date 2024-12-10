@@ -15,12 +15,12 @@ import Chip from "./components/Chip";
 import Divider from "./components/Divider";
 import Toggle from "./components/Toggle";
 import Label from "./components/Label";
-import { Checkbox } from "./components";
+import { Checkbox, DatePicker } from "./components";
 import HelperText from "./components/HelperText";
 import Radio from "./components/Radio";
 import Input from "./components/Input";
 import { cn } from "./utils";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import Dropdown from "./components/Dropdown";
 import DropdownWithIcon from "./components/DropdownWithIcon";
 import TabsContainer, { Tab, TabList, TabPanel } from "./components/Tabs";
@@ -36,6 +36,16 @@ import Loading from "./components/Loading";
 import Sidebar from "./components/Sidebar";
 import Breadcrumbs from "./components/Breadcrumbs";
 import { Link } from "react-router-dom";
+import DateRangePicker from "./components/DateRangePicker";
+import { DateRange } from "react-day-picker";
+import {
+  format,
+  isAfter,
+  isValid,
+  parse,
+  startOfToday,
+  subMonths,
+} from "date-fns";
 
 interface Option {
   label: string;
@@ -321,6 +331,85 @@ const Test = () => {
     const timer = setTimeout(() => setProgress(80), 2000);
     return () => clearTimeout(timer);
   }, [progress]);
+
+  // single date picker
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [inputValueDate, setInputValueDate] = useState<string>("");
+
+  // date range picker
+  const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
+  const [dateRangeInput, setDateRangeInput] = useState<string>("");
+
+  const handleRangeInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setDateRangeInput(value);
+      const [fromDateString, toDateString] = value.split(" - ");
+      const fromDate = parse(fromDateString, "dd/MM/yyyy", new Date());
+      const toDate = parse(toDateString, "dd/MM/yyyy", new Date());
+
+      if (isValid(fromDate) && isValid(toDate) && isAfter(toDate, fromDate)) {
+        setSelectedRange({ from: fromDate, to: toDate });
+      } else {
+        setSelectedRange(undefined);
+      }
+    },
+    [] // Removed unnecessary dependencies
+  );
+
+  const handleRangeSelect = useCallback((range: DateRange | undefined) => {
+    setSelectedRange(range);
+    if (range) {
+      setDateRangeInput(
+        `${range.from ? format(range.from, "dd/MM/yyyy") : ""} - ${
+          range.to ? format(range.to, "dd/MM/yyyy") : ""
+        }`
+      );
+    } else {
+      setDateRangeInput("");
+    }
+  }, []);
+
+  const handleApply = useCallback(() => {
+    const { from, to } = selectedRange || {};
+    const fromDate = from ? format(from, "dd/MM/yyyy") : "";
+    const toDate = to ? format(to, "dd/MM/yyyy") : "";
+
+    if (selectedRange) {
+      setDateRangeInput(`${fromDate} - ${toDate}`); // Ensure input value is set
+      alert(`Date Range:  ${[fromDate, toDate]}`);
+    } else {
+      console.log("No Date Range selected.");
+    }
+  }, []);
+  const applyPreset = (
+    preset: "today" | "last1Months" | "last3Months" | "last6Months"
+  ) => {
+    let fromDate;
+    const toDate = new Date(); // End date is always today
+
+    switch (preset) {
+      case "today":
+        fromDate = startOfToday();
+        break;
+      case "last1Months":
+        fromDate = subMonths(toDate, 1);
+        break;
+      case "last3Months":
+        fromDate = subMonths(toDate, 3);
+        break;
+      case "last6Months":
+        fromDate = subMonths(toDate, 6);
+        break;
+      default:
+        return;
+    }
+
+    setSelectedRange({ from: fromDate, to: toDate });
+    setDateRangeInput(
+      `${format(fromDate, "MMM dd, y")} - ${format(toDate, "MMM dd, y")}`
+    );
+  };
 
   return (
     <div className="m-4">
@@ -1131,6 +1220,172 @@ const Test = () => {
             </Button>
           </section>
         </div>
+      </section>
+
+      {/* single Date picker */}
+
+      <section className="space-y-5 my-20">
+        <h1 className="text-display-sm text-primary-400">Single Date Picker</h1>
+        <div className="flex items-start gap-20">
+          <div className="space-y-2">
+            <h1>Date Picker with Top Position</h1>
+            <DatePicker
+              selected={selectedDate}
+              setSelected={setSelectedDate}
+              inputValue={inputValueDate}
+              position="top"
+              setInputValue={setInputValueDate}
+            />
+          </div>
+          <div className="space-y-2">
+            <h1>Date Picker with Bottom Position</h1>
+            <DatePicker
+              selected={selectedDate}
+              setSelected={setSelectedDate}
+              inputValue={inputValueDate}
+              position="bottom"
+              setInputValue={setInputValueDate}
+            />
+          </div>
+        </div>
+        <div className="flex items-start gap-20">
+          <div className="space-y-2">
+            <h1>Date Picker with disabled before today</h1>
+            <DatePicker
+              selected={selectedDate}
+              setSelected={setSelectedDate}
+              inputValue={inputValueDate}
+              disabledCalendar={{ before: new Date() }}
+              setInputValue={setInputValueDate}
+            />
+          </div>
+          <div className="space-y-2">
+            <h1>Date Picker with disabled after today</h1>
+            <DatePicker
+              selected={selectedDate}
+              setSelected={setSelectedDate}
+              inputValue={inputValueDate}
+              disabledCalendar={{ after: new Date() }}
+              setInputValue={setInputValueDate}
+            />
+          </div>
+        </div>
+        <p> Selected Date: {selectedDate?.toString()}</p>
+      </section>
+
+      <section className="space-y-5 my-10">
+        <h1 className="text-display-sm text-primary-400">Date Range Picker</h1>
+        <div className="flex items-start gap-20">
+          <div className="space-y-2">
+            <h1>Date Range with presets</h1>
+            <DateRangePicker
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              dateRangeInput={dateRangeInput}
+              setDateRangeInput={setDateRangeInput}
+              handleInputChange={handleRangeInputChange}
+              handleRangeSelect={handleRangeSelect}
+              handleApply={handleApply}
+            >
+              <section className="flex flex-col gap-y-4 text-left justify-start items-start mt-5">
+                <button
+                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+                  onClick={() => applyPreset("today")}
+                >
+                  Today
+                </button>
+                <button
+                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+                  onClick={() => applyPreset("last1Months")}
+                >
+                  Last 1 Months
+                </button>
+                <button
+                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+                  onClick={() => applyPreset("last3Months")}
+                >
+                  Last 3 Months
+                </button>
+                <button
+                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+                  onClick={() => applyPreset("last6Months")}
+                >
+                  Last 6 Months
+                </button>
+              </section>
+            </DateRangePicker>
+          </div>
+          <div className="space-y-2">
+            <h1>Date Range with without presets</h1>
+            <DateRangePicker
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              dateRangeInput={dateRangeInput}
+              setDateRangeInput={setDateRangeInput}
+              handleInputChange={handleRangeInputChange}
+              handleRangeSelect={handleRangeSelect}
+              handleApply={handleApply}
+            />
+          </div>
+        </div>
+        <div className="flex items-start gap-20">
+          <div className="space-y-2">
+            <h1>Date Range with disabled before today</h1>
+            <DateRangePicker
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              dateRangeInput={dateRangeInput}
+              setDateRangeInput={setDateRangeInput}
+              handleInputChange={handleRangeInputChange}
+              handleRangeSelect={handleRangeSelect}
+              handleApply={handleApply}
+              disabledCalendar={{ before: new Date() }}
+            />
+          </div>
+          <div className="space-y-2">
+            <h1>Date Range with disabled after today</h1>
+            <DateRangePicker
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              dateRangeInput={dateRangeInput}
+              setDateRangeInput={setDateRangeInput}
+              handleInputChange={handleRangeInputChange}
+              handleRangeSelect={handleRangeSelect}
+              handleApply={handleApply}
+              disabledCalendar={{ after: new Date() }}
+            />
+          </div>
+        </div>
+        <div className="flex items-start gap-20">
+          <div className="space-y-2">
+            <h1>Date Range with top position</h1>
+            <DateRangePicker
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              dateRangeInput={dateRangeInput}
+              setDateRangeInput={setDateRangeInput}
+              handleInputChange={handleRangeInputChange}
+              handleRangeSelect={handleRangeSelect}
+              handleApply={handleApply}
+              position="top"
+            />
+          </div>
+          <div className="space-y-2">
+            <h1>Date Range with bottom position</h1>
+            <DateRangePicker
+              selectedRange={selectedRange}
+              setSelectedRange={setSelectedRange}
+              dateRangeInput={dateRangeInput}
+              setDateRangeInput={setDateRangeInput}
+              handleInputChange={handleRangeInputChange}
+              handleRangeSelect={handleRangeSelect}
+              handleApply={handleApply}
+              position="bottom"
+            />
+          </div>
+        </div>
+
+        <p>Selected Range: {selectedRange?.from + " - " + selectedRange?.to}</p>
       </section>
 
       {/* Textarea */}

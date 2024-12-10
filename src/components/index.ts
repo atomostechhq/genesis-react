@@ -30,3 +30,5 @@ export { default as TabsContainer, TabList, TabPanel, Tab } from "./Tabs";
 export { default as Textarea } from "./Textarea";
 export { default as Toggle } from "./Toggle";
 export { default as Tooltip } from "./Tooltip";
+export { default as DatePicker } from "./DatePicker";
+export { default as DateRangePicker } from "./DateRangePicker";
