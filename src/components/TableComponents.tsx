@@ -1,4 +1,3 @@
-import { cn } from "../utils";
 import React, {
   HTMLAttributes,
   ReactNode,
@@ -6,6 +5,7 @@ import React, {
   TdHTMLAttributes,
   ThHTMLAttributes,
 } from "react";
+import { cn } from "../utils";
 
 interface TableProps extends TableHTMLAttributes<HTMLTableElement> {
   children?: ReactNode;
