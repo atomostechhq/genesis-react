@@ -69,10 +69,8 @@ const Test = () => {
   };
 
   const [multiSelect, setMultiSelect] = useState<Option[]>([]);
-  // console.log("multiSelect", multiSelect)
 
   const [singleSelect, setSingleSelect] = useState<Option[]>([]);
-  // console.log("singleSelect", singleSelect);
 
   const singleOptions = [
     { label: "Option 1", value: "1" },
@@ -113,9 +111,6 @@ const Test = () => {
 
   // notice
   const [open, setOpen] = useState(false);
-
-  const [loadingState, setLoadingState] = useState(false);
-  console.log("loadingState", loadingState)
   // progress bar
   const [progress, setProgress] = useState(0);
 
@@ -321,12 +316,6 @@ const Test = () => {
   const handlePrev = () => {
     setCurrentStep((prevStep) => prevStep - 1);
   };
-
-  useEffect(() => {
-    setTimeout(() => {
-      setLoadingState(true);
-    }, 2000);
-  });
 
   useEffect(() => {
     const timer = setTimeout(() => setProgress(80), 2000);

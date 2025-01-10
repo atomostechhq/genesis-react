@@ -11,7 +11,9 @@ if (rootElement) {
   root.render(
     <StrictMode>
       <BrowserRouter>
+      <div className="theme-primary">
         <App />
+        </div>
       </BrowserRouter>
     </StrictMode>
   );
