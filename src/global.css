@@ -14,7 +14,7 @@
 
 @layer base {
   :root {
-    /* .theme-brand {
+    .theme-brand {
       --primary-25: #f5faff;
       --primary-50: #eff8ff;
       --primary-100: #d1e9ff;
@@ -26,9 +26,9 @@
       --primary-700: #175cd3;
       --primary-800: #1849a9;
       --primary-900: #194185;
-    } */
+    }
 
-    .theme-brand {
+    /* .theme-brand {
       --primary-25: #f5faff;
       --primary-50: #FFF8E4;
       --primary-100: #FFECBA;
@@ -40,7 +40,7 @@
       --primary-700: #FFA33A;
       --primary-800: #FD9438;
       --primary-900: #F97835;
-    }
+    } */
      
     .rdp {
       --rdp-cell-size: 28px;

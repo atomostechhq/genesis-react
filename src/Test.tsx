@@ -57,7 +57,7 @@ const Test = () => {
   const [error, setError] = useState("");
 
   // label
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setInputValue(value);
     // Validate the input value
@@ -115,6 +115,7 @@ const Test = () => {
   const [open, setOpen] = useState(false);
 
   const [loadingState, setLoadingState] = useState(false);
+  console.log("loadingState", loadingState)
   // progress bar
   const [progress, setProgress] = useState(0);
 
