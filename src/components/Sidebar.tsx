@@ -1,5 +1,4 @@
-import React, { ReactNode } from "react";
-import { RiArrowLeftSLine } from "@remixicon/react";
+import React, { ReactNode, useCallback } from "react";
 import { cn } from "../utils";
 import { Link, useLocation } from "react-router-dom";
 import Divider from "./Divider";
@@ -59,10 +58,18 @@ const Sidebar: React.FC<SidebarProps> & {
   Menu: React.FC<SidebarMenuProps>;
   Footer: React.FC<FooterProps>;
 } = ({ children, collapsed, setCollapsed }) => {
+  const handleMouseEnter = useCallback(
+    () => setCollapsed(true),
+    [setCollapsed]
+  );
+  const handleMouseLeave = useCallback(
+    () => setCollapsed(false),
+    [setCollapsed]
+  );
   return (
     <div
-      onMouseEnter={() => setCollapsed(true)}
-      onMouseLeave={() => setCollapsed(false)}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={cn(
         "border border-gray-200 shadow-sm relative flex flex-col min-h-screen transition-all duration-300 ease-in-out cursor-pointer",
         !collapsed ? "w-[80px] py-[21px] px-[17px]" : "w-[308px] py-[22px] px-6"
@@ -102,7 +109,10 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
   const currentPath = location.pathname;
 
   return (
-    <nav className={`max-h-[60vh] ${scroll && "overflow-y-auto customScroll"}`}>
+    <nav
+      aria-label="Sidebar navigation"
+      className={`max-h-[60vh] ${scroll && "overflow-y-auto customScroll"}`}
+    >
       <ul className="my-2 flex flex-col gap-2 items-stretch">
         {navItems?.map((parentItem, parentIndex) => (
           <li

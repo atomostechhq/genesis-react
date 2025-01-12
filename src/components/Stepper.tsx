@@ -117,8 +117,7 @@ const Stepper = ({
           </div>
         ))}
       </div>
-
-      {ActiveComponent && <ActiveComponent />}
+      {ActiveComponent && <ActiveComponent key={currentStep} />}
     </div>
   );
 };
