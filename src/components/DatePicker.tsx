@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { format } from "date-fns";
 import { DayPicker, PropsSingle } from "react-day-picker";
 import { RiCalendar2Line } from "@remixicon/react";

@@ -1,4 +1,4 @@
-import React, {
+import {
   useEffect,
   useState,
   useMemo,
@@ -233,7 +233,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           <section className="max-h-[200px] z-[1000] transition-all duration-75 delay-100 ease-in-out overflow-y-scroll">
             {options
               ? memoizedFilteredOptions?.map((option, i) => (
-                  <React.Fragment key={i}>
+                  <div key={i}>
                     {multiple ? (
                       <Label
                         className="has-[:checked]:bg-primary-50 has-[:checked]:border-primary-600 hover:bg-gray-50 flex flex-col py-[6px] px-[14px] break-words cursor-pointer border-l-4 border-transparent"
@@ -289,7 +289,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                         <span className="text-gray-500">{info}</span>
                       </Label>
                     )}
-                  </React.Fragment>
+                  </div>
                 ))
               : children}
           </section>

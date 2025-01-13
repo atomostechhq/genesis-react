@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { RiArrowDownSLine } from "@remixicon/react";
 import Pagination from "../Pagination";
 import { tableData } from "./table";
-import Table, { TableBody, TableDataCell, TableHead, TableHeadCell, TableRow } from "../TableComponents";
+import Table, {
+  TableBody,
+  TableDataCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "../TableComponents";
 import Chip from "../Chip";
 
 const TableExpanding = () => {

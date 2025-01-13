@@ -1,7 +1,7 @@
 {
-  "name": "@atomos_tech/genesis-react",
+  "name": "atomos_genesis_react",
   "private": false,
-  "version": "0.0.6-alpha",
+  "version": "1.1.16",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -29,13 +29,12 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "react-day-picker": "^9.4.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^7.0.2",
     "tailwind-merge": "^2.5.5"
   },
   "peerDependencies": {
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",

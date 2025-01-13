@@ -1,12 +1,17 @@
-
-import React, { useState } from "react";
+import { useState } from "react";
 import Chip from "../Chip";
 import Button from "../Button";
 import Pagination from "../Pagination";
 import { RiInformation2Line } from "@remixicon/react";
 import Tooltip from "../Tooltip";
 import { tableData } from "./table";
-import Table, { TableBody, TableDataCell, TableHead, TableHeadCell, TableRow } from "../TableComponents";
+import Table, {
+  TableBody,
+  TableDataCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "../TableComponents";
 
 const TableFixedColumn = () => {
   const [data, setdata] = useState(tableData);
