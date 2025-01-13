@@ -1,7 +1,7 @@
 {
-  "name": "atomos_genesis_react",
+  "name": "@atomos_tech/genesis-react",
   "private": false,
-  "version": "1.1.16",
+  "version": "0.0.6-alpha",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

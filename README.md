@@ -1,8 +1,8 @@
-# Atomos Genesis Component Library (React)
+# Atomos Genesis Component Library(React)
 
 ## Step 1: Installation
 
-Begin by installing the Atomos Genesis Component Library (React) via npm:
+Begin by installing the Atomos Genesis Component Library(React) via npm:
 
 ```bash
 npm i @atomos_tech/genesis-react
@@ -10,57 +10,120 @@ npm i @atomos_tech/genesis-react
 
 ## Step 2: Import CSS
 
-Import the library's CSS in your root page to apply the default styles(main.tsx or App.tsx):
+Import the library's CSS in your root page to apply the default styles:
 
 ```typescript
 import "@atomos_tech/genesis-react/style";
 ```
 
-## Step 3: Set Up Theme Container
-
-Wrap your application content within a `theme-brand` class to ensure consistent theming across your app. Add this snippet to your root or base page(main.tsx or App.tsx):
+**Or if you are getting error for style then import css from your node modules like the example below:**
 
 ```typescript
-<div className="theme-brand">{children}</div>
+import "../node_modules/@atomos_tech/genesis-react/dist/index.css";
+```
+
+**Also, Make sure to import it right above your global.css file to override the default colour palette!**
+
+For example:
+
+```typescript
+import "@atomos_tech/genesis-react/style";
+// or node_modules import
+import "../node_modules/@atomos_tech/genesis-react/dist/index.css";
+import "./globals.css";
+```
+
+## Step 3: Set Up Theme Container
+
+Wrap your application content within a `theme-primary` class to ensure consistent theming across your app. Add this snippet to your root or base page(main.tsx or App.tsx):
+
+```typescript
+<div className="theme-primary">{children}</div>
 ```
 
 ## Step 4: Configure Tailwind
 
-You can set up the Tailwind CSS configuration by following the instructions provided [here](tailwind.config.js).
+You can set up the Tailwind CSS configuration in your tailwind.config.ts or tailwind.config.js and copy the theme styling below:
 
-```css
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
+```
+ theme: {
     extend: {
       colors: {
         backdrop: "rgba(0, 0, 0, 0.5)",
 
-        "primary-25": "var(--primary-25)",
-        "primary-50": "var(--primary-50)",
-        "primary-100": "var(--primary-100)",
-        "primary-200": "var(--primary-200)",
-        "primary-300": "var(--primary-300)",
-        "primary-400": "var(--primary-400)",
-        "primary-500": "var(--primary-500)",
-        "primary-600": "var(--primary-600)",
-        "primary-700": "var(--primary-700)",
-        "primary-800": "var(--primary-800)",
-        "primary-900": "var(--primary-900)",
+        // Primary Colors
+        primary: {
+          25: "var(--primary-25)",
+          50: "var(--primary-50)",
+          100: "var(--primary-100)",
+          200: "var(--primary-200)",
+          300: "var(--primary-300)",
+          400: "var(--primary-400)",
+          500: "var(--primary-500)",
+          600: "var(--primary-600)",
+          700: "var(--primary-700)",
+          800: "var(--primary-800)",
+          900: "var(--primary-900)",
+        },
 
-        brand: {
-          25: "#f5faff",
-          50: "#eff8ff",
-          100: "#d1e9ff",
-          200: "#b2ddff",
-          300: "#84caff",
-          400: "#53b1fd",
-          500: "#2e90fa",
-          600: "#1570ef",
-          700: "#175cd3",
-          800: "#1849a9",
-          900: "#194185",
+        // Gray Colors
+        gray: {
+          25: "var(--gray-25)",
+          50: "var(--gray-50)",
+          100: "var(--gray-100)",
+          200: "var(--gray-200)",
+          300: "var(--gray-300)",
+          400: "var(--gray-400)",
+          500: "var(--gray-500)",
+          600: "var(--gray-600)",
+          700: "var(--gray-700)",
+          800: "var(--gray-800)",
+          900: "var(--gray-900)",
+        },
+
+        // Error Colors
+        error: {
+          25: "var(--error-25)",
+          50: "var(--error-50)",
+          100: "var(--error-100)",
+          200: "var(--error-200)",
+          300: "var(--error-300)",
+          400: "var(--error-400)",
+          500: "var(--error-500)",
+          600: "var(--error-600)",
+          700: "var(--error-700)",
+          800: "var(--error-800)",
+          900: "var(--error-900)",
+        },
+
+        // Warning Colors
+        warning: {
+          25: "var(--warning-25)",
+          50: "var(--warning-50)",
+          100: "var(--warning-100)",
+          200: "var(--warning-200)",
+          300: "var(--warning-300)",
+          400: "var(--warning-400)",
+          500: "var(--warning-500)",
+          600: "var(--warning-600)",
+          700: "var(--warning-700)",
+          800: "var(--warning-800)",
+          900: "var(--warning-900)",
+        },
+
+        // Success Colors
+        success: {
+          25: "var(--success-25)",
+          50: "var(--success-50)",
+          100: "var(--success-100)",
+          200: "var(--success-200)",
+          300: "var(--success-300)",
+          400: "var(--success-400)",
+          500: "var(--success-500)",
+          600: "var(--success-600)",
+          700: "var(--success-700)",
+          800: "var(--success-800)",
+          900: "var(--success-900)",
         },
 
         bluegray: {
@@ -174,59 +237,6 @@ export default {
           800: "#9c2a10",
           900: "#7e2410",
         },
-
-        gray: {
-          25: "#fff",
-          50: "#F9FAFB",
-          100: "#F2F4F7",
-          200: "#EAECF0",
-          300: "#D0D5DD",
-          400: "#98A2B3",
-          500: "#667085",
-          600: "#475467",
-          700: "#344054",
-          800: "#1D2939",
-          900: "#101828",
-        },
-        error: {
-          25: "#FFFBFA",
-          50: "#FEF3F2",
-          100: "#FEE4E2",
-          200: "#FECDCA",
-          300: "#FDA29B",
-          400: "#F97066",
-          500: "#F04438",
-          600: "#D92D20",
-          700: "#B42318",
-          800: "#912018",
-          900: "#7A271A",
-        },
-        warning: {
-          25: "#FFFCF5",
-          50: "#FFFAEB",
-          100: "#FEF0C7",
-          200: "#FEDF89",
-          300: "#FEC84B",
-          400: "#FDB022",
-          500: "#F79009",
-          600: "#DC6803",
-          700: "#B54708",
-          800: "#93370D",
-          900: "#7A2E0E",
-        },
-        success: {
-          25: "#F6FEF9",
-          50: "#ECFDF3",
-          100: "#D1FADF",
-          200: "#A6F4C5",
-          300: "#6CE9A6",
-          400: "#32D583",
-          500: "#12B76A",
-          600: "#039855",
-          700: "#027A48",
-          800: "#05603A",
-          900: "#054F31",
-        },
       },
       fontSize: {
         "display-2xl": "4.5rem", // 72px
@@ -286,8 +296,6 @@ export default {
       },
     },
   },
-  plugins: [],
-};
 
 ```
 
@@ -295,12 +303,11 @@ export default {
 
 Add the following CSS to your `index.css` file to define the theme variables and styles:
 
-You can check the css file [here](src/index.css)
-
 ```css
 @layer base {
   :root {
-    .theme-brand {
+    /* Theme Primary Colors */
+    .theme-primary {
       --primary-25: #f5faff;
       --primary-50: #eff8ff;
       --primary-100: #d1e9ff;
@@ -313,198 +320,59 @@ You can check the css file [here](src/index.css)
       --primary-800: #1849a9;
       --primary-900: #194185;
     }
-    .theme-bluegray {
-      --primary-25: #fcfcfd;
-      --primary-50: #f8f9fc;
-      --primary-100: #eaecf5;
-      --primary-200: #d5d9eb;
-      --primary-300: #afb5d9;
-      --primary-400: #717bbc;
-      --primary-500: #4e5ba6;
-      --primary-600: #3e4784;
-      --primary-700: #363f72;
-      --primary-800: #293056;
-      --primary-900: #101323;
-    }
-    .theme-bluelight {
-      --primary-25: #f5fbff;
-      --primary-50: #f0f9ff;
-      --primary-100: #e0f2fe;
-      --primary-200: #b9e6fe;
-      --primary-300: #7cd4fd;
-      --primary-400: #36bffa;
-      --primary-500: #0ba5ec;
-      --primary-600: #0086c9;
-      --primary-700: #026aa2;
-      --primary-800: #065986;
-      --primary-900: #0b4a6f;
-    }
-    .theme-indigo {
-      --primary-25: #f5f8ff;
-      --primary-50: #eef4ff;
-      --primary-100: #e0eaff;
-      --primary-200: #c7d7fe;
-      --primary-300: #a4bcfd;
-      --primary-400: #8098f9;
-      --primary-500: #6172f3;
-      --primary-600: #444ce7;
-      --primary-700: #3538cd;
-      --primary-800: #2d31a6;
-      --primary-900: #2d3282;
-    }
-    .theme-purple {
-      --primary-25: #fafaff;
-      --primary-50: #f4f3ff;
-      --primary-100: #ebe9fe;
-      --primary-200: #d9d6fe;
-      --primary-300: #bdb4fe;
-      --primary-400: #9b8afb;
-      --primary-500: #7a5af8;
-      --primary-600: #6938ef;
-      --primary-700: #5925dc;
-      --primary-800: #4a1fb8;
-      --primary-900: #3e1c96;
-    }
-    .theme-violet {
-      --primary-25: #fcfaff;
-      --primary-50: #f9f5ff;
-      --primary-100: #f4ebff;
-      --primary-200: #e9d7fe;
-      --primary-300: #d6bbfb;
-      --primary-400: #b692f6;
-      --primary-500: #9e77ed;
-      --primary-600: #7f56d9;
-      --primary-700: #6941c6;
-      --primary-800: #53389e;
-      --primary-900: #42307d;
-    }
-    .theme-pink {
-      --primary-25: #fef6fb;
-      --primary-50: #fdf2fa;
-      --primary-100: #fce7f6;
-      --primary-200: #fcceee;
-      --primary-300: #faa7e0;
-      --primary-400: #f670c7;
-      --primary-500: #ee46bc;
-      --primary-600: #dd2590;
-      --primary-700: #c11574;
-      --primary-800: #9e165f;
-      --primary-900: #851651;
-    }
-    .theme-rose {
-      --primary-25: #fff5f6;
-      --primary-50: #fff1f3;
-      --primary-100: #ffe4e8;
-      --primary-200: #fecdd6;
-      --primary-300: #fea3b4;
-      --primary-400: #fd6f8e;
-      --primary-500: #f63d68;
-      --primary-600: #e31b54;
-      --primary-700: #c01048;
-      --primary-800: #a11043;
-      --primary-900: #89123e;
-    }
-    .theme-orange {
-      --primary-25: #fffaf5;
-      --primary-50: #fff6ed;
-      --primary-100: #ffead5;
-      --primary-200: #fddcab;
-      --primary-300: #feb273;
-      --primary-400: #fd853a;
-      --primary-500: #fb6514;
-      --primary-600: #ec4a0a;
-      --primary-700: #c4320a;
-      --primary-800: #9c2a10;
-      --primary-900: #7e2410;
-    }
-    .rdp {
-      --rdp-cell-size: 28px;
-      --rdp-caption-font-size: 15px;
-    }
+
+    /* Gray Colors */
+    --gray-25: #fff;
+    --gray-50: #f9fafb;
+    --gray-100: #f2f4f7;
+    --gray-200: #eaecf0;
+    --gray-300: #d0d5dd;
+    --gray-400: #98a2b3;
+    --gray-500: #667085;
+    --gray-600: #475467;
+    --gray-700: #344054;
+    --gray-800: #1d2939;
+    --gray-900: #101828;
+
+    /* Error Colors */
+    --error-25: #fffbfa;
+    --error-50: #fef3f2;
+    --error-100: #fee4e2;
+    --error-200: #fecdca;
+    --error-300: #fda29b;
+    --error-400: #f97066;
+    --error-500: #f04438;
+    --error-600: #d92d20;
+    --error-700: #b42318;
+    --error-800: #912018;
+    --error-900: #7a271a;
+
+    /* Warning Colors */
+    --warning-25: #fffdf5;
+    --warning-50: #fffaeb;
+    --warning-100: #fef0c7;
+    --warning-200: #fedf89;
+    --warning-300: #fec84b;
+    --warning-400: #fdb022;
+    --warning-500: #f79009;
+    --warning-600: #dc6803;
+    --warning-700: #b54708;
+    --warning-800: #93370d;
+    --warning-900: #7a2e0e;
+
+    /* Success Colors */
+    --success-25: #f6fef9;
+    --success-50: #ecfdf3;
+    --success-100: #d1fadf;
+    --success-200: #a6f4c5;
+    --success-300: #6ce9a6;
+    --success-400: #32d583;
+    --success-500: #12b76a;
+    --success-600: #039855;
+    --success-700: #027a48;
+    --success-800: #05603a;
+    --success-900: #054f31;
   }
-}
-
-.skeleton {
-  border-radius: 2px;
-  display: inline-block;
-  line-height: 100%;
-  width: 100%;
-  background-color: #fff;
-  background-size: 1000px 1000px;
-  background-image: linear-gradient(
-    100deg,
-    #e8e8e8 20%,
-    #fafafa 50%,
-    #e8e8e8 60%
-  );
-  animation: placeholderShimmer 1.5s linear infinite forwards;
-}
-
-/* Skeleton animation*/
-@keyframes placeholderShimmer {
-  0% {
-    background-position: -500px 0;
-  }
-  100% {
-    background-position: 500px 0;
-  }
-}
-
-.skeleton.circle {
-  border-radius: 50%;
-}
-
-.handle {
-  cursor: grabbing;
-}
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
-@keyframes fadeInGrow {
-  0% {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.fade-in-grow {
-  animation: fadeInGrow 0.3s ease;
-}
-
-/* scrollbar */
-/* width */
-.customScroll::-webkit-scrollbar {
-  width: 4px;
-}
-
-/* Track */
-.customScroll::-webkit-scrollbar-track {
-  background-color: white;
-}
-
-/* Handle */
-.customScroll::-webkit-scrollbar-thumb {
-  background: #eaecf0;
-  border-radius: 10px;
-}
-
-/* Handle on hover */
-.customScroll::-webkit-scrollbar-thumb:hover {
-  background: #98a2b3;
 }
 ```
 
@@ -542,8 +410,8 @@ import { Button, Chip } from "@atomos_tech/genesis-react";
 
 export default function ExamplePage() {
   return (
-    <div className="theme-brand p-4">
-      <h1 className="text-2xl font-bold mb-4">Atomos Genesis Example</h1>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Atomos Genesis Example(React)</h1>
       <div className="mb-4">
         <Button variant="filled" intent="primary">
           Primary Button
@@ -571,9 +439,9 @@ export default function InteractivePage() {
   const [buttonClicked, setButtonClicked] = useState(false);
 
   return (
-    <div className="theme-brand p-4">
+    <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">
-        Interactive Atomos Genesis Example
+        Interactive Atomos Genesis(React) Example
       </h1>
 
       <div className="mb-4">
