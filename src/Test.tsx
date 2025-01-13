@@ -35,7 +35,7 @@ import Textarea from "./components/Textarea";
 import Loading from "./components/Loading";
 import Sidebar from "./components/Sidebar";
 import Breadcrumbs from "./components/Breadcrumbs";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import DateRangePicker from "./components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import {
@@ -119,6 +119,8 @@ const Test = () => {
 
   // sidebar
   const [collapsed, setCollapsed] = useState(true);
+  const location = useLocation();
+  const currentPath = location.pathname;
 
   const handleFileChangeSingle = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;

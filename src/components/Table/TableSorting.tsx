@@ -1,11 +1,16 @@
-"use client";
 import React, { useState } from "react";
 import { RiSortAsc } from "@remixicon/react";
 import Chip from "../Chip";
 import Checkbox from "../Checkbox";
 import Pagination from "../Pagination";
 import { tableData, User } from "./table";
-import Table, { TableBody, TableDataCell, TableHead, TableHeadCell, TableRow } from "../TableComponents";
+import Table, {
+  TableBody,
+  TableDataCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "../TableComponents";
 
 const TableSorting = () => {
   const [data, setData] = useState<User[]>(tableData);
