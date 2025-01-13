@@ -1030,8 +1030,9 @@ const Test = () => {
           setShowModal={setShowModal}
           closeModal={true}
           closeOnOutsideClick={true}
+           className="sm:w-[50%] w-full h-[50%]"
         >
-          <div className="w-[500px] h-[300px]">content</div>
+          <div>content</div>
         </Modal>
       </section>
 
