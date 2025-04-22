@@ -1,5 +1,6 @@
 import Button from "./components/Button";
 import {
+  RiAddLine,
   RiAlertFill,
   RiCheckLine,
   RiCircleFill,
@@ -51,6 +52,13 @@ import {
 import CircularProgress from "./components/CircularProgress";
 import GlobalNavigation from "./components/GlobalNavigation";
 import Slider from "./components/Slider";
+import Accordion, {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "./components/Accordion";
+import MenuDropdown, { MenuItem, MenuSubItem } from "./components/MenuItem";
+import ListItem from "./components/ListItem";
 
 interface Option {
   label: string;
@@ -1392,6 +1400,111 @@ const Test = () => {
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
       </div>
+
+      {/* Accordian */}
+      <section className="space-y-5">
+        <h1 className="text-display-sm text-primary-400">Accordian:</h1>
+        <div className="space-y-2">
+          <h2>Accordian Single</h2>
+          <Accordion type="single" collapsible className="w-full space-y-2">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>
+                What is your favorite template from BRIX Templates?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Is it styled?</AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It comes with default styles that match the other components'
+              aesthetic.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>Is it animated?</AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It's animated by default, but you can disable it if you
+              prefer.`}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+        <div className="space-y-2">
+          <h2>Accordian Multiple</h2>
+          <Accordion type="multiple" collapsible className="w-full space-y-2">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>
+                What is your favorite template from BRIX Templates?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2" disabled>
+              <AccordionTrigger>Is it styled?</AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It comes with default styles that match the other components'
+              aesthetic.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger>Is it animated?</AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It's animated by default, but you can disable it if you
+              prefer.`}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
+
+      {/* Menu Items */}
+      <section>
+        <h1 className="text-display-sm text-primary-400">MenuItems:</h1>
+        <MenuDropdown
+          className=""
+          trigger={
+            <ListItem
+              as="button"
+              title="Products"
+              icon={<RiAddLine size={20} />}
+              className="w-fit bg-primary-100 hover:bg-primary-200 rounded-full border border-primary-400"
+            />
+          }
+        >
+          <Link
+            to="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygULcmljayBuIHJvbGw%3D"
+            target="_blank"
+          >
+            <MenuSubItem label="Inertia" />
+          </Link>
+          <MenuItem content={<h6>Blaze</h6>}>
+            <MenuSubItem label="Flames" onClick={() => alert("clicked")} />
+            <MenuSubItem label="Blaze" onClick={() => alert("click")} />
+            <MenuSubItem label="Admin" onClick={() => alert("click")} />
+          </MenuItem>
+          <Link
+            to="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygULcmljayBuIHJvbGw%3D"
+            target="_blank"
+          >
+            <MenuSubItem label="Qiwi" />
+          </Link>
+          <Link
+            to="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygULcmljayBuIHJvbGw%3D"
+            target="_blank"
+          >
+            <MenuSubItem label="Audit" />
+          </Link>
+        </MenuDropdown>
+      </section>
 
       {/* Global Navigation */}
       <section className="my-5">
