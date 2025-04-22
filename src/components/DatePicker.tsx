@@ -1,20 +1,18 @@
 import { useRef, useState, useEffect } from "react";
 import { format } from "date-fns";
-import { DayPicker, PropsSingle } from "react-day-picker";
+import { DayPicker, DropdownProps, PropsSingle } from "react-day-picker";
 import { RiCalendar2Line } from "@remixicon/react";
 import Input from "./Input";
 import { cn } from "../utils";
 
 interface DatePickerProps {
-  selected?: Date | undefined;
+  selected: Date | undefined;
   setSelected: (value: Date | undefined) => void;
-  inputValue?: string;
-  setInputValue: (value: string) => void;
-  handleInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   disabledCalendar?: { before: Date } | { after: Date };
   placeholder?: string;
-  position?: "top" | "bottom";
+  dateFormat?: string;
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
 }
 
 const css = `
@@ -85,13 +83,11 @@ background-color:#EAECF0;
 const DatePicker = ({
   selected,
   setSelected,
-  inputValue,
-  setInputValue,
-  handleInputChange,
   disabled = false,
   disabledCalendar,
-  position = "bottom",
+  dateFormat,
   placeholder = "DD/MM/YY",
+  position = "bottom-left",
 }: DatePickerProps) => {
   const [isPopperOpen, setIsPopperOpen] = useState(false);
   const popperRef = useRef<HTMLDivElement>(null);
@@ -100,6 +96,11 @@ const DatePicker = ({
   );
 
   const closePopper = () => setIsPopperOpen(false);
+
+  const formatSelectedDate = (date?: Date, dateFormat?: string) => {
+    if (!date) return "";
+    return format(date, dateFormat || "dd/MM/yyyy");
+  };
 
   // Add event listener to handle clicks outside of the popup
   useEffect(() => {
@@ -119,25 +120,51 @@ const DatePicker = ({
     };
   }, [popperElement]);
 
+  function CustomSelectDropdown(props: DropdownProps) {
+    const { options, value, onChange } = props;
+
+    const handleValueChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      if (onChange) {
+        onChange(event);
+      }
+    };
+
+    return (
+      <select
+        className="border p-1 shadow rounded-md mb-3 outline-none mx-1"
+        value={value?.toString()}
+        onChange={handleValueChange}
+      >
+        {options?.map((option) => (
+          <option
+            key={option.value}
+            value={option.value.toString()}
+            disabled={option.disabled}
+          >
+            {option.label}
+          </option>
+        ))}
+      </select>
+    );
+  }
+
   const handleDaySelect: PropsSingle["onSelect"] = (date) => {
     if (date) {
       setSelected(date);
-      setInputValue(format(date, "MMM dd, y"));
       closePopper();
     }
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <div ref={popperRef}>
         <Input
           type="text"
           readOnly
           className="w-full main-shadow"
           placeholder={placeholder || format(new Date(), "dd/mm/yyyy")}
-          value={inputValue}
-          onChange={handleInputChange}
           aria-label="Pick a date"
+          value={formatSelectedDate(selected, dateFormat)}
           onClick={() => setIsPopperOpen(true)}
           disabled={disabled}
           endIcon={<RiCalendar2Line size={16} />}
@@ -147,9 +174,14 @@ const DatePicker = ({
         <div
           tabIndex={-1}
           className={cn(
-            "text-[16px] shadow-sm bg-white rounded-md",
+            "text-[16px] shadow-sm border bg-white rounded-md",
             "mt-1 mx-auto z-[1000] transition-all absolute duration-75 delay-100 ease-in-out",
-            position === "top" ? "bottom-12" : position === "bottom" && "top-11"
+            {
+              "bottom-11 right-0": position === "top-right",
+              "bottom-11 left-0": position === "top-left",
+              "top-10 right-0": position === "bottom-right" || !position,
+              "top-10 left-0": position === "bottom-left",
+            }
           )}
           ref={(element) => setPopperElement(element)}
           role="dialog"
@@ -162,8 +194,9 @@ const DatePicker = ({
             defaultMonth={selected || new Date()}
             showOutsideDays
             disabled={disabledCalendar}
+            components={{ Dropdown: CustomSelectDropdown }}
             captionLayout="dropdown"
-            endMonth={new Date(new Date().getFullYear() + 50, 12)}
+            endMonth={new Date(new Date().getFullYear() + 100, 12)}
             selected={selected}
             onSelect={handleDaySelect}
             modifiersStyles={{

@@ -7,7 +7,12 @@ import {
   ReactNode,
 } from "react";
 import { RiCalendarLine } from "@remixicon/react";
-import { type DateRange, DayPicker, PropsRange } from "react-day-picker";
+import {
+  type DateRange,
+  DayPicker,
+  DropdownProps,
+  PropsRange,
+} from "react-day-picker";
 import { format } from "date-fns";
 import Input from "./Input";
 import Button from "./Button";
@@ -16,14 +21,15 @@ import { cn } from "../utils";
 interface DateRangePickerProps {
   selectedRange?: DateRange | undefined;
   setSelectedRange: React.Dispatch<React.SetStateAction<DateRange | undefined>>;
-  dateRangeInput?: string;
-  setDateRangeInput: (value: string) => void;
-  handleInputChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleRangeSelect?: (range: DateRange | undefined) => void;
+  handleApply?: () => void;
+  handleReset?: () => void;
   disabledCalendar?: { before: Date } | { after: Date };
-  handleApply: () => void;
   children?: ReactNode;
-  position?: "top" | "bottom";
+  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  apply?: boolean;
+  rangeFormat?: string;
+  placeholder?: string;
 }
 
 const css = `
@@ -99,14 +105,17 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     {
       selectedRange,
       setSelectedRange,
-      dateRangeInput,
-      setDateRangeInput,
-      handleInputChange,
       handleRangeSelect,
       disabledCalendar,
-      position = "bottom",
+      position = "bottom-right",
       children,
       handleApply,
+      apply,
+      handleReset = () => {
+        setSelectedRange(undefined);
+      },
+      placeholder,
+      rangeFormat,
     },
     ref
   ) => {
@@ -114,6 +123,15 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
 
     const popperRef = useRef<HTMLDivElement>(null);
     useImperativeHandle(ref, () => popperRef.current!);
+
+    const formatDateRange = (rangeFormat: string, range?: DateRange) => {
+      if (!range?.from) return "";
+      if (!range.to) return format(range.from, rangeFormat) + " - ";
+      return `${format(range.from, rangeFormat)} - ${format(
+        range.to,
+        rangeFormat
+      )}`;
+    };
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
@@ -135,26 +153,51 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
 
     const handleButtonClick = () => setIsPopperOpen(true);
 
-    const handleReset = () => {
-      console.log("Resetting selected range and date range input");
-      setSelectedRange(undefined);
-      setDateRangeInput("");
-    };
+    function CustomSelectDropdown(props: DropdownProps) {
+      const { options, value, onChange } = props;
+
+      const handleValueChange = (
+        event: React.ChangeEvent<HTMLSelectElement>
+      ) => {
+        if (onChange) {
+          onChange(event);
+        }
+      };
+
+      return (
+        <select
+          className="border p-1 shadow rounded-md mb-3 outline-none mx-1"
+          value={value?.toString()}
+          onChange={handleValueChange}
+        >
+          {options?.map((option) => (
+            <option
+              key={option.value}
+              value={option.value.toString()}
+              disabled={option.disabled}
+            >
+              {option.label}
+            </option>
+          ))}
+        </select>
+      );
+    }
 
     const handleRangeSelectInternal: PropsRange["onSelect"] = (range) => {
-      setSelectedRange(range);
-      if (range?.from && range.to) {
-        const fromDateString = format(range.from, "dd/MM/yyyy");
-        const toDateString = format(range.to, "dd/MM/yyyy");
-        const formattedDateRange = `${fromDateString} - ${toDateString}`;
-        setDateRangeInput(formattedDateRange);
-        console.log("Range selected and input updated:", formattedDateRange);
-        // setIsPopperOpen(false);
-      } else {
-        console.log("Range partially selected:", range);
+      if (range?.from) {
+        setSelectedRange((prevRange) => ({
+          from: range.from,
+          to: prevRange?.to ?? undefined,
+        }));
       }
 
-      // Call the passed handleRangeSelect function if it exists
+      if (range?.to) {
+        setSelectedRange({
+          from: range.from ?? undefined,
+          to: range.to,
+        });
+      }
+
       if (handleRangeSelect) {
         handleRangeSelect(range);
       }
@@ -162,29 +205,21 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
 
     const handleApplyClick = () => {
       if (selectedRange?.from && selectedRange.to) {
-        const fromDateString = format(selectedRange.from, "dd/MM/yyyy");
-        const toDateString = format(selectedRange.to, "dd/MM/yyyy");
-        const formattedDateRange = `${fromDateString} - ${toDateString}`;
-        setDateRangeInput(formattedDateRange);
-        console.log("Formatted Date Range to apply:", formattedDateRange);
-        handleApply();
-      } else {
-        console.log("No valid date range selected");
+        handleApply?.();
+        setIsPopperOpen(false);
       }
-      setIsPopperOpen(false);
     };
 
     return (
-      <div className="relative">
+      <div className="relative w-full">
         <div ref={popperRef}>
           <Input
             type="text"
             startIcon={<RiCalendarLine size={16} />}
-            placeholder="DD/MM/YYYY - DD/MM/YYYY"
+            placeholder={placeholder ?? "DD/MM/YYYY - DD/MM/YYYY"}
             className="main-shadow w-full"
             readOnly
-            value={dateRangeInput}
-            onChange={handleInputChange}
+            value={formatDateRange(rangeFormat ?? "dd/MM/yyyy", selectedRange)}
             onClick={handleButtonClick}
           />
         </div>
@@ -193,9 +228,10 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             className={cn(
               "shadow-md rounded-md p-3 flex gap-5 justify-center items-start",
               "mt-1 h-[300px] absolute bg-white z-[1000] transition-all duration-75 delay-100 ease-in-out",
-              position === "top"
-                ? "bottom-12"
-                : position === "bottom" && "top-11"
+              position === "top-left" && "bottom-11 left-0",
+              position === "top-right" && "bottom-11 right-0",
+              position === "bottom-left" && "top-10 left-0",
+              position === "bottom-right" && "top-10 right-0"
             )}
             ref={popperRef}
             aria-label="Date Range Picker"
@@ -210,10 +246,11 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
               <DayPicker
                 mode="range"
                 selected={selectedRange}
-                endMonth={new Date(new Date().getFullYear() + 50, 12)}
+                endMonth={new Date(new Date().getFullYear() + 100, 12)}
                 onSelect={handleRangeSelectInternal}
                 showOutsideDays
                 disabled={disabledCalendar}
+                components={{ Dropdown: CustomSelectDropdown }}
                 hideNavigation
                 captionLayout="dropdown"
                 modifiersStyles={{
@@ -248,12 +285,14 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 >
                   Reset
                 </Button>
-                <Button
-                  className="py-1 px-2 text-sm"
-                  onClick={handleApplyClick}
-                >
-                  Apply
-                </Button>
+                {apply && (
+                  <Button
+                    className="py-1 px-2 text-sm"
+                    onClick={handleApplyClick}
+                  >
+                    Apply
+                  </Button>
+                )}
               </div>
             </div>
           </div>
