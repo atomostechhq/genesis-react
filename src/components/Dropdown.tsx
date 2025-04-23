@@ -77,6 +77,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       dropdownFooter = false,
       onApply,
       disabled = false,
+      onReset,
     },
     ref
   ) => {
@@ -150,6 +151,9 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     };
 
     const handleReset = () => {
+      if (onReset) {
+        onReset();
+      }
       setSelected?.([]);
       setDropdownMenu(false);
     };

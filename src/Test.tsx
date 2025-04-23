@@ -603,49 +603,6 @@ const Test = () => {
         </div>
       </section>
 
-      {/* Chips  */}
-      <div className="space-y-5">
-        <h1 className="text-display-sm text-primary-400">Chip:</h1>
-        <section className="flex items-center gap-4">
-          <p>Chips with sizes</p>
-          <Chip intent="primary" size={"sm"}>
-            Size sm
-          </Chip>
-          <Chip intent="primary" size={"md"}>
-            Size md
-          </Chip>
-          <Chip intent="primary" size={"lg"}>
-            Size lg
-          </Chip>
-        </section>
-        <section className="flex items-center gap-4">
-          <p>Chips with dot</p>
-          <Chip intent="primary" dot dotColor="bg-red-400">
-            primary
-          </Chip>
-          <Chip dot intent="warning">
-            warning
-          </Chip>
-          <Chip dot intent="success">
-            success
-          </Chip>
-          <Chip dot intent="error">
-            error
-          </Chip>
-          <Chip dot intent="default">
-            default
-          </Chip>
-        </section>
-        <section className="flex items-center gap-4">
-          <p>Chips without dot</p>
-          <Chip intent="primary">primary</Chip>
-          <Chip intent="warning">warning</Chip>
-          <Chip intent="success">success</Chip>
-          <Chip intent="error">error</Chip>
-          <Chip intent="default">default</Chip>
-        </section>
-      </div>
-
       {/* Toggle  */}
       <div className="flex flex-col gap-5 my-5">
         <h1 className="text-display-sm text-primary-400">Toggle:</h1>
