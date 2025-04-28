@@ -136,10 +136,16 @@ const Test = () => {
       label: "appleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       value: "apple",
       info: "Modals",
+
       addInfo: "Be a direct child descendent of the modal.",
       tooltipContent: "hjsghjwg",
     },
-    { label: "banana", value: "banana", addInfo: "jdhjaldh" },
+    {
+      label: "banana",
+      value: "banana",
+      addInfo: "jdhjaldh",
+      disabledOption: true,
+    },
     { label: "strawberry", value: "strawberry" },
     { label: "kiwi", value: "kiwi", info: "info4" },
     {
@@ -1303,13 +1309,14 @@ const Test = () => {
         <Slider
           value={sliderValue}
           min={10}
-          max={200}
+          max={100}
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
         <Slider
           value={sliderValue}
           min={10}
-          max={200}
+          step={10}
+          max={100}
           size="lg"
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
@@ -1748,6 +1755,7 @@ const Test = () => {
           onChange={handleFileChangeMultiple}
           onDelete={() => handleDeleteFile(selectedFiles[0])}
           title="SVG, PNG, JPG or GIF (max. 800x400px)"
+          filePreviewClassName="grid grid-cols-2 gap-2"
         >
           <ProgressBar progressColor="bg-primary-600" progress={50} />
         </FileUpload>

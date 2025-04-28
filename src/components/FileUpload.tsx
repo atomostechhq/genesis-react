@@ -24,6 +24,7 @@ export interface FileUploadProps extends InputHTMLAttributes<HTMLInputElement> {
   onDelete?: () => void;
   title?: string;
   disabled?: boolean;
+  filePreviewClassName?: string;
 }
 
 const getIconForMimeType = (file: File) => {
@@ -113,6 +114,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
       disabled,
       title,
       id,
+      filePreviewClassName,
       className,
       accept,
       ...props
@@ -151,7 +153,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
             <br /> {title}
           </p>
         </Label>
-        <div className="flex flex-col gap-2">
+        <section className={cn(`grid gap-2`, filePreviewClassName)}>
           {selectedFile?.map((file, index) => (
             <div
               key={index}
@@ -172,7 +174,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
               />
             </div>
           ))}
-        </div>
+        </section>
       </div>
     );
   }

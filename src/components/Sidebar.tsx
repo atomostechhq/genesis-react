@@ -111,7 +111,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
   return (
     <nav
       aria-label="Sidebar navigation"
-      className={`max-h-[60vh] ${scroll && "overflow-y-auto customScroll"}`}
+      className={`max-h-[60vh] ${
+        scroll && collapsed ? "overflow-y-auto customScroll" : "overflow-hidden"
+      }`}
     >
       <ul className="my-2 flex flex-col gap-2 items-stretch">
         {navItems?.map((parentItem, parentIndex) => (
