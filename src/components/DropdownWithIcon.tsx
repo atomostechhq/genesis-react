@@ -35,11 +35,11 @@ interface DropdownFooterProps {
 }
 
 interface DropdownProps {
-  icon?: JSX.Element;
   options: Option[];
   selected?: Option[];
   setSelected?: React.Dispatch<React.SetStateAction<Option[]>>;
   onApply?: () => void;
+  onReset?: () => void;
   dropdownText?: string;
   search?: boolean;
   multiple?: boolean;
@@ -47,10 +47,10 @@ interface DropdownProps {
   children?: React.ReactNode;
   trigger?: React.ReactNode;
   dropdownMenu?: boolean;
-  position?: "top" | "bottom" | "left" | "right" | "left" | "right";
+  position?: "top" | "bottom" | "left" | "right";
   setDropdownMenu?: (value: boolean) => void;
-  info?: any;
-  addInfo?: any;
+  info?: string | number;
+  addInfo?: string | number;
   tooltipContent?: string;
   width?: string;
   dropDownTooltip?: boolean | undefined;
@@ -70,6 +70,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
       setSelected,
       search = false,
       multiple = false,
+      dropdownText,
       renderItem = defaultRenderItem,
       children,
       trigger,
@@ -82,6 +83,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
       dropdownFooter = false,
       onApply,
       disabled = false,
+      onReset,
     },
     ref
   ) => {
@@ -147,6 +149,9 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
     };
 
     const handleReset = () => {
+      if (onReset) {
+        onReset();
+      }
       setSelected?.([]);
       setDropdownMenu(false);
     };
@@ -179,9 +184,20 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           width: width,
         }}
       >
-        {/* <div onClick={() => setDropdownMenu(!dropdownMenu)}>{trigger}</div> */}
-        <div onClick={() => !disabled && setDropdownMenu((prev) => !prev)}>
+        <div
+          className={cn(
+            "w-full",
+            disabled && "cursor-not-allowed opacity-50",
+            dropdownText && "flex items-center gap-2"
+          )}
+          onClick={() => !disabled && setDropdownMenu((prev) => !prev)}
+        >
           {trigger}
+          {dropdownText && (
+            <span className={cn("text-sm text-gray-800 cursor-pointer")}>
+              {dropdownText}
+            </span>
+          )}
         </div>
         <ul
           className={cn(

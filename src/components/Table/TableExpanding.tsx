@@ -13,7 +13,7 @@ import Chip from "../Chip";
 
 const TableExpanding = () => {
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (newPage: number) => {
     setPage(newPage);

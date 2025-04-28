@@ -111,7 +111,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
   return (
     <nav
       aria-label="Sidebar navigation"
-      className={`max-h-[60vh] ${scroll && "overflow-y-auto customScroll"}`}
+      className={`max-h-[60vh] ${
+        scroll && collapsed ? "overflow-y-auto customScroll" : "overflow-hidden"
+      }`}
     >
       <ul className="my-2 flex flex-col gap-2 items-stretch">
         {navItems?.map((parentItem, parentIndex) => (
@@ -185,49 +187,52 @@ const Footer: React.FC<FooterProps> = ({
           <Divider />
         </div>
       )}
-      <nav className="flex-grow w-full">
-        <ul className="my-2 flex flex-col gap-2 items-stretch">
-          {navItems?.map((parentItem, parentIndex) => (
-            <li
-              key={parentIndex}
-              className="flex flex-col gap-3 mb-1 whitespace-nowrap overflow-hidden"
-            >
-              <p
-                className={cn({
-                  "text-[14px] text-gray-500": true,
-                  "w-[37px] text-ellipsis text-white whitespace-nowrap overflow-hidden":
-                    !collapsed,
-                })}
+      {navItems && navItems.length > 0 && (
+        <nav className="flex-grow w-full">
+          <ul className="my-2 flex flex-col gap-2 items-stretch">
+            {navItems?.map((parentItem, parentIndex) => (
+              <li
+                key={parentIndex}
+                className="flex flex-col gap-3 mb-1 whitespace-nowrap overflow-hidden"
               >
-                {parentItem.label}
-              </p>
-              <ul>
-                {parentItem?.items.map((item, index) => (
-                  <li key={index}>
-                    <Link
-                      className={cn({
-                        "hover:bg-gray-100 px-3 py-2 flex items-center mb-[6px] cursor-pointer rounded-md transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden":
-                          true,
-                        "text-white bg-primary-600": currentPath === item.href,
-                        "text-gray-700": currentPath !== item.href,
-                        "hover:bg-primary-600": currentPath === item.href,
-                      })}
-                      to={item.href} // React Router DOM's `to` prop
-                    >
-                      <div className="flex items-center gap-2 whitespace-nowrap">
-                        <span className="text-text-sm">{item.icon}</span>
-                        <span className={cn(!collapsed ? "opacity-0" : "")}>
-                          {item.label}
-                        </span>
-                      </div>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
-        </ul>
-      </nav>
+                <p
+                  className={cn({
+                    "text-[14px] text-gray-500": true,
+                    "w-[37px] text-ellipsis text-white whitespace-nowrap overflow-hidden":
+                      !collapsed,
+                  })}
+                >
+                  {parentItem.label}
+                </p>
+                <ul>
+                  {parentItem?.items.map((item, index) => (
+                    <li key={index}>
+                      <Link
+                        className={cn({
+                          "hover:bg-gray-100 px-3 py-2 flex items-center mb-[6px] cursor-pointer rounded-md transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden":
+                            true,
+                          "text-white bg-primary-600":
+                            currentPath === item.href,
+                          "text-gray-700": currentPath !== item.href,
+                          "hover:bg-primary-600": currentPath === item.href,
+                        })}
+                        to={item.href} // React Router DOM's `to` prop
+                      >
+                        <div className="flex items-center gap-2 whitespace-nowrap">
+                          <span className="text-text-sm">{item.icon}</span>
+                          <span className={cn(!collapsed ? "opacity-0" : "")}>
+                            {item.label}
+                          </span>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       {children}
     </div>
   );

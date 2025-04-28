@@ -136,10 +136,16 @@ const Test = () => {
       label: "appleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       value: "apple",
       info: "Modals",
+
       addInfo: "Be a direct child descendent of the modal.",
       tooltipContent: "hjsghjwg",
     },
-    { label: "banana", value: "banana", addInfo: "jdhjaldh" },
+    {
+      label: "banana",
+      value: "banana",
+      addInfo: "jdhjaldh",
+      disabledOption: true,
+    },
     { label: "strawberry", value: "strawberry" },
     { label: "kiwi", value: "kiwi", info: "info4" },
     {
@@ -602,49 +608,6 @@ const Test = () => {
           <Divider position="horizontal" className="my-4" />
         </div>
       </section>
-
-      {/* Chips  */}
-      <div className="space-y-5">
-        <h1 className="text-display-sm text-primary-400">Chip:</h1>
-        <section className="flex items-center gap-4">
-          <p>Chips with sizes</p>
-          <Chip intent="primary" size={"sm"}>
-            Size sm
-          </Chip>
-          <Chip intent="primary" size={"md"}>
-            Size md
-          </Chip>
-          <Chip intent="primary" size={"lg"}>
-            Size lg
-          </Chip>
-        </section>
-        <section className="flex items-center gap-4">
-          <p>Chips with dot</p>
-          <Chip intent="primary" dot dotColor="bg-red-400">
-            primary
-          </Chip>
-          <Chip dot intent="warning">
-            warning
-          </Chip>
-          <Chip dot intent="success">
-            success
-          </Chip>
-          <Chip dot intent="error">
-            error
-          </Chip>
-          <Chip dot intent="default">
-            default
-          </Chip>
-        </section>
-        <section className="flex items-center gap-4">
-          <p>Chips without dot</p>
-          <Chip intent="primary">primary</Chip>
-          <Chip intent="warning">warning</Chip>
-          <Chip intent="success">success</Chip>
-          <Chip intent="error">error</Chip>
-          <Chip intent="default">default</Chip>
-        </section>
-      </div>
 
       {/* Toggle  */}
       <div className="flex flex-col gap-5 my-5">
@@ -1346,13 +1309,14 @@ const Test = () => {
         <Slider
           value={sliderValue}
           min={10}
-          max={200}
+          max={100}
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
         <Slider
           value={sliderValue}
           min={10}
-          max={200}
+          step={10}
+          max={100}
           size="lg"
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
@@ -1791,6 +1755,7 @@ const Test = () => {
           onChange={handleFileChangeMultiple}
           onDelete={() => handleDeleteFile(selectedFiles[0])}
           title="SVG, PNG, JPG or GIF (max. 800x400px)"
+          filePreviewClassName="grid grid-cols-2 gap-2"
         >
           <ProgressBar progressColor="bg-primary-600" progress={50} />
         </FileUpload>

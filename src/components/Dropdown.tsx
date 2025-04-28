@@ -24,6 +24,7 @@ type Option = {
   info?: string;
   addInfo?: string;
   tooltipContent?: string;
+  disabledOption?: boolean;
 };
 
 interface MenuItemProps {
@@ -77,6 +78,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       dropdownFooter = false,
       onApply,
       disabled = false,
+      onReset,
     },
     ref
   ) => {
@@ -150,6 +152,9 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
     };
 
     const handleReset = () => {
+      if (onReset) {
+        onReset();
+      }
       setSelected?.([]);
       setDropdownMenu(false);
     };
@@ -180,7 +185,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         ref={dropdownRef}
         // className={cn("relative", !width && "w-full")}
         className={cn(
-          "relative ",
+          "relative bg-gray-25 shadow-[0px_1px_2px_0px_#1018280D] rounded-lg",
           !width && "w-full",
           disabled && "cursor-not-allowed opacity-50"
         )}
@@ -204,13 +209,15 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             style={{ width: `${adjustedWidth}px` }}
           >
             {icon && <span>{icon}</span>}
-            {multiple
-              ? (selected?.length ?? 0) > 0
-                ? `${selected?.length} Selected`
-                : dropdownText
-              : selected?.[0]?.label
-              ? selected?.[0]?.label
-              : dropdownText}
+            <p className="line-clamp-1 w-full">
+              {multiple
+                ? (selected?.length ?? 0) > 0
+                  ? `${selected?.length} Selected`
+                  : dropdownText
+                : selected?.[0]?.label
+                ? selected?.[0]?.label
+                : dropdownText}
+            </p>
           </section>
           <RiArrowDownSLine size={18} />
         </div>
@@ -254,7 +261,11 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                   <div key={i}>
                     {multiple ? (
                       <Label
-                        className="has-[:checked]:bg-primary-50 has-[:checked]:border-primary-600 hover:bg-gray-50 flex flex-col py-[6px] px-[14px] cursor-pointer border-l-4 border-transparent"
+                        className={cn(
+                          "has-[:checked]:bg-primary-50 has-[:checked]:border-primary-600 hover:bg-gray-50 flex flex-col py-[6px] px-[14px] cursor-pointer border-l-4 border-transparent",
+                          option?.disabledOption &&
+                            "opacity-50 cursor-not-allowed hover:bg-white text-gray-300 select-none"
+                        )}
                         htmlFor={`checkbox-${option.value}`}
                         key={i}
                       >
@@ -267,6 +278,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                                   (item) => item.value === option.value
                                 ) ?? false
                               }
+                              disabled={option?.disabledOption}
                               onChange={() => handleCheckboxChange(option)}
                             />
                             <div className="flex items-center gap-1">
@@ -292,9 +304,13 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                           {
                             "bg-primary-50 border-primary-600":
                               selected && selected[0]?.value === option.value,
+                            "opacity-50 cursor-not-allowed hover:bg-white text-gray-500":
+                              option?.disabledOption,
                           }
                         )}
-                        onClick={() => toggleOption(option)}
+                        onClick={() =>
+                          !option?.disabledOption && toggleOption(option)
+                        }
                       >
                         <div className="flex items-center gap-1">
                           <span>{renderItem(option)}</span>

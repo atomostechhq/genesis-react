@@ -227,7 +227,7 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
           <div
             className={cn(
               "shadow-md rounded-md p-3 flex gap-5 justify-center items-start",
-              "mt-1 h-[300px] absolute bg-white z-[1000] transition-all duration-75 delay-100 ease-in-out",
+              "mt-1 h-[330px] absolute bg-white z-[1000] transition-all duration-75 delay-100 ease-in-out",
               position === "top-left" && "bottom-11 left-0",
               position === "top-right" && "bottom-11 right-0",
               position === "bottom-left" && "top-10 left-0",
