@@ -108,12 +108,27 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
   const location = useLocation();
   const currentPath = location.pathname;
 
+    // Calculate menu height based on footer items
+    const getMenuHeight = () => {
+      const footerItemsLength =
+        navItems?.reduce((acc, item) => acc + item.items.length, 0) || 0;
+      if (footerItemsLength <= 1) {
+        return "max-h-[80vh]";
+      } else if (footerItemsLength === 2) {
+        return "max-h-[70vh]";
+      } else {
+        return "max-h-[60vh]";
+      }
+    };
+
   return (
     <nav
       aria-label="Sidebar navigation"
-      className={`max-h-[60vh] ${
+      className={cn(
+        getMenuHeight(),
+        "",
         scroll && collapsed ? "overflow-y-auto customScroll" : "overflow-hidden"
-      }`}
+      )}
     >
       <ul className="my-2 flex flex-col gap-2 items-stretch">
         {navItems?.map((parentItem, parentIndex) => (
