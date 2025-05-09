@@ -34,6 +34,7 @@ interface MenuItemProps {
 }
 
 interface DropdownProps {
+  id?: string;
   icon?: JSX.Element;
   options: Option[];
   selected?: Option[];
@@ -62,6 +63,7 @@ const defaultRenderItem = (option: Option) => {
 const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
   (
     {
+      id = `dropdown-${Math.random().toString(36).substring(2, 11)}`,
       options,
       selected,
       setSelected,
@@ -182,8 +184,8 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
     return (
       <div
+        id={id}
         ref={dropdownRef}
-        // className={cn("relative", !width && "w-full")}
         className={cn(
           "relative bg-gray-25 shadow-[0px_1px_2px_0px_#1018280D] rounded-lg",
           !width && "w-full",
@@ -231,6 +233,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
         >
           {search && (
             <Input
+              id={`${id}-search`}
               type="text"
               placeholder="Search..."
               value={searchQuery}
@@ -266,13 +269,13 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                           option?.disabledOption &&
                             "opacity-50 cursor-not-allowed hover:bg-white text-gray-300 select-none"
                         )}
-                        htmlFor={`checkbox-${option.value}`}
+                        htmlFor={`${id}-checkbox-${option.value}`}
                         key={i}
                       >
                         <section className="flex items-center justify-between gap-2 w-full">
                           <div className="flex gap-2">
                             <Checkbox
-                              id={`checkbox-${option.value}`}
+                              id={`${id}-checkbox-${option.value}`}
                               checked={
                                 selected?.some(
                                   (item) => item.value === option.value

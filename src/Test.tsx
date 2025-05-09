@@ -158,6 +158,12 @@ const Test = () => {
     { label: "mango", value: "mango" },
   ];
 
+  const [dropdownMenuOption, setDropdownMenuOption] = useState<Option[]>([]);
+
+  const [dropdownMenuOptionTwo, setDropdownMenuOptionTwo] = useState<Option[]>(
+    []
+  );
+
   // tabs
   const [value, setValue] = useState("1");
 
@@ -1383,9 +1389,7 @@ const Test = () => {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="item-2">
-              <AccordionTrigger>
-                Is it styled?
-              </AccordionTrigger>
+              <AccordionTrigger>Is it styled?</AccordionTrigger>
               <AccordionContent>
                 {` Yes. It comes with default styles that match the other components'
               aesthetic.`}
@@ -1488,6 +1492,41 @@ const Test = () => {
       </section>
 
       {/* Dropdown  */}
+      <section className="flex gap-6 items-center test">
+        <h1 className="text-lg">Dropdown with icon</h1>
+        <DropdownWithIcon
+          options={multiOptions}
+          selected={dropdownMenuOption}
+          setSelected={setDropdownMenuOption}
+          search={true}
+          multiple={true}
+          width="200px"
+          id="dropdownMenuOptionOne"
+          trigger={
+            <RiFilterLine
+              className="hover:bg-gray-200 rounded"
+              cursor="pointer"
+              size={14}
+            />
+          }
+        />
+        <DropdownWithIcon
+          options={multiOptions}
+          selected={dropdownMenuOptionTwo}
+          setSelected={setDropdownMenuOptionTwo}
+          search={true}
+          multiple={true}
+          width="200px"
+          id="dropdownMenuOptionTwo"
+          trigger={
+            <RiFilterLine
+              className="hover:bg-gray-200 rounded"
+              cursor="pointer"
+              size={14}
+            />
+          }
+        />
+      </section>
       <section className="flex gap-10 my-5">
         <div>
           <h1>Dropdown with icon</h1>
