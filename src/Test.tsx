@@ -1494,7 +1494,7 @@ const Test = () => {
       {/* Dropdown  */}
       <section className="flex gap-6 items-center test">
         <h1 className="text-lg">Dropdown with icon</h1>
-        <DropdownWithIcon
+        <Dropdown
           options={multiOptions}
           selected={dropdownMenuOption}
           setSelected={setDropdownMenuOption}
@@ -1502,13 +1502,10 @@ const Test = () => {
           multiple={true}
           width="200px"
           id="dropdownMenuOptionOne"
-          trigger={
-            <RiFilterLine
-              className="hover:bg-gray-200 rounded"
-              cursor="pointer"
-              size={14}
-            />
-          }
+          dropdownFooter={true}
+          onApply={() => {
+            alert("Apply button clicked");
+          }}
         />
         <DropdownWithIcon
           options={multiOptions}
@@ -1525,6 +1522,10 @@ const Test = () => {
               size={14}
             />
           }
+          dropdownFooter={true}
+          onApply={() => {
+            alert("Apply button clicked");
+          }}
         />
       </section>
       <section className="flex gap-10 my-5">

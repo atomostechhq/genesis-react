@@ -29,9 +29,8 @@ interface MenuItemProps {
 }
 
 interface DropdownFooterProps {
-  //   onReset?: () => void;
   onApply?: (() => void) | undefined;
-  setDropdownMenu?: any;
+  setDropdownMenu?: (value: boolean) => void;
 }
 
 interface DropdownProps {
@@ -243,6 +242,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                 Select all
               </p>
               <button
+                type="button"
                 className="text-text-sm text-warning-500 hover:text-warning-600"
                 onClick={handleReset}
               >
@@ -313,7 +313,12 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                 ))
               : children}
           </section>
-          {dropdownFooter && <DropdownFooter onApply={onApply} />}
+          {dropdownFooter && (
+            <DropdownFooter
+              setDropdownMenu={setDropdownMenu}
+              onApply={onApply}
+            />
+          )}
         </ul>
       </div>
     );
@@ -343,14 +348,17 @@ const DropdownFooter: React.FC<DropdownFooterProps> = ({
   setDropdownMenu,
 }) => {
   return (
-    <div className="flex justify-between border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
+    <div className="flex justify-end test border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
       <button
+       type="button"
         className="text-primary-600 hover:text-primary-700"
         onClick={() => {
           if (onApply) {
             onApply();
           }
-          setDropdownMenu(false);
+          if (setDropdownMenu) {
+            setDropdownMenu(false);
+          }
         }}
       >
         Apply

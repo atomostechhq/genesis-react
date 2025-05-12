@@ -251,6 +251,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                 Select all
               </p>
               <button
+                type="button"
                 className="text-text-sm text-warning-500 hover:text-warning-600"
                 onClick={handleReset}
               >
@@ -363,7 +364,7 @@ const DropdownTooltip: React.FC<DropdownTooltipProps> = ({
 
 interface DropdownFooterProps {
   onApply?: (() => void) | undefined;
-  setDropdownMenu?: any;
+  setDropdownMenu?: (value: boolean) => void;
 }
 
 export const DropdownFooter: React.FC<DropdownFooterProps> = ({
@@ -374,12 +375,15 @@ export const DropdownFooter: React.FC<DropdownFooterProps> = ({
   return (
     <div className="flex justify-end border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
       <button
+        type="button"
         className="text-primary-600 hover:text-primary-700"
         onClick={() => {
           if (onApply) {
             onApply();
           }
-          setDropdownMenu(false);
+          if (setDropdownMenu) {
+            setDropdownMenu(false);
+          }
         }}
       >
         Apply
