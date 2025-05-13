@@ -19,7 +19,21 @@ interface InputProps
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ size, startIcon, endIcon, className, type, disabled, ...props }, ref) => {
+  (
+    {
+      size,
+      startIcon,
+      endIcon,
+      className,
+      type,
+      disabled,
+      id,
+      "aria-label": ariaLabel,
+      "aria-describedby": ariaDescribedby,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <div
         className={cn(
@@ -34,9 +48,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       >
         {startIcon && (
           <span
+            aria-hidden="true"
             className={cn(
               "group-hover:text-gray-600 group-focus-within:text-gray-600",
-              disabled === true && "text-gray-900"
+              disabled && "text-gray-900"
             )}
           >
             {startIcon}
@@ -45,18 +60,23 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           {...props}
           ref={ref}
+          id={id}
           disabled={disabled}
           type={type}
+          aria-label={ariaLabel}
+          aria-describedby={ariaDescribedby}
+          aria-disabled={disabled}
           className={cn(
-            "w-full text-sm focus:outline-none bg-transparent disabled:text-gray-900 placeholder:text-gray-500 group-hover:placeholder:text-gray-500",
+            "w-full text-sm focus:outline-none focus:ring-offset-0 bg-transparent disabled:text-gray-900 placeholder:text-gray-500 group-hover:placeholder:text-gray-500 rounded-md",
             size
           )}
         />
         {endIcon && (
           <span
+            aria-hidden="true"
             className={cn(
               "group-hover:text-gray-600 group-focus-within:text-gray-600",
-              disabled === true && "text-gray-900"
+              disabled && "text-gray-900"
             )}
           >
             {endIcon}

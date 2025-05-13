@@ -648,6 +648,10 @@ const Test = () => {
         <section className="flex items-center gap-4">
           <h1>Size with Text:</h1>
           <div className="flex items-center gap-2">
+            <Checkbox id="xl" size="xl" />
+            <Label htmlFor="xl">XL</Label>
+          </div>
+          <div className="flex items-center gap-2">
             <Checkbox id="large" size="lg" />
             <Label htmlFor="large">Large</Label>
           </div>

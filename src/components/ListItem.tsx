@@ -30,18 +30,27 @@ const ListItem = React.forwardRef<
   HTMLAnchorElement | HTMLButtonElement,
   ListItemProps
 >(({ className, title, href, onClick, as = "link", icon }, ref) => {
+  const commonClasses = cn(
+    "px-4 py-[8px] w-full flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary-600 focus-visible:ring-2 rounded transition-colors",
+    className
+  );
+
   if (as === "button") {
     return (
       <button
-        className={cn(
-          "px-4 py-[8px] w-full text-left flex items-center gap-2",
-          className
-        )}
+        className={commonClasses}
         onClick={onClick}
         ref={ref as React.Ref<HTMLButtonElement>}
+        type="button"
+        role="menuitem"
+        aria-label={title}
       >
-        <h1>{title}</h1>
-        {icon && <span>{icon}</span>}
+        <span className="text-base font-normal">{title}</span>
+        {icon && (
+          <span className="flex-shrink-0" aria-hidden="true">
+            {icon}
+          </span>
+        )}
       </button>
     );
   }
@@ -49,11 +58,22 @@ const ListItem = React.forwardRef<
   return (
     <Link
       to={href ?? ""}
-      className={cn("px-4 py-[8px] w-full flex items-center gap-2", className)}
+      className={commonClasses}
       ref={ref as React.Ref<HTMLAnchorElement>}
+      role="menuitem"
+      aria-label={title}
+      onClick={(e) => {
+        if (!href) {
+          e.preventDefault();
+        }
+      }}
     >
-      <h1>{title}</h1>
-      {icon && <p>{icon}</p>}
+      <span className="text-base font-normal">{title}</span>
+      {icon && (
+        <span className="flex-shrink-0" aria-hidden="true">
+          {icon}
+        </span>
+      )}
     </Link>
   );
 });
