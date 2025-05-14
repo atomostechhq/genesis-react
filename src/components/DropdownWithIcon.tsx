@@ -1,4 +1,5 @@
-import {
+"use client";
+import React, {
   useEffect,
   useState,
   useMemo,
@@ -8,11 +9,11 @@ import {
   useImperativeHandle,
 } from "react";
 import { RiErrorWarningLine, RiSearchLine } from "@remixicon/react";
-import { cn } from "../utils";
 import Input from "./Input";
 import Label from "./Label";
 import Checkbox from "./Checkbox";
 import Tooltip from "./Tooltip";
+import { cn } from "../utils";
 
 type Option = {
   label: string;
@@ -20,6 +21,8 @@ type Option = {
   info?: string;
   addInfo?: string;
   tooltipContent?: string;
+  disabledOption?: boolean;
+  labelTextColor?: string;
 };
 
 interface MenuItemProps {
@@ -56,6 +59,7 @@ interface DropdownProps {
   dropDownTooltip?: boolean | undefined;
   dropdownFooter?: boolean;
   disabled?: boolean;
+  labelTextColor?: string;
 }
 
 const defaultRenderItem = (option: Option) => {
@@ -75,9 +79,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
       renderItem = defaultRenderItem,
       children,
       trigger,
-      //   dropdownMenu = false,
       position = "top",
-      //   setDropdownMenu = () => {},
       width,
       info,
       dropDownTooltip = false,
@@ -186,22 +188,37 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           width: width,
         }}
       >
-        <div
+        <button
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={dropdownMenu}
+          aria-labelledby={`${id}-label`}
+          disabled={disabled}
+          onClick={() => !disabled && setDropdownMenu((prev) => !prev)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              !disabled && setDropdownMenu((prev) => !prev);
+            }
+          }}
           className={cn(
             "w-full",
             disabled && "cursor-not-allowed opacity-50",
             dropdownText && "flex items-center gap-2"
           )}
-          onClick={() => !disabled && setDropdownMenu((prev) => !prev)}
         >
           {trigger}
           {dropdownText && (
-            <span className={cn("text-sm text-gray-800 cursor-pointer")}>
+            <span id={`${id}-label`} className="text-sm text-gray-800">
               {dropdownText}
             </span>
           )}
-        </div>
+        </button>
         <ul
+          role="listbox"
+          aria-multiselectable={multiple}
+          aria-labelledby={`${id}-label`}
+          tabIndex={-1}
           className={cn(
             "max-h-0 opacity-0 overflow-hidden shadow-sm mt-1 rounded absolute text-[16px] bg-white z-[1000] w-full transition-all duration-75 delay-100 ease-in",
             position === "top"
@@ -227,6 +244,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
               id={`${id}-search`}
               type="text"
               placeholder="Search..."
+              aria-label="Search options"
               value={searchQuery}
               onChange={handleSearchChange}
               className="rounded rounded-b-none text-gray-800 bg-white w-full h-[35px] pl-3"
@@ -235,13 +253,16 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           )}
           {multiple && (
             <section className="py-[6px] px-[14px] flex justify-between items-center">
-              <p
+              <button
+                type="button"
+                aria-label="Select all"
                 onClick={handleSelectAll}
-                className="text-text-sm  hover:text-primary-700  text-primary-600 cursor-pointer"
+                className="text-text-sm  hover:text-primary-700 text-primary-600 cursor-pointer"
               >
                 Select all
-              </p>
+              </button>
               <button
+                aria-label="Reset"
                 type="button"
                 className="text-text-sm text-warning-500 hover:text-warning-600"
                 onClick={handleReset}
@@ -253,10 +274,14 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           <section className="max-h-[200px] z-[1000] transition-all duration-75 delay-100 ease-in-out overflow-y-scroll">
             {options
               ? memoizedFilteredOptions?.map((option, i) => (
-                  <div key={i}>
+                  <React.Fragment key={i}>
                     {multiple ? (
                       <Label
-                        className="has-[:checked]:bg-primary-50 has-[:checked]:border-primary-600 hover:bg-gray-50 flex flex-col py-[6px] px-[14px] break-words cursor-pointer border-l-4 border-transparent"
+                        className={cn(
+                          "has-[:checked]:bg-primary-50 has-[:checked]:border-primary-600 hover:bg-gray-50 flex flex-col py-[6px] px-[14px] break-words cursor-pointer border-l-4 border-transparent",
+                          option?.disabledOption &&
+                            "opacity-50 cursor-not-allowed hover:bg-white text-gray-300 select-none"
+                        )}
                         htmlFor={`${id}-checkbox-${option.value}`}
                         key={i}
                       >
@@ -268,9 +293,26 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                                 (item) => item?.value === option?.value
                               )}
                               onChange={() => handleCheckboxChange(option)}
+                              disabled={option?.disabledOption}
                             />
                             <div className="flex items-center gap-1">
-                              <div className="break-words">
+                              {/* <div
+                                style={{ color: option.labelTextColor }}
+                                className="break-words"
+                              >
+                                {renderItem(option)}
+                              </div> */}
+                              <div
+                                style={{
+                                  color: option?.disabledOption
+                                    ? "#D1D5DB"
+                                    : option.labelTextColor,
+                                }}
+                                className={cn(
+                                  "break-words",
+                                  option?.disabledOption && "text-gray-300"
+                                )}
+                              >
                                 {renderItem(option)}
                               </div>
                               {dropDownTooltip && (
@@ -288,18 +330,43 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                       </Label>
                     ) : (
                       <Label
+                        htmlFor={`${id}-checkbox-${option.value}`}
                         key={i}
                         className={cn(
                           "flex justify-between py-[6px] px-[14px] hover:bg-gray-50 gap-2 items-center border-l-4 border-transparent cursor-pointer",
                           {
                             "bg-primary-50 border-primary-600":
                               selected && selected[0]?.value === option?.value,
+                            "opacity-50 cursor-not-allowed hover:bg-white text-gray-500":
+                              option?.disabledOption,
                           }
                         )}
-                        onClick={() => toggleOption(option)}
+                        onClick={() =>
+                          !option?.disabledOption && toggleOption(option)
+                        }
                       >
-                        <div className="flex items-center gap-1">
-                          <span>{renderItem(option)}</span>
+                        {/* <div className="flex items-center gap-1">
+                          <span style={{ color: option.labelTextColor }}>
+                            {renderItem(option)}
+                          </span>
+                          {dropDownTooltip && (
+                            <DropdownTooltip
+                              tooltipContent={option?.tooltipContent}
+                            />
+                          )}
+                        </div> */}
+                        <div
+                          style={{
+                            color: option?.disabledOption
+                              ? "#D1D5DB"
+                              : option.labelTextColor,
+                          }}
+                          className={cn(
+                            "break-words",
+                            option?.disabledOption && "text-gray-300"
+                          )}
+                        >
+                          {renderItem(option)}
                           {dropDownTooltip && (
                             <DropdownTooltip
                               tooltipContent={option?.tooltipContent}
@@ -309,10 +376,11 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                         <span className="text-gray-500">{info}</span>
                       </Label>
                     )}
-                  </div>
+                  </React.Fragment>
                 ))
               : children}
           </section>
+          {/* {dropdownFooter && <DropdownFooter onApply={onApply} />} */}
           {dropdownFooter && (
             <DropdownFooter
               setDropdownMenu={setDropdownMenu}
@@ -348,9 +416,9 @@ const DropdownFooter: React.FC<DropdownFooterProps> = ({
   setDropdownMenu,
 }) => {
   return (
-    <div className="flex justify-end test border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
+    <div className="flex justify-between border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
       <button
-       type="button"
+        type="button"
         className="text-primary-600 hover:text-primary-700"
         onClick={() => {
           if (onApply) {

@@ -42,10 +42,6 @@ import { Link, useLocation } from "react-router-dom";
 import DateRangePicker from "./components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import {
-  format,
-  isAfter,
-  isValid,
-  parse,
   startOfToday,
   subMonths,
 } from "date-fns";
@@ -136,9 +132,9 @@ const Test = () => {
       label: "appleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
       value: "apple",
       info: "Modals",
-
       addInfo: "Be a direct child descendent of the modal.",
       tooltipContent: "hjsghjwg",
+      disabledOption:true
     },
     {
       label: "banana",
@@ -439,7 +435,7 @@ const Test = () => {
     <div className="m-4">
       <div className="mt-10 flex gap-10">
         <section>
-          <h1 className="text-primary-400 border-b border-primary-900 w-fit">
+          <h1 className="text-primary-600 border-b border-primary-900 w-fit">
             Typography - Font Size
           </h1>
           <h1 className="text-display-2xl">Display 2xl</h1>
@@ -455,7 +451,7 @@ const Test = () => {
           <h1 className="text-text-xs">Text Xs</h1>
         </section>
         <section>
-          <h1 className="text-primary-400 border-b border-primary-900 w-fit">
+          <h1 className="text-primary-600 border-b border-primary-900 w-fit">
             Typography - Font Weight
           </h1>
           <h1 className="font-regular">Regular</h1>
@@ -465,7 +461,7 @@ const Test = () => {
         </section>
       </div>
       <div className="flex flex-col gap-5">
-        <h1 className="text-display-sm text-primary-400">Button:</h1>
+        <h1 className="text-display-sm text-primary-600">Button:</h1>
         <section className="my-2">
           <h1>Full width:</h1>
           <Button variant="filled" fullWidth>
@@ -561,7 +557,7 @@ const Test = () => {
 
       {/* Chips  */}
       <div className="space-y-5">
-        <h1 className="text-display-sm text-primary-400">Chip:</h1>
+        <h1 className="text-display-sm text-primary-600">Chip:</h1>
         <section className="flex items-center gap-4">
           <p>Chips with sizes</p>
           <Chip intent="primary" size={"sm"}>
@@ -604,7 +600,7 @@ const Test = () => {
 
       {/* Divider */}
       <section>
-        <h1 className="text-display-sm text-primary-400">Divider</h1>
+        <h1 className="text-display-sm text-primary-600">Divider</h1>
         <div className="w-[50%] border border-primary-600 p-5 flex justify-center gap-6 items-center">
           <Divider
             position="vertical"
@@ -617,7 +613,7 @@ const Test = () => {
 
       {/* Toggle  */}
       <div className="flex flex-col gap-5 my-5">
-        <h1 className="text-display-sm text-primary-400">Toggle:</h1>
+        <h1 className="text-display-sm text-primary-600">Toggle:</h1>
         <section className="flex items-center gap-4">
           <h1>Size:</h1>
           <Toggle size="sm" />
@@ -644,7 +640,7 @@ const Test = () => {
 
       {/* checkbox */}
       <div className="flex flex-col gap-1 my-5">
-        <h1 className="text-display-sm text-primary-400">Checkbox:</h1>
+        <h1 className="text-display-sm text-primary-600">Checkbox:</h1>
         <section className="flex items-center gap-4">
           <h1>Size with Text:</h1>
           <div className="flex items-center gap-2">
@@ -694,7 +690,7 @@ const Test = () => {
 
       {/* Radio */}
       <div className="flex flex-col gap-1 my-5">
-        <h1 className="text-display-sm text-primary-400">Radio:</h1>
+        <h1 className="text-display-sm text-primary-600">Radio:</h1>
         <section className="flex items-center gap-4">
           <h1>Size with Text:</h1>
           <div className="flex items-center gap-2">
@@ -742,7 +738,7 @@ const Test = () => {
 
       {/* <Input /> */}
       <div className="flex flex-col gap-1 my-5">
-        <h1 className="text-display-sm text-primary-400">Input Field:</h1>
+        <h1 className="text-display-sm text-primary-600">Input Field:</h1>
         <section className="flex items-center gap-4">
           <h1>Size with Text:</h1>
           <div className="w-[500px]">
@@ -801,7 +797,7 @@ const Test = () => {
 
       {/* Avatar */}
       <section className="my-10 space-y-2">
-        <h1 className="text-display-sm text-primary-400">Avatar:</h1>
+        <h1 className="text-display-sm text-primary-600">Avatar:</h1>
         <div className="flex items-center gap-5">
           <Avatar
             type="text"
@@ -877,11 +873,11 @@ const Test = () => {
             statusPosition="bottom-right"
           />
         </div>
-        <h1 className="text-display-sm text-primary-400">
+        <h1 className="text-display-sm text-primary-600">
           Avatar Positions/Size:
         </h1>
         <div className="flex items-center gap-5">
-          <h2 className="text-display-sm text-primary-400">Avatar Small:</h2>
+          <h2 className="text-display-sm text-primary-600">Avatar Small:</h2>
           <Avatar
             type="text"
             text="AV"
@@ -1006,7 +1002,7 @@ const Test = () => {
           />
         </div>
         <div className="flex items-center gap-5">
-          <h2 className="text-display-sm text-primary-400">Avatar Medium:</h2>
+          <h2 className="text-display-sm text-primary-600">Avatar Medium:</h2>
           <Avatar
             type="text"
             text="AV"
@@ -1131,7 +1127,7 @@ const Test = () => {
           />
         </div>
         <div className="flex items-center gap-5">
-          <h2 className="text-display-sm text-primary-400">Avatar Large:</h2>
+          <h2 className="text-display-sm text-primary-600">Avatar Large:</h2>
           <Avatar
             type="icon"
             size="lg"
@@ -1315,7 +1311,7 @@ const Test = () => {
 
       {/* Slider */}
       <div className="space-y-6">
-        <h1 className="text-display-sm text-primary-400">Slider:</h1>
+        <h1 className="text-display-sm text-primary-600">Slider:</h1>
         <Slider
           value={sliderValue}
           min={10}
@@ -1334,7 +1330,7 @@ const Test = () => {
 
       {/* Accordian */}
       <section className="space-y-5">
-        <h1 className="text-display-sm text-primary-400">Accordian:</h1>
+        <h1 className="text-display-sm text-primary-600">Accordian:</h1>
         <div className="space-y-2">
           <h2>Accordian Single</h2>
           <Accordion type="single" collapsible className="w-full space-y-2">
@@ -1414,7 +1410,7 @@ const Test = () => {
 
       {/* Menu Items */}
       <section>
-        <h1 className="text-display-sm text-primary-400">MenuItems:</h1>
+        <h1 className="text-display-sm text-primary-600">MenuItems:</h1>
         <MenuDropdown
           className=""
           trigger={
@@ -1454,7 +1450,7 @@ const Test = () => {
 
       {/* Global Navigation */}
       <section className="my-5">
-        <h1 className="text-display-sm text-primary-400">Global Navigation:</h1>
+        <h1 className="text-display-sm text-primary-600">Global Navigation:</h1>
         <div className="flex items-center w-full justify-evenly">
           <GlobalNavigation
             isOpen={isOpen}
@@ -1626,7 +1622,7 @@ const Test = () => {
 
       {/* Tabs */}
       <div>
-        <h1 className="text-display-sm text-primary-400">Tabs</h1>
+        <h1 className="text-display-sm text-primary-600">Tabs</h1>
         <section className="my-5">
           <h1 className="text-lg">Default Tabs</h1>
           <TabsContainer value={value}>
@@ -1765,7 +1761,7 @@ const Test = () => {
 
       {/* notice */}
       <section className="flex flex-col w-fit">
-        <h1 className="text-display-sm text-primary-400">Notice:</h1>
+        <h1 className="text-display-sm text-primary-600">Notice:</h1>
         <Button variant="filled" onClick={() => setOpen(true)}>
           Show Notice
         </Button>
@@ -1797,7 +1793,7 @@ const Test = () => {
 
       {/* File Upload */}
       <section className="flex flex-col gap-2 max-w-lg">
-        <h1 className="text-display-sm text-primary-400">File Upload</h1>
+        <h1 className="text-display-sm text-primary-600">File Upload</h1>
         <FileUpload
           id="single"
           selectedFile={selectedSingleFiles}
@@ -1824,7 +1820,7 @@ const Test = () => {
 
       {/* Tooltip */}
       <section className="flex items-center gap-5 my-5">
-        <h1 className="text-display-sm text-primary-400">Tooltip:</h1>
+        <h1 className="text-display-sm text-primary-600">Tooltip:</h1>
         <Tooltip
           position="top"
           className="text-red-500"
@@ -1879,7 +1875,7 @@ const Test = () => {
 
       {/* skeleton */}
       <section className="my-5">
-        <h1 className="text-display-sm text-primary-400">Skeleton:</h1>
+        <h1 className="text-display-sm text-primary-600">Skeleton:</h1>
         <div className="flex flex-col gap-2">
           {/* in percent */}
           <div className="w-[400px] h-[200px]">
@@ -1893,7 +1889,7 @@ const Test = () => {
 
       {/* stepper */}
       <section>
-        <h1 className="text-display-sm text-primary-400">Stepper:</h1>
+        <h1 className="text-display-sm text-primary-600">Stepper:</h1>
         <div className="w-[50%] mx-auto">
           <Stepper
             stepsConfig={stepsConfig}
@@ -1943,7 +1939,7 @@ const Test = () => {
 
       {/* single Date picker */}
       <section className="space-y-5 my-20">
-        <h1 className="text-display-sm text-primary-400">Single Date Picker</h1>
+        <h1 className="text-display-sm text-primary-600">Single Date Picker</h1>
         <div className="flex items-start gap-20">
           <div className="space-y-2">
             <h1>Date Picker with Top Position</h1>
@@ -1988,7 +1984,7 @@ const Test = () => {
 
       {/* Date Range Picker */}
       <section className="space-y-5 my-10">
-        <h1 className="text-display-sm text-primary-400">Date Range Picker</h1>
+        <h1 className="text-display-sm text-primary-600">Date Range Picker</h1>
         <div className="flex items-start gap-20">
           <div className="space-y-2">
             <h1>Date Range with presets</h1>
@@ -2099,7 +2095,7 @@ const Test = () => {
 
       {/* Textarea */}
       <section className="flex flex-col gap-1">
-        <h1 className="text-display-sm text-primary-400">Textarea</h1>
+        <h1 className="text-display-sm text-primary-600">Textarea</h1>
         <section className="flex items-center gap-4">
           <h1>States</h1>
           <Textarea
@@ -2117,7 +2113,7 @@ const Test = () => {
 
       {/* Circular Progress */}
       <section className="my-5">
-        <h1 className="text-display-sm text-primary-400">Circular Progress:</h1>
+        <h1 className="text-display-sm text-primary-600">Circular Progress:</h1>
         <div className="flex items-center gap-5 py-10">
           <CircularProgress size={50} strokeWidth={4} percentage={50} />
           <CircularProgress size={90} strokeWidth={10} percentage={70} />
@@ -2133,7 +2129,7 @@ const Test = () => {
 
       {/* Loading State */}
       <section className="flex flex-col items-center justify-center gap-2">
-        <h1 className="text-display-sm text-primary-400">Loading</h1>
+        <h1 className="text-display-sm text-primary-600">Loading</h1>
         <Loading width="50px" height="50px" loaderColor="green" />
         <span className="font-bold">Hold On ...</span>
         <p className="text-sm text-gray-500">
@@ -2192,7 +2188,7 @@ const Test = () => {
 
       {/* Breadcrumbs */}
       <section className="my-5">
-        <h1 className="text-display-sm text-primary-400">Breadcrumbs</h1>
+        <h1 className="text-display-sm text-primary-600">Breadcrumbs</h1>
         <Breadcrumbs aria-label="breadcrumb" separator="/">
           <Link to="/">
             <RiStackLine size={18} />
