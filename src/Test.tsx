@@ -1492,7 +1492,7 @@ const Test = () => {
       </section>
 
       {/* Dropdown  */}
-      <section className="flex gap-6 items-center test">
+      <section className="flex gap-6 items-center">
         <h1 className="text-lg">Dropdown with icon</h1>
         <Dropdown
           options={multiOptions}

@@ -13,8 +13,8 @@ import {
   RiFileZipLine,
   RiFilePdf2Line,
 } from "@remixicon/react";
-import Label from "./Label";
 import { cn } from "../utils";
+import Label from "./Label";
 
 export interface FileUploadProps extends InputHTMLAttributes<HTMLInputElement> {
   id: string;
@@ -113,8 +113,8 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
       children,
       disabled,
       title,
-      id,
       filePreviewClassName,
+      id,
       className,
       accept,
       ...props
@@ -122,7 +122,7 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
     ref
   ) => {
     return (
-      <div className="flex flex-col gap-2 ">
+      <div className="flex flex-col gap-2">
         <input
           type="file"
           {...props}
@@ -137,21 +137,34 @@ const FileUpload = forwardRef<HTMLInputElement, FileUploadProps>(
         <Label
           htmlFor={id}
           disabled={disabled}
+          role="button"
+          aria-label={`Upload ${multiple ? "files" : "file"}`}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              e.currentTarget.click();
+            }
+          }}
           className={cn(
-            "w-full h-[126px] border-2 border-dashed border-gray-200 hover:bg-gray-200 cursor-pointer rounded-lg px-6 py-4 flex flex-col items-center gap-2",
+            "w-full h-[126px] border-2 border-dashed border-gray-200 hover:bg-gray-200 cursor-pointer rounded-lg px-6 py-4 flex items-center justify-center ",
             disabled && "pointer-events-none",
             className
           )}
         >
-          <div className="w-10 h-10 border-[6px] border-gray-50 bg-gray-200 rounded-full p-1 flex justify-center items-center">
-            <RiUpload2Line className="w-5 h-5" />
+          <div className={cn("grid grid-cols-1 place-items-center gap-2")}>
+            <div className="w-10 h-10 border-[6px] border-gray-50 bg-gray-200 rounded-full p-1 flex justify-center items-center">
+              <RiUpload2Line className="w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-center text-sm text-gray-600">
+                <span className="text-primary-600 font-semibold">
+                  Click to upload
+                </span>{" "}
+                <br /> {title}
+              </p>
+            </div>
           </div>
-          <p className="text-center text-sm text-gray-600">
-            <span className="text-primary-600 font-semibold">
-              Click to upload
-            </span>{" "}
-            <br /> {title}
-          </p>
         </Label>
         <section className={cn(`grid gap-2`, filePreviewClassName)}>
           {selectedFile?.map((file, index) => (
