@@ -23,7 +23,7 @@ import HelperText from "./components/HelperText";
 import Radio from "./components/Radio";
 import Input from "./components/Input";
 import { cn } from "./utils";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import Dropdown from "./components/Dropdown";
 import DropdownWithIcon from "./components/DropdownWithIcon";
 import TabsContainer, { Tab, TabList, TabPanel } from "./components/Tabs";
