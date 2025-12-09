@@ -5,7 +5,10 @@ import {
   RiCheckLine,
   RiCircleFill,
   RiCloseLine,
+  RiEditLine,
+  RiFileLine,
   RiFilterLine,
+  RiFolderOpenFill,
   RiGlobalLine,
   RiInformation2Line,
   RiInformationLine,
@@ -61,7 +64,28 @@ import Drawer from "./components/Drawer";
 import Callout from "./components/Callout";
 import MultipleDatePicker from "./components/MultipleDatePicker";
 import SplitButton from "./components/SplitButton";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./components/DropdownMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "./components/DropdownMenu";
+import TreeView from "./components/TreeView";
+import Typography from "./components/Typography";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./components/Card";
 
 interface Option {
   label: string | number;
@@ -205,6 +229,9 @@ const Test = () => {
   const [progress, setProgress] = useState(0);
   // accordion
   const [isExpanded, setIsExpanded] = useState(false);
+
+  // tree view
+  const [selected, setSelected] = useState<string | null>(null);
 
   // sidebar
   const [collapsed, setCollapsed] = useState(true);
@@ -582,31 +609,31 @@ const Test = () => {
 
   return (
     <div className="m-4">
+      {/* Typography */}
       <div className="mt-10 flex gap-10">
-        <section>
-          <h1 className="text-primary-600 border-b border-primary-900 w-fit">
-            Typography - Font Size
-          </h1>
-          <h1 className="text-display-2xl">Display 2xl</h1>
-          <h1 className="text-display-xl">Display xl</h1>
-          <h1 className="text-display-lg">Display lg</h1>
-          <h1 className="text-display-md">Display md</h1>
-          <h1 className="text-display-sm">Display sm</h1>
-          <h1 className="text-display-xs">Display xs</h1>
-          <h1 className="text-text-xl">Text Xl</h1>
-          <h1 className="text-text-lg">Text Lg</h1>
-          <h1 className="text-text-md">Text Md</h1>
-          <h1 className="text-text-sm">Text Sm</h1>
-          <h1 className="text-text-xs">Text Xs</h1>
-        </section>
-        <section>
-          <h1 className="text-primary-600 border-b border-primary-900 w-fit">
-            Typography - Font Weight
-          </h1>
-          <h1 className="font-regular">Regular</h1>
-          <h1 className="font-medium">Medium</h1>
-          <h1 className="font-semibold">Semi Bold</h1>
-          <h1 className="font-bold">Bold</h1>
+        <section className="space-y-3">
+          <Typography variant="h6">Typography</Typography>
+          <Typography variant="h1">H1 Headline</Typography>
+          <Typography variant="h2">H2 Headline</Typography>
+          <Typography variant="h3">H3 Headline</Typography>
+          <Typography variant="h4">H4 Headline</Typography>
+          <Typography variant="h5">H5 Headline</Typography>
+          <Typography variant="h6">H6 Headline</Typography>
+          <Typography variant="b1" intent="primary">
+            Body 1 - Primary
+          </Typography>
+          <Typography variant="b2" intent="success">
+            Body 2 - Success
+          </Typography>
+          <Typography variant="b3" intent="error">
+            Body 3 - Error
+          </Typography>
+          <Typography variant="b4" intent="warning">
+            Body 4 - Warning
+          </Typography>
+          <Typography variant="b5" intent="default">
+            Body 5 - Default
+          </Typography>
         </section>
       </div>
       <div className="flex flex-col gap-5">
@@ -936,6 +963,51 @@ const Test = () => {
             )}
           </div>
         </section>
+      </div>
+          {/* cards */}
+      <div className="space-y-5">
+        <Card>
+          <CardHeader>
+            <CardTitle>Card Title</CardTitle>
+            <CardDescription>Card Description</CardDescription>
+            <CardAction>
+              <Button>Action Button</Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <p>Card Content</p>
+          </CardContent>
+          <CardFooter>
+            <p>Card Footer</p>
+          </CardFooter>
+        </Card>
+      </div>
+      <div>
+        <h1>Customised card</h1>
+        <Card className="w-96 p-0 bg-yellow-50 text-green-600 rounded-2xl">
+          <CardHeader>
+            <CardTitle className="text-red-600">Project Dashboard</CardTitle>
+            <CardDescription>
+              Manage your projects and tasks efficiently
+            </CardDescription>
+            <CardAction>
+              <Button variant="outlined">Create New</Button>
+            </CardAction>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p>Active Projects: 12</p>
+              <p>Completed Tasks: 45</p>
+              <p>Pending Reviews: 3</p>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <div className="flex justify-between items-center w-full">
+              <span className="text-sm text-gray-500">Last updated: Today</span>
+              <Button size="sm">View All</Button>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
       {/* Avatar */}
       <section className="my-10 space-y-2">
@@ -2818,6 +2890,438 @@ const Test = () => {
           </Callout>
         </div>
       </section>
+
+      {/* Menu Items */}
+      <section className="p-5">
+        <h1 className="text-display-sm text-primary-600">MenuItems:</h1>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <Button> Open Menu </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-64">
+            <DropdownMenuLabel>Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Profile</DropdownMenuItem>
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>More Options</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem>Billing</DropdownMenuItem>
+                <DropdownMenuItem>Support</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuLabel>Label One</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Menu One</DropdownMenuItem>
+            <DropdownMenuItem>Menu Two</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </section>
+      <div className="grid grid-cols-2 gap-4 p-8 w-full whitespace-nowrap">
+        {/* Top-Left */}
+        <div className="flex justify-center gap-6">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="outlined">Top</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="top">
+              <DropdownMenuLabel>Top Position</DropdownMenuLabel>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="outlined">Bottom</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="bottom">
+              <DropdownMenuLabel>Bottom Position</DropdownMenuLabel>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="outlined">Left</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="left">
+              <DropdownMenuLabel>Left Position</DropdownMenuLabel>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="outlined">Right</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="right">
+              <DropdownMenuLabel>Right Position</DropdownMenuLabel>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="outlined">Center</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="center">
+              <DropdownMenuLabel>Center Aligned</DropdownMenuLabel>
+              <DropdownMenuItem>Profile</DropdownMenuItem>
+              <DropdownMenuItem>Settings</DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>Invite users</DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                  <DropdownMenuItem>Message</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button variant="outlined">Wide Menu</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-80" align="end">
+              <DropdownMenuLabel>Wide Menu (320px)</DropdownMenuLabel>
+              <DropdownMenuItem>Profile with very long text</DropdownMenuItem>
+              <DropdownMenuItem>Settings with extra content</DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  Invite users with long text
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email invitation</DropdownMenuItem>
+                  <DropdownMenuItem>Message invitation</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More options...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  Invite users with long text
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem>Email invitation</DropdownMenuItem>
+                  <DropdownMenuItem>Message invitation</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>More options...</DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* tree view */}
+      <section className="my-5 w-1/2 border p-5">
+        <h1 className="text-display-sm text-primary-600">Tree View:</h1>
+        <TreeView aria-label="Project files" defaultExpandedIds={["frontend"]}>
+          {/* FRONTEND SECTION */}
+          <TreeView.Item
+            id="frontend"
+            onSelect={setSelected}
+            selected={selected === "frontend"}
+          >
+            <TreeView.LeadingVisual>
+              <RiAlertFill />{" "}
+            </TreeView.LeadingVisual>{" "}
+            Frontend
+            <TreeView.SubTree>
+              <TreeView.Item
+                id="frontend-react"
+                onSelect={setSelected}
+                selected={selected === "frontend-react"}
+              >
+                React App
+                <TreeView.SubTree>
+                  <TreeView.Item
+                    id="frontend-react-components"
+                    onSelect={setSelected}
+                    selected={selected === "frontend-react-components"}
+                  >
+                    <TreeView.LeadingVisual>
+                      <RiAlertFill />{" "}
+                    </TreeView.LeadingVisual>{" "}
+                    Components
+                    <TreeView.SubTree>
+                      <TreeView.Item
+                        id="frontend-react-components-button"
+                        onSelect={setSelected}
+                        selected={
+                          selected === "frontend-react-components-button"
+                        }
+                      >
+                        <Button
+                          onClick={() => {
+                            alert("clicked");
+                          }}
+                        >
+                          Click
+                        </Button>
+                      </TreeView.Item>
+                      <TreeView.Item
+                        id="frontend-react-components-modal"
+                        onSelect={setSelected}
+                        selected={
+                          selected === "frontend-react-components-modal"
+                        }
+                      >
+                        Modal
+                      </TreeView.Item>
+                    </TreeView.SubTree>
+                  </TreeView.Item>
+
+                  <TreeView.Item
+                    id="frontend-react-hooks"
+                    onSelect={setSelected}
+                    selected={selected === "frontend-react-hooks"}
+                  >
+                    Hooks
+                  </TreeView.Item>
+                  <TreeView.Item
+                    id="frontend-react-context"
+                    onSelect={setSelected}
+                    selected={selected === "frontend-react-context"}
+                  >
+                    Context
+                  </TreeView.Item>
+                </TreeView.SubTree>
+              </TreeView.Item>
+
+              <TreeView.Item
+                id="frontend-next"
+                onSelect={setSelected}
+                selected={selected === "frontend-next"}
+              >
+                Next.js App
+                <TreeView.SubTree>
+                  <TreeView.Item
+                    id="frontend-next-pages"
+                    onSelect={setSelected}
+                    selected={selected === "frontend-next-pages"}
+                  >
+                    Pages
+                  </TreeView.Item>
+                  <TreeView.Item
+                    id="frontend-next-api"
+                    onSelect={setSelected}
+                    selected={selected === "frontend-next-api"}
+                  >
+                    API Routes
+                  </TreeView.Item>
+                </TreeView.SubTree>
+              </TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+
+          {/* BACKEND SECTION */}
+          <TreeView.Item
+            id="backend"
+            onSelect={setSelected}
+            selected={selected === "backend"}
+          >
+            Backend
+            <TreeView.SubTree>
+              <TreeView.Item
+                id="backend-api"
+                onSelect={setSelected}
+                selected={selected === "backend-api"}
+              >
+                API Routes
+                <TreeView.SubTree>
+                  <TreeView.Item
+                    id="backend-api-auth"
+                    onSelect={setSelected}
+                    selected={selected === "backend-api-auth"}
+                  >
+                    Auth
+                  </TreeView.Item>
+                  <TreeView.Item
+                    id="backend-api-users"
+                    onSelect={setSelected}
+                    selected={selected === "backend-api-users"}
+                  >
+                    Users
+                  </TreeView.Item>
+                  <TreeView.Item
+                    id="backend-api-products"
+                    onSelect={setSelected}
+                    selected={selected === "backend-api-products"}
+                  >
+                    Products
+                  </TreeView.Item>
+                </TreeView.SubTree>
+              </TreeView.Item>
+
+              <TreeView.Item
+                id="backend-database"
+                onSelect={setSelected}
+                selected={selected === "backend-database"}
+              >
+                Database
+                <TreeView.SubTree>
+                  <TreeView.Item
+                    id="backend-database-models"
+                    onSelect={setSelected}
+                    selected={selected === "backend-database-models"}
+                  >
+                    Models
+                  </TreeView.Item>
+                  <TreeView.Item
+                    id="backend-database-migrations"
+                    onSelect={setSelected}
+                    selected={selected === "backend-database-migrations"}
+                  >
+                    Migrations
+                  </TreeView.Item>
+                  <TreeView.Item
+                    id="backend-database-seeds"
+                    onSelect={setSelected}
+                    selected={selected === "backend-database-seeds"}
+                  >
+                    Seeds
+                  </TreeView.Item>
+                </TreeView.SubTree>
+              </TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+        </TreeView>
+      </section>
+      <Divider />
+      <section>
+        <TreeView aria-label="Files changed" defaultExpandedIds={["src"]}>
+          <TreeView.Item
+            id="src"
+            onSelect={setSelected}
+            selected={selected === "src"}
+          >
+            <TreeView.LeadingVisual>
+              <RiFolderOpenFill color="#1765dc" size={16} />
+            </TreeView.LeadingVisual>
+            src
+            <TreeView.SubTree>
+              <TreeView.Item
+                id="src/Avatar.tsx"
+                onSelect={setSelected}
+                selected={selected === "src/Avatar.tsx"}
+              >
+                <TreeView.LeadingVisual>
+                  <RiFileLine size={16} />
+                </TreeView.LeadingVisual>
+                Avatar.tsx
+                <TreeView.TrailingVisual label="Added">
+                  <RiAddLine size={16} />
+                </TreeView.TrailingVisual>
+              </TreeView.Item>
+
+              <TreeView.Item
+                id="src/Button.tsx"
+                onSelect={setSelected}
+                selected={selected === "src/Button.tsx"}
+              >
+                <TreeView.LeadingVisual>
+                  <RiFileLine size={16} />
+                </TreeView.LeadingVisual>
+                Button.tsx
+                <TreeView.TrailingVisual label="Modified">
+                  <RiEditLine size={16} />
+                </TreeView.TrailingVisual>
+              </TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+
+          <TreeView.Item
+            id="package.json"
+            onSelect={setSelected}
+            selected={selected === "package.json"}
+          >
+            <TreeView.LeadingVisual>
+              <RiFileLine size={16} />
+            </TreeView.LeadingVisual>
+            package.json
+            <TreeView.TrailingVisual label="Modified">
+              <RiEditLine size={16} />
+            </TreeView.TrailingVisual>
+          </TreeView.Item>
+        </TreeView>
+      </section>
+      <section className="my-5">
+        <h1>Allow multiple expanded (default)</h1>
+        <TreeView aria-label="Example Tree" expandTopLevelByDefault>
+          <TreeView.Item id="1">
+            Parent 1
+            <TreeView.SubTree>
+              <TreeView.Item id="1.1">Child 1</TreeView.Item>
+              <TreeView.Item id="1.2">Child 2</TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+
+          <TreeView.Item id="2">
+            Parent 2
+            <TreeView.SubTree>
+              <TreeView.Item id="2.1">Child A</TreeView.Item>
+              <TreeView.Item id="2.2">Child B</TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+        </TreeView>
+      </section>
+      <Divider />
+      <section className="my-5">
+        <h1>Treeview Mode (only one expanded)</h1>
+        <TreeView aria-label="Accordion Tree" allowMultiple={false}>
+          <TreeView.Item id="1">
+            Section 1
+            <TreeView.SubTree>
+              <TreeView.Item id="1.1">Item A</TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+          <TreeView.Item id="2">
+            Section 2
+            <TreeView.SubTree>
+              <TreeView.Item id="2.1">Item B</TreeView.Item>
+            </TreeView.SubTree>
+          </TreeView.Item>
+        </TreeView>
+      </section>
+      <Divider />
       {/* Breadcrumbs */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Breadcrumbs</h1>
