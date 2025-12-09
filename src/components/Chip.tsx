@@ -1,10 +1,11 @@
 import React, { ReactNode, HTMLAttributes } from "react";
 import { cva, VariantProps } from "class-variance-authority";
-import { cn } from "@/utils";
+import { cn } from "../utils";
+
 
 interface ChipProps
   extends HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof chipVariants> {
+  VariantProps<typeof chipVariants> {
   children: ReactNode;
   dot?: boolean;
   dotColor?: string;
@@ -92,8 +93,8 @@ const Chip = ({
           className={cn(
             "w-1.5 h-1.5 rounded-full",
             dotColor ||
-              dotColorVariants[resolvedIntent] ||
-              "bg-primary-600"
+            dotColorVariants[resolvedIntent] ||
+            "bg-primary-600"
           )}
         />
       )}

@@ -1,10 +1,10 @@
-import React, { InputHTMLAttributes, forwardRef } from "react";
+import { InputHTMLAttributes, forwardRef } from "react";
 import { cva, VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
 
 interface RadioProps
   extends Omit<InputHTMLAttributes<HTMLInputElement>, "size">,
-    VariantProps<typeof radioVariants> {
+  VariantProps<typeof radioVariants> {
   size?: "sm" | "lg";
   disabled?: boolean;
   checked?: boolean;
@@ -41,7 +41,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
           role="radio"
           aria-checked={checked}
           className={cn(
-            "peer relative cursor-pointer appearance-none rounded-full border border-gray-300 hover:border-primary-600 hover:bg-primary-50 transition-all checked:border-primary-600 checked:bg-primary-50 disabled:opacity-30 disabled:pointer-events-none",
+            "peer relative cursor-pointer appearance-none rounded-full border border-gray-300 hover:border-primary-600 hover:bg-primary-50 transition-all checked:border-primary-600 checked:bg-primary-50 disabled:opacity-30 disabled:pointer-events-none focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2",
             radioVariants({ size, className })
           )}
         />

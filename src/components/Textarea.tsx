@@ -11,11 +11,24 @@ interface TextareaProps
   disabled?: boolean;
   rows?: number;
   cols?: number;
+  error?: boolean
   children?: ReactNode;
 }
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ size, className, rows, cols, disabled, children, ...props }, ref) => {
+  (
+    {
+      size,
+      className,
+      rows,
+      cols,
+      disabled, error,
+      children,
+      id,
+      ...props
+    },
+    ref
+  ) => {
     return (
       <textarea
         {...props}
@@ -24,8 +37,8 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         rows={rows}
         cols={cols}
         className={cn(
-          "group flex items-center gap-2 border border-gray-200 rounded-lg bg-gray-50 shadow-xs hover:bg-gray-50 hover:border-gray-300 text-sm focus-within:border-gray-800 focus-within:bg-gray-25 focus-within:hover:bg-gray-50 focus-within:hover:border-gray-800 outline-none disabled:bg-gray-300 disabled:select-none disabled:pointer-events-none disabled:opacity-30 placeholder:text-gray-500 hover:placeholder:text-gray-500 shadow-[0px_1px_2px_0px_#1018280D]",
-          size === "sm" ? "py-2.5 px-3.5" : "p-2.5",
+          "group flex items-center gap-2 border border-gray-200 rounded-lg bg-gray-50 shadow-xs hover:bg-gray-50 hover:border-gray-300 text-sm focus-within:border-gray-800 focus-within:bg-gray-25 focus-within:hover:bg-gray-50 focus-within:hover:border-gray-800 outline-none disabled:bg-gray-300 disabled:select-none disabled:pointer-events-none disabled:opacity-30 w-full placeholder:text-gray-500 hover:placeholder:text-gray-500 shadow-[0px_1px_2px_0px_#1018280D]",
+          size === "sm" ? "py-2.5 px-3.5" : "p-2.5", error && "border-error-500 hover:border-error-600 focus-within:hover:border-error-500 focus-within:border-error-500",
           className,
           size
         )}

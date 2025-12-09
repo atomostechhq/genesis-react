@@ -4,15 +4,18 @@ import {
   RiAlertFill,
   RiCheckLine,
   RiCircleFill,
+  RiCloseLine,
   RiFilterLine,
   RiGlobalLine,
   RiInformation2Line,
+  RiInformationLine,
   RiListCheck,
   RiLogoutBoxRLine,
   RiMailLine,
   RiSearch2Line,
   RiStackLine,
   RiTimeFill,
+  RiUpload2Line,
 } from "@remixicon/react";
 import Chip from "./components/Chip";
 import Divider from "./components/Divider";
@@ -23,7 +26,7 @@ import HelperText from "./components/HelperText";
 import Radio from "./components/Radio";
 import Input from "./components/Input";
 import { cn } from "./utils";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Dropdown from "./components/Dropdown";
 import DropdownWithIcon from "./components/DropdownWithIcon";
 import TabsContainer, { Tab, TabList, TabPanel } from "./components/Tabs";
@@ -42,6 +45,7 @@ import { Link, useLocation } from "react-router-dom";
 import DateRangePicker from "./components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import {
+  format,
   startOfToday,
   subMonths,
 } from "date-fns";
@@ -55,6 +59,13 @@ import Accordion, {
 } from "./components/Accordion";
 import MenuDropdown, { MenuItem, MenuSubItem } from "./components/MenuItem";
 import ListItem from "./components/ListItem";
+import TextInputWithLabel from "./components/TextInputWithLabel";
+import Spinner from "./components/Spinner";
+import OTPInput from "./components/OTPInput";
+import FileSelector from "./components/FileSelector";
+import Drawer from "./components/Drawer";
+import Callout from "./components/Callout";
+import MultipleDatePicker from "./components/MultipleDatePicker";
 
 interface Option {
   label: string;
@@ -134,7 +145,7 @@ const Test = () => {
       info: "Modals",
       addInfo: "Be a direct child descendent of the modal.",
       tooltipContent: "hjsghjwg",
-      disabledOption:true
+      disabledOption: true
     },
     {
       label: "banana",
@@ -167,6 +178,10 @@ const Test = () => {
     setValue(newValue);
   };
 
+  const [tags, setTags] = useState<string[]>([]);
+  const [otp, setOtp] = useState("");
+
+
   // modal
   const [showModal, setShowModal] = useState(false);
 
@@ -175,13 +190,13 @@ const Test = () => {
   // progress bar
   const [progress, setProgress] = useState(0);
 
-  // single file upload
-  const [selectedSingleFiles, setSelectedSingleFiles] = useState<File[]>([]);
 
   // sidebar
   const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
   const currentPath = location.pathname;
+  // single file upload
+  const [selectedSingleFiles, setSelectedSingleFiles] = useState<File[]>([]);
 
   const handleFileChangeSingle = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -191,8 +206,11 @@ const Test = () => {
       setSelectedSingleFiles((prevFiles) => [...prevFiles, ...newFiles]);
     }
   };
-  const handleDeleteFileSingle = (file: string | File) => {
-    setSelectedSingleFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+
+  const handleDeleteFileSingle = (index: number) => {
+    setSelectedSingleFiles((prevFiles) =>
+      prevFiles.filter((_, i) => i !== index)
+    );
   };
 
   // multiple file upload
@@ -207,9 +225,26 @@ const Test = () => {
     }
   };
 
-  const handleDeleteFile = (file: string | File) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+  const handleDeleteFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
+
+  const fileRef = useRef<HTMLInputElement>(null);
+  const fileMultiRef = useRef<HTMLInputElement>(null);
+
+  const handleSingleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      console.log("Selected file:", e.target.files[0]);
+    }
+  };
+
+  const handleMultipleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      console.log("Selected files:", Array.from(e.target.files));
+    }
+  };
+
+
 
   // Stepper
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -395,8 +430,18 @@ const Test = () => {
     setSliderValue(value);
   };
 
+  // drawer
+  type DrawerPosition = "top" | "right" | "bottom" | "left" | undefined;
+  const [openPosition, setOpenPosition] = useState<DrawerPosition>(undefined);
+
+  const positions: DrawerPosition[] = ["top", "right", "bottom", "left"];
+
+
   // single date picker
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+
+  // multi date picker
+  const [multiDate, setMultiDate] = useState<Date[] | undefined>(undefined);
 
   // date range picker
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
@@ -554,7 +599,6 @@ const Test = () => {
           </Button>
         </section>
       </div>
-
       {/* Chips  */}
       <div className="space-y-5">
         <h1 className="text-display-sm text-primary-600">Chip:</h1>
@@ -597,7 +641,6 @@ const Test = () => {
           <Chip intent="default">default</Chip>
         </section>
       </div>
-
       {/* Divider */}
       <section>
         <h1 className="text-display-sm text-primary-600">Divider</h1>
@@ -610,7 +653,6 @@ const Test = () => {
           <Divider position="horizontal" className="my-4" />
         </div>
       </section>
-
       {/* Toggle  */}
       <div className="flex flex-col gap-5 my-5">
         <h1 className="text-display-sm text-primary-600">Toggle:</h1>
@@ -637,7 +679,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* checkbox */}
       <div className="flex flex-col gap-1 my-5">
         <h1 className="text-display-sm text-primary-600">Checkbox:</h1>
@@ -687,7 +728,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* Radio */}
       <div className="flex flex-col gap-1 my-5">
         <h1 className="text-display-sm text-primary-600">Radio:</h1>
@@ -735,7 +775,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* <Input /> */}
       <div className="flex flex-col gap-1 my-5">
         <h1 className="text-display-sm text-primary-600">Input Field:</h1>
@@ -794,7 +833,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* Avatar */}
       <section className="my-10 space-y-2">
         <h1 className="text-display-sm text-primary-600">Avatar:</h1>
@@ -1308,7 +1346,6 @@ const Test = () => {
           max={4}
         />
       </section>
-
       {/* Slider */}
       <div className="space-y-6">
         <h1 className="text-display-sm text-primary-600">Slider:</h1>
@@ -1327,7 +1364,6 @@ const Test = () => {
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
       </div>
-
       {/* Accordian */}
       <section className="space-y-5">
         <h1 className="text-display-sm text-primary-600">Accordian:</h1>
@@ -1407,7 +1443,6 @@ const Test = () => {
           </Accordion>
         </div>
       </section>
-
       {/* Menu Items */}
       <section>
         <h1 className="text-display-sm text-primary-600">MenuItems:</h1>
@@ -1447,7 +1482,6 @@ const Test = () => {
           </Link>
         </MenuDropdown>
       </section>
-
       {/* Global Navigation */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Global Navigation:</h1>
@@ -1490,7 +1524,6 @@ const Test = () => {
           </GlobalNavigation>
         </div>
       </section>
-
       {/* Dropdown  */}
       <section className="flex gap-6 items-center">
         <h1 className="text-lg">Dropdown with icon</h1>
@@ -1585,7 +1618,7 @@ const Test = () => {
             // search={true}
             multiple={false}
             info="info"
-            // dropDownTooltip={true}
+          // dropDownTooltip={true}
           />
         </div>
         <div>
@@ -1619,7 +1652,35 @@ const Test = () => {
           />
         </div>
       </section>
+      {/* Drawer */}
+      <section className="my-5 space-y-4">
+        <h1 className="text-display-sm text-primary-600">Drawer:</h1>
 
+        <div className="flex gap-3 flex-wrap">
+          {positions.map((pos) => (
+            <Button key={pos} onClick={() => setOpenPosition(pos)}>
+              Show {pos} Drawer
+            </Button>
+          ))}
+        </div>
+
+        {positions.map((pos) => (
+          <Drawer
+            key={pos}
+            isOpen={openPosition === pos}
+            setIsOpen={(isOpen) => {
+              if (!isOpen) setOpenPosition(undefined);
+            }}
+            closeOnOutsideClick={false}
+            position={pos}
+            width={pos === "left" || pos === "right" ? "w-[500px]" : undefined}
+            height={pos === "top" || pos === "bottom" ? "h-[500px]" : undefined}
+          >
+            <p>This is a {pos} drawer.</p>
+            <p>You can change its position, width, and height using props.</p>
+          </Drawer>
+        ))}
+      </section>
       {/* Tabs */}
       <div>
         <h1 className="text-display-sm text-primary-600">Tabs</h1>
@@ -1744,7 +1805,30 @@ const Test = () => {
           </TabsContainer>
         </section>
       </div>
-
+      {/* Text input with label */}
+      <section className="space-y-2 w-1/2 ">
+        <h1 className="text-display-sm whitespace-nowrap text-primary-600">
+          Text Input With Label:
+        </h1>
+        <TextInputWithLabel
+          tags={tags}
+          setTags={setTags}
+          placeholder="Add tags"
+          intent="primary"
+        />
+        <HelperText>Note: Paste comma separated values</HelperText>
+      </section>
+      {/* OTP */}
+      <section className="space-y-4">
+        <h1 className="text-display-sm text-primary-600">OTP Input Field:</h1>
+        <div className="space-y-2">
+          <OTPInput type="text" length={4} onChange={setOtp} />
+          <OTPInput type="number" length={5} onChange={setOtp} />
+          <OTPInput type="password" length={6} onChange={setOtp} />
+          {/* <p className="mt-4 text-gray-700">Your OTP: {otp}</p> */}
+        </div>
+        <HelperText>Note: you can also paste values</HelperText>
+      </section>
       {/* Modal */}
       <section className="my-5">
         <Button onClick={() => setShowModal(true)}>Show Modal</Button>
@@ -1758,7 +1842,6 @@ const Test = () => {
           <div>content</div>
         </Modal>
       </section>
-
       {/* notice */}
       <section className="flex flex-col w-fit">
         <h1 className="text-display-sm text-primary-600">Notice:</h1>
@@ -1790,16 +1873,15 @@ const Test = () => {
           This is a success Alert with an encouraging title and both icons.
         </Notice>
       </section>
-
       {/* File Upload */}
-      <section className="flex flex-col gap-2 max-w-lg">
+      <section className="max-w-lg space-y-3">
         <h1 className="text-display-sm text-primary-600">File Upload</h1>
         <FileUpload
           id="single"
           selectedFile={selectedSingleFiles}
           setSelectedFile={setSelectedSingleFiles}
           onChange={handleFileChangeSingle}
-          onDelete={() => handleDeleteFileSingle(selectedSingleFiles[0])}
+          onDelete={handleDeleteFileSingle}
           title="SVG, PNG, JPG or GIF (max. 800x400px)"
         >
           <ProgressBar progressColor="bg-primary-600" progress={50} />
@@ -1810,14 +1892,33 @@ const Test = () => {
           selectedFile={selectedFiles}
           setSelectedFile={setSelectedFiles}
           onChange={handleFileChangeMultiple}
-          onDelete={() => handleDeleteFile(selectedFiles[0])}
+          onDelete={handleDeleteFile}
           title="SVG, PNG, JPG or GIF (max. 800x400px)"
           filePreviewClassName="grid grid-cols-2 gap-2"
-        >
-          <ProgressBar progressColor="bg-primary-600" progress={50} />
-        </FileUpload>
+        />
+        <FileSelector
+          ref={fileRef}
+          id="singleselect"
+          component={
+            <Button
+              size={"sm"}
+              variant={"outlined"}
+              endIcon={<RiUpload2Line size={18} />}
+            >
+              Upload Single File
+            </Button>
+          }
+          onChange={handleSingleChange}
+        />
+        <br />
+        <FileSelector
+          ref={fileMultiRef}
+          id="multiselect"
+          component={<Button>Upload Multiple Files</Button>}
+          multiple
+          onChange={handleMultipleChange}
+        />
       </section>
-
       {/* Tooltip */}
       <section className="flex items-center gap-5 my-5">
         <h1 className="text-display-sm text-primary-600">Tooltip:</h1>
@@ -1872,7 +1973,6 @@ const Test = () => {
           Left
         </Tooltip>
       </section>
-
       {/* skeleton */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Skeleton:</h1>
@@ -1886,7 +1986,6 @@ const Test = () => {
           <Skeleton width="138px" height="42px" />
         </div>
       </section>
-
       {/* stepper */}
       <section>
         <h1 className="text-display-sm text-primary-600">Stepper:</h1>
@@ -1936,163 +2035,113 @@ const Test = () => {
           </section>
         </div>
       </section>
-
       {/* single Date picker */}
-      <section className="space-y-5 my-20">
-        <h1 className="text-display-sm text-primary-600">Single Date Picker</h1>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Picker with Top Position</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              position="top-left"
-              dateFormat="MMM dd, yyyy"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Picker with Bottom Position</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              position="bottom-left"
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Picker with disabled before today</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              disabledCalendar={{ before: new Date() }}
-              position="top-right"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Picker with disabled after today</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              disabledCalendar={{ after: new Date() }}
-              position="bottom-right"
-            />
-          </div>
-        </div>
-        <p> Selected Date: {selectedDate?.toString()}</p>
+      <section className="space-y-3 my-5">
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Single Date Picker
+        </h1>
+        <DatePicker
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          position="bottom-left"
+          footer={
+            <p className="text-xs">
+              Selected Date:{" "}
+              {selectedDate ? format(selectedDate, "MM/dd/yyyy") : "-"}
+            </p>
+          }
+        />
       </section>
-
-      {/* Date Range Picker */}
-      <section className="space-y-5 my-10">
-        <h1 className="text-display-sm text-primary-600">Date Range Picker</h1>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Range with presets</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-left"
+      {/* multi Date picker */}
+      <section className="space-y-3">
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Multiple Date Picker
+        </h1>
+        <MultipleDatePicker
+          selectedDate={multiDate}
+          setSelectedDate={setMultiDate}
+          dateFormat="MMM dd, yyyy"
+          disabledCalendar={{ after: new Date() }}
+          endMonth={new Date()}
+          hideWeekdays
+          placeholder="Select Multiple Dates"
+          startMonth={new Date(new Date().getFullYear() - 10, 12)}
+          position="bottom-left"
+          footer={
+            <Button
+              size="sm"
+              fullWidth
+              className="p-1"
+              onClick={() => setMultiDate(undefined)}
+              variant={"outlined"}
+              intent={"default-outlined"}
             >
-              <section className="flex flex-col gap-y-4 text-left justify-start items-start mt-5">
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("today")}
-                >
-                  Today
-                </button>
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("last1Months")}
-                >
-                  Last 1 Months
-                </button>
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("last3Months")}
-                >
-                  Last 3 Months
-                </button>
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("last6Months")}
-                >
-                  Last 6 Months
-                </button>
-              </section>
-            </DateRangePicker>
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with without presets</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-right"
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Range with disabled before today</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              disabledCalendar={{ before: new Date() }}
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with disabled after today</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              disabledCalendar={{ after: new Date() }}
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Range with top left position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="top-left"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with top right position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="top-right"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with bottom left position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-left"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with bottom right position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-right"
-            />
-          </div>
-        </div>
-        <p>Selected Range: {selectedRange?.from + " - " + selectedRange?.to}</p>
+              Reset
+            </Button>
+          }
+        />
       </section>
-
+      {/* Date Range Picker */}
+      <section className="space-y-3 my-5">
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Date Range Picker
+        </h1>
+        <DateRangePicker
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          rangeFormat="MMM dd, yyyy"
+          disabledCalendar={{ after: new Date() }}
+          endMonth={new Date()}
+          hideWeekdays
+          handleRangeSelect={handleRangeSelect}
+          placeholder="Select Range"
+          startMonth={new Date(new Date().getFullYear() - 10, 12)}
+          position="bottom-left"
+        // min={3}
+        // max={10}
+        />
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Date Range Picker with presets
+        </h1>
+        <DateRangePicker
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          rangeFormat="MMM dd, yyyy"
+          disabledCalendar={{ after: new Date() }}
+          hideWeekdays
+          placeholder="Select Range"
+          startMonth={new Date(new Date().getFullYear() - 10, 12)}
+          position="top-left"
+        >
+          {" "}
+          <section className="flex flex-col gap-y-4 text-left justify-start items-start mt-5">
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("today")}
+            >
+              Today
+            </button>
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("last1Months")}
+            >
+              Last 1 Months
+            </button>
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("last3Months")}
+            >
+              Last 3 Months
+            </button>
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("last6Months")}
+            >
+              Last 6 Months
+            </button>
+          </section>
+        </DateRangePicker>
+      </section>
       {/* Textarea */}
       <section className="flex flex-col gap-1">
         <h1 className="text-display-sm text-primary-600">Textarea</h1>
@@ -2110,7 +2159,6 @@ const Test = () => {
           ></Textarea>
         </section>
       </section>
-
       {/* Circular Progress */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Circular Progress:</h1>
@@ -2126,7 +2174,6 @@ const Test = () => {
           />
         </div>
       </section>
-
       {/* Loading State */}
       <section className="flex flex-col items-center justify-center gap-2">
         <h1 className="text-display-sm text-primary-600">Loading</h1>
@@ -2142,7 +2189,12 @@ const Test = () => {
           Loading <Loading width="15px" height="15px" variant="heavy" />
         </Button>
       </section>
-
+      <section className="flex items-center gap-6">
+        <h1 className="text-display-sm text-primary-600">Spinner: </h1>
+        <Spinner size="sm" />
+        <Spinner size="md" />
+        <Spinner size="lg" />
+      </section>
       {/* Sidebar */}
       <div className="relative flex gap-3 bg-white">
         <section className=" bg-white">
@@ -2185,7 +2237,115 @@ const Test = () => {
           </p>
         </section>
       </div>
-
+      {/* Callout */}
+      <section className="my-5 space-y-4">
+        <h1 className="text-display-sm text-primary-600">Callout:</h1>
+        <div className="space-y-3">
+          <h1 className="text-display-xs text-primary-600">Filled:</h1>
+          <Callout
+            size={"xs"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"sm"}
+            intent={"warning"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"md"}
+            intent={"error"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            intent={"success"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            intent={"default"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <h1 className="text-display-xs text-primary-600">Outlined:</h1>
+          <Callout
+            size={"xs"}
+            variant={"outlined"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"sm"}
+            variant={"outlined"}
+            intent={"warning"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"md"}
+            variant={"outlined"}
+            intent={"error"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            variant={"outlined"}
+            intent={"success"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={
+              <Button
+                size={"sm"}
+                intent={"success"}
+                className="whitespace-nowrap"
+              >
+                Contact Admin
+              </Button>
+            }
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            variant={"outlined"}
+            intent={"default"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+        </div>
+      </section>
       {/* Breadcrumbs */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Breadcrumbs</h1>
@@ -2195,13 +2355,13 @@ const Test = () => {
           </Link>
           <Link
             to="/pages/dashboard"
-            // style={{ textDecoration: "none", color: "inherit" }}
+          // style={{ textDecoration: "none", color: "inherit" }}
           >
             Dashboard
           </Link>
           <Link
             to="/pages/team"
-            // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+          // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
           >
             Team
           </Link>
