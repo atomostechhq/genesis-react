@@ -4,15 +4,18 @@ import {
   RiAlertFill,
   RiCheckLine,
   RiCircleFill,
+  RiCloseLine,
   RiFilterLine,
   RiGlobalLine,
   RiInformation2Line,
+  RiInformationLine,
   RiListCheck,
   RiLogoutBoxRLine,
   RiMailLine,
   RiSearch2Line,
   RiStackLine,
   RiTimeFill,
+  RiUpload2Line,
 } from "@remixicon/react";
 import Chip from "./components/Chip";
 import Divider from "./components/Divider";
@@ -23,7 +26,7 @@ import HelperText from "./components/HelperText";
 import Radio from "./components/Radio";
 import Input from "./components/Input";
 import { cn } from "./utils";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Dropdown from "./components/Dropdown";
 import DropdownWithIcon from "./components/DropdownWithIcon";
 import TabsContainer, { Tab, TabList, TabPanel } from "./components/Tabs";
@@ -55,6 +58,12 @@ import Accordion, {
 } from "./components/Accordion";
 import MenuDropdown, { MenuItem, MenuSubItem } from "./components/MenuItem";
 import ListItem from "./components/ListItem";
+import TextInputWithLabel from "./components/TextInputWithLabel";
+import Spinner from "./components/Spinner";
+import OTPInput from "./components/OTPInput";
+import FileSelector from "./components/FileSelector";
+import Drawer from "./components/Drawer";
+import Callout from "./components/Callout";
 
 interface Option {
   label: string;
@@ -134,7 +143,7 @@ const Test = () => {
       info: "Modals",
       addInfo: "Be a direct child descendent of the modal.",
       tooltipContent: "hjsghjwg",
-      disabledOption:true
+      disabledOption: true
     },
     {
       label: "banana",
@@ -167,6 +176,10 @@ const Test = () => {
     setValue(newValue);
   };
 
+  const [tags, setTags] = useState<string[]>([]);
+  const [otp, setOtp] = useState("");
+
+
   // modal
   const [showModal, setShowModal] = useState(false);
 
@@ -175,13 +188,13 @@ const Test = () => {
   // progress bar
   const [progress, setProgress] = useState(0);
 
-  // single file upload
-  const [selectedSingleFiles, setSelectedSingleFiles] = useState<File[]>([]);
 
   // sidebar
   const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
   const currentPath = location.pathname;
+  // single file upload
+  const [selectedSingleFiles, setSelectedSingleFiles] = useState<File[]>([]);
 
   const handleFileChangeSingle = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -191,8 +204,11 @@ const Test = () => {
       setSelectedSingleFiles((prevFiles) => [...prevFiles, ...newFiles]);
     }
   };
-  const handleDeleteFileSingle = (file: string | File) => {
-    setSelectedSingleFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+
+  const handleDeleteFileSingle = (index: number) => {
+    setSelectedSingleFiles((prevFiles) =>
+      prevFiles.filter((_, i) => i !== index)
+    );
   };
 
   // multiple file upload
@@ -207,9 +223,26 @@ const Test = () => {
     }
   };
 
-  const handleDeleteFile = (file: string | File) => {
-    setSelectedFiles((prevFiles) => prevFiles.filter((f) => f !== file));
+  const handleDeleteFile = (index: number) => {
+    setSelectedFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
+
+  const fileRef = useRef<HTMLInputElement>(null);
+  const fileMultiRef = useRef<HTMLInputElement>(null);
+
+  const handleSingleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      console.log("Selected file:", e.target.files[0]);
+    }
+  };
+
+  const handleMultipleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      console.log("Selected files:", Array.from(e.target.files));
+    }
+  };
+
+
 
   // Stepper
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -394,6 +427,13 @@ const Test = () => {
   const handleSliderChange = (value: number) => {
     setSliderValue(value);
   };
+
+  // drawer
+  type DrawerPosition = "top" | "right" | "bottom" | "left" | undefined;
+  const [openPosition, setOpenPosition] = useState<DrawerPosition>(undefined);
+
+  const positions: DrawerPosition[] = ["top", "right", "bottom", "left"];
+
 
   // single date picker
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -1585,7 +1625,7 @@ const Test = () => {
             // search={true}
             multiple={false}
             info="info"
-            // dropDownTooltip={true}
+          // dropDownTooltip={true}
           />
         </div>
         <div>
@@ -1619,7 +1659,35 @@ const Test = () => {
           />
         </div>
       </section>
+      {/* Drawer */}
+      <section className="my-5 space-y-4">
+        <h1 className="text-display-sm text-primary-600">Drawer:</h1>
 
+        <div className="flex gap-3 flex-wrap">
+          {positions.map((pos) => (
+            <Button key={pos} onClick={() => setOpenPosition(pos)}>
+              Show {pos} Drawer
+            </Button>
+          ))}
+        </div>
+
+        {positions.map((pos) => (
+          <Drawer
+            key={pos}
+            isOpen={openPosition === pos}
+            setIsOpen={(isOpen) => {
+              if (!isOpen) setOpenPosition(undefined);
+            }}
+            closeOnOutsideClick={false}
+            position={pos}
+            width={pos === "left" || pos === "right" ? "w-[500px]" : undefined}
+            height={pos === "top" || pos === "bottom" ? "h-[500px]" : undefined}
+          >
+            <p>This is a {pos} drawer.</p>
+            <p>You can change its position, width, and height using props.</p>
+          </Drawer>
+        ))}
+      </section>
       {/* Tabs */}
       <div>
         <h1 className="text-display-sm text-primary-600">Tabs</h1>
@@ -1744,7 +1812,30 @@ const Test = () => {
           </TabsContainer>
         </section>
       </div>
-
+      {/* Text input with label */}
+      <section className="space-y-2 w-1/2 ">
+        <h1 className="text-display-sm whitespace-nowrap text-primary-600">
+          Text Input With Label:
+        </h1>
+        <TextInputWithLabel
+          tags={tags}
+          setTags={setTags}
+          placeholder="Add tags"
+          intent="primary"
+        />
+        <HelperText>Note: Paste comma separated values</HelperText>
+      </section>
+      {/* OTP */}
+      <section className="space-y-4">
+        <h1 className="text-display-sm text-primary-600">OTP Input Field:</h1>
+        <div className="space-y-2">
+          <OTPInput type="text" length={4} onChange={setOtp} />
+          <OTPInput type="number" length={5} onChange={setOtp} />
+          <OTPInput type="password" length={6} onChange={setOtp} />
+          {/* <p className="mt-4 text-gray-700">Your OTP: {otp}</p> */}
+        </div>
+        <HelperText>Note: you can also paste values</HelperText>
+      </section>
       {/* Modal */}
       <section className="my-5">
         <Button onClick={() => setShowModal(true)}>Show Modal</Button>
@@ -1758,7 +1849,6 @@ const Test = () => {
           <div>content</div>
         </Modal>
       </section>
-
       {/* notice */}
       <section className="flex flex-col w-fit">
         <h1 className="text-display-sm text-primary-600">Notice:</h1>
@@ -1790,16 +1880,15 @@ const Test = () => {
           This is a success Alert with an encouraging title and both icons.
         </Notice>
       </section>
-
       {/* File Upload */}
-      <section className="flex flex-col gap-2 max-w-lg">
+      <section className="max-w-lg space-y-3">
         <h1 className="text-display-sm text-primary-600">File Upload</h1>
         <FileUpload
           id="single"
           selectedFile={selectedSingleFiles}
           setSelectedFile={setSelectedSingleFiles}
           onChange={handleFileChangeSingle}
-          onDelete={() => handleDeleteFileSingle(selectedSingleFiles[0])}
+          onDelete={handleDeleteFileSingle}
           title="SVG, PNG, JPG or GIF (max. 800x400px)"
         >
           <ProgressBar progressColor="bg-primary-600" progress={50} />
@@ -1810,14 +1899,33 @@ const Test = () => {
           selectedFile={selectedFiles}
           setSelectedFile={setSelectedFiles}
           onChange={handleFileChangeMultiple}
-          onDelete={() => handleDeleteFile(selectedFiles[0])}
+          onDelete={handleDeleteFile}
           title="SVG, PNG, JPG or GIF (max. 800x400px)"
           filePreviewClassName="grid grid-cols-2 gap-2"
-        >
-          <ProgressBar progressColor="bg-primary-600" progress={50} />
-        </FileUpload>
+        />
+        <FileSelector
+          ref={fileRef}
+          id="singleselect"
+          component={
+            <Button
+              size={"sm"}
+              variant={"outlined"}
+              endIcon={<RiUpload2Line size={18} />}
+            >
+              Upload Single File
+            </Button>
+          }
+          onChange={handleSingleChange}
+        />
+        <br />
+        <FileSelector
+          ref={fileMultiRef}
+          id="multiselect"
+          component={<Button>Upload Multiple Files</Button>}
+          multiple
+          onChange={handleMultipleChange}
+        />
       </section>
-
       {/* Tooltip */}
       <section className="flex items-center gap-5 my-5">
         <h1 className="text-display-sm text-primary-600">Tooltip:</h1>
@@ -1872,7 +1980,6 @@ const Test = () => {
           Left
         </Tooltip>
       </section>
-
       {/* skeleton */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Skeleton:</h1>
@@ -1886,7 +1993,6 @@ const Test = () => {
           <Skeleton width="138px" height="42px" />
         </div>
       </section>
-
       {/* stepper */}
       <section>
         <h1 className="text-display-sm text-primary-600">Stepper:</h1>
@@ -1936,7 +2042,6 @@ const Test = () => {
           </section>
         </div>
       </section>
-
       {/* single Date picker */}
       <section className="space-y-5 my-20">
         <h1 className="text-display-sm text-primary-600">Single Date Picker</h1>
@@ -1981,7 +2086,6 @@ const Test = () => {
         </div>
         <p> Selected Date: {selectedDate?.toString()}</p>
       </section>
-
       {/* Date Range Picker */}
       <section className="space-y-5 my-10">
         <h1 className="text-display-sm text-primary-600">Date Range Picker</h1>
@@ -2092,7 +2196,6 @@ const Test = () => {
         </div>
         <p>Selected Range: {selectedRange?.from + " - " + selectedRange?.to}</p>
       </section>
-
       {/* Textarea */}
       <section className="flex flex-col gap-1">
         <h1 className="text-display-sm text-primary-600">Textarea</h1>
@@ -2110,7 +2213,6 @@ const Test = () => {
           ></Textarea>
         </section>
       </section>
-
       {/* Circular Progress */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Circular Progress:</h1>
@@ -2126,7 +2228,6 @@ const Test = () => {
           />
         </div>
       </section>
-
       {/* Loading State */}
       <section className="flex flex-col items-center justify-center gap-2">
         <h1 className="text-display-sm text-primary-600">Loading</h1>
@@ -2142,7 +2243,12 @@ const Test = () => {
           Loading <Loading width="15px" height="15px" variant="heavy" />
         </Button>
       </section>
-
+      <section className="flex items-center gap-6">
+        <h1 className="text-display-sm text-primary-600">Spinner: </h1>
+        <Spinner size="sm" />
+        <Spinner size="md" />
+        <Spinner size="lg" />
+      </section>
       {/* Sidebar */}
       <div className="relative flex gap-3 bg-white">
         <section className=" bg-white">
@@ -2185,7 +2291,115 @@ const Test = () => {
           </p>
         </section>
       </div>
-
+      {/* Callout */}
+      <section className="my-5 space-y-4">
+        <h1 className="text-display-sm text-primary-600">Callout:</h1>
+        <div className="space-y-3">
+          <h1 className="text-display-xs text-primary-600">Filled:</h1>
+          <Callout
+            size={"xs"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"sm"}
+            intent={"warning"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"md"}
+            intent={"error"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            intent={"success"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            intent={"default"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <h1 className="text-display-xs text-primary-600">Outlined:</h1>
+          <Callout
+            size={"xs"}
+            variant={"outlined"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"sm"}
+            variant={"outlined"}
+            intent={"warning"}
+            startIcon={<RiInformationLine size={18} />}
+            endIcon={<RiCloseLine size={18} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"md"}
+            variant={"outlined"}
+            intent={"error"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            variant={"outlined"}
+            intent={"success"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={
+              <Button
+                size={"sm"}
+                intent={"success"}
+                className="whitespace-nowrap"
+              >
+                Contact Admin
+              </Button>
+            }
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+          <Callout
+            size={"lg"}
+            variant={"outlined"}
+            intent={"default"}
+            startIcon={<RiInformationLine size={20} />}
+            endIcon={<RiCloseLine size={20} />}
+          >
+            Access denied. Please contact the network administrator to view this
+            page.
+          </Callout>
+        </div>
+      </section>
       {/* Breadcrumbs */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Breadcrumbs</h1>
@@ -2195,13 +2409,13 @@ const Test = () => {
           </Link>
           <Link
             to="/pages/dashboard"
-            // style={{ textDecoration: "none", color: "inherit" }}
+          // style={{ textDecoration: "none", color: "inherit" }}
           >
             Dashboard
           </Link>
           <Link
             to="/pages/team"
-            // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+          // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
           >
             Team
           </Link>

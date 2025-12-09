@@ -1,10 +1,10 @@
 import { cva, VariantProps } from "class-variance-authority";
-import React, { LabelHTMLAttributes, ReactNode } from "react";
+import { LabelHTMLAttributes, ReactNode } from "react";
 import { cn } from "../utils";
 
 interface LabelProps
   extends LabelHTMLAttributes<HTMLLabelElement>,
-    VariantProps<typeof labelVariants> {
+  VariantProps<typeof labelVariants> {
   htmlFor?: string;
   children: ReactNode;
   required?: boolean;

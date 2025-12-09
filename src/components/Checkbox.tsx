@@ -1,10 +1,10 @@
-import React, { HTMLAttributes, forwardRef } from "react";
+import { HTMLAttributes, forwardRef } from "react";
 import { cva, VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
 
 interface CheckboxProps
   extends Omit<HTMLAttributes<HTMLInputElement>, "size">,
-    VariantProps<typeof checkboxVariant> {
+  VariantProps<typeof checkboxVariant> {
   size?: "sm" | "lg" | "xl";
   disabled?: boolean;
   checked?: boolean;
@@ -41,7 +41,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           disabled={disabled}
           checked={checked}
           className={cn(
-            checkboxVariant({ className, size })
+            "peer",
+            checkboxVariant({ className, size }),
+            "focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
           )}
         />
         <span
