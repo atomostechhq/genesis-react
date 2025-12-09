@@ -45,6 +45,7 @@ import { Link, useLocation } from "react-router-dom";
 import DateRangePicker from "./components/DateRangePicker";
 import { DateRange } from "react-day-picker";
 import {
+  format,
   startOfToday,
   subMonths,
 } from "date-fns";
@@ -64,6 +65,7 @@ import OTPInput from "./components/OTPInput";
 import FileSelector from "./components/FileSelector";
 import Drawer from "./components/Drawer";
 import Callout from "./components/Callout";
+import MultipleDatePicker from "./components/MultipleDatePicker";
 
 interface Option {
   label: string;
@@ -438,6 +440,9 @@ const Test = () => {
   // single date picker
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
+  // multi date picker
+  const [multiDate, setMultiDate] = useState<Date[] | undefined>(undefined);
+
   // date range picker
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>();
 
@@ -594,7 +599,6 @@ const Test = () => {
           </Button>
         </section>
       </div>
-
       {/* Chips  */}
       <div className="space-y-5">
         <h1 className="text-display-sm text-primary-600">Chip:</h1>
@@ -637,7 +641,6 @@ const Test = () => {
           <Chip intent="default">default</Chip>
         </section>
       </div>
-
       {/* Divider */}
       <section>
         <h1 className="text-display-sm text-primary-600">Divider</h1>
@@ -650,7 +653,6 @@ const Test = () => {
           <Divider position="horizontal" className="my-4" />
         </div>
       </section>
-
       {/* Toggle  */}
       <div className="flex flex-col gap-5 my-5">
         <h1 className="text-display-sm text-primary-600">Toggle:</h1>
@@ -677,7 +679,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* checkbox */}
       <div className="flex flex-col gap-1 my-5">
         <h1 className="text-display-sm text-primary-600">Checkbox:</h1>
@@ -727,7 +728,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* Radio */}
       <div className="flex flex-col gap-1 my-5">
         <h1 className="text-display-sm text-primary-600">Radio:</h1>
@@ -775,7 +775,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* <Input /> */}
       <div className="flex flex-col gap-1 my-5">
         <h1 className="text-display-sm text-primary-600">Input Field:</h1>
@@ -834,7 +833,6 @@ const Test = () => {
           </div>
         </section>
       </div>
-
       {/* Avatar */}
       <section className="my-10 space-y-2">
         <h1 className="text-display-sm text-primary-600">Avatar:</h1>
@@ -1348,7 +1346,6 @@ const Test = () => {
           max={4}
         />
       </section>
-
       {/* Slider */}
       <div className="space-y-6">
         <h1 className="text-display-sm text-primary-600">Slider:</h1>
@@ -1367,7 +1364,6 @@ const Test = () => {
           onChange={(e) => handleSliderChange(Number(e.target.value))}
         />
       </div>
-
       {/* Accordian */}
       <section className="space-y-5">
         <h1 className="text-display-sm text-primary-600">Accordian:</h1>
@@ -1447,7 +1443,6 @@ const Test = () => {
           </Accordion>
         </div>
       </section>
-
       {/* Menu Items */}
       <section>
         <h1 className="text-display-sm text-primary-600">MenuItems:</h1>
@@ -1487,7 +1482,6 @@ const Test = () => {
           </Link>
         </MenuDropdown>
       </section>
-
       {/* Global Navigation */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Global Navigation:</h1>
@@ -1530,7 +1524,6 @@ const Test = () => {
           </GlobalNavigation>
         </div>
       </section>
-
       {/* Dropdown  */}
       <section className="flex gap-6 items-center">
         <h1 className="text-lg">Dropdown with icon</h1>
@@ -2043,158 +2036,111 @@ const Test = () => {
         </div>
       </section>
       {/* single Date picker */}
-      <section className="space-y-5 my-20">
-        <h1 className="text-display-sm text-primary-600">Single Date Picker</h1>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Picker with Top Position</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              position="top-left"
-              dateFormat="MMM dd, yyyy"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Picker with Bottom Position</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              position="bottom-left"
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Picker with disabled before today</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              disabledCalendar={{ before: new Date() }}
-              position="top-right"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Picker with disabled after today</h1>
-            <DatePicker
-              selected={selectedDate}
-              setSelected={setSelectedDate}
-              disabledCalendar={{ after: new Date() }}
-              position="bottom-right"
-            />
-          </div>
-        </div>
-        <p> Selected Date: {selectedDate?.toString()}</p>
+      <section className="space-y-3 my-5">
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Single Date Picker
+        </h1>
+        <DatePicker
+          selectedDate={selectedDate}
+          setSelectedDate={setSelectedDate}
+          position="bottom-left"
+          footer={
+            <p className="text-xs">
+              Selected Date:{" "}
+              {selectedDate ? format(selectedDate, "MM/dd/yyyy") : "-"}
+            </p>
+          }
+        />
+      </section>
+      {/* multi Date picker */}
+      <section className="space-y-3">
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Multiple Date Picker
+        </h1>
+        <MultipleDatePicker
+          selectedDate={multiDate}
+          setSelectedDate={setMultiDate}
+          dateFormat="MMM dd, yyyy"
+          disabledCalendar={{ after: new Date() }}
+          endMonth={new Date()}
+          hideWeekdays
+          placeholder="Select Multiple Dates"
+          startMonth={new Date(new Date().getFullYear() - 10, 12)}
+          position="bottom-left"
+          footer={
+            <Button
+              size="sm"
+              fullWidth
+              className="p-1"
+              onClick={() => setMultiDate(undefined)}
+              variant={"outlined"}
+              intent={"default-outlined"}
+            >
+              Reset
+            </Button>
+          }
+        />
       </section>
       {/* Date Range Picker */}
-      <section className="space-y-5 my-10">
-        <h1 className="text-display-sm text-primary-600">Date Range Picker</h1>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Range with presets</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-left"
+      <section className="space-y-3 my-5">
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Date Range Picker
+        </h1>
+        <DateRangePicker
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          rangeFormat="MMM dd, yyyy"
+          disabledCalendar={{ after: new Date() }}
+          endMonth={new Date()}
+          hideWeekdays
+          handleRangeSelect={handleRangeSelect}
+          placeholder="Select Range"
+          startMonth={new Date(new Date().getFullYear() - 10, 12)}
+          position="bottom-left"
+        // min={3}
+        // max={10}
+        />
+        <h1 className="text-primary-500 font-semibold text-display-xs">
+          Date Range Picker with presets
+        </h1>
+        <DateRangePicker
+          selectedRange={selectedRange}
+          setSelectedRange={setSelectedRange}
+          rangeFormat="MMM dd, yyyy"
+          disabledCalendar={{ after: new Date() }}
+          hideWeekdays
+          placeholder="Select Range"
+          startMonth={new Date(new Date().getFullYear() - 10, 12)}
+          position="top-left"
+        >
+          {" "}
+          <section className="flex flex-col gap-y-4 text-left justify-start items-start mt-5">
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("today")}
             >
-              <section className="flex flex-col gap-y-4 text-left justify-start items-start mt-5">
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("today")}
-                >
-                  Today
-                </button>
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("last1Months")}
-                >
-                  Last 1 Months
-                </button>
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("last3Months")}
-                >
-                  Last 3 Months
-                </button>
-                <button
-                  className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
-                  onClick={() => applyPreset("last6Months")}
-                >
-                  Last 6 Months
-                </button>
-              </section>
-            </DateRangePicker>
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with without presets</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-right"
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Range with disabled before today</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              disabledCalendar={{ before: new Date() }}
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with disabled after today</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              disabledCalendar={{ after: new Date() }}
-            />
-          </div>
-        </div>
-        <div className="flex items-start gap-20">
-          <div className="space-y-2">
-            <h1>Date Range with top left position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="top-left"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with top right position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="top-right"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with bottom left position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-left"
-            />
-          </div>
-          <div className="space-y-2">
-            <h1>Date Range with bottom right position</h1>
-            <DateRangePicker
-              selectedRange={selectedRange}
-              setSelectedRange={setSelectedRange}
-              handleRangeSelect={handleRangeSelect}
-              position="bottom-right"
-            />
-          </div>
-        </div>
-        <p>Selected Range: {selectedRange?.from + " - " + selectedRange?.to}</p>
+              Today
+            </button>
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("last1Months")}
+            >
+              Last 1 Months
+            </button>
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("last3Months")}
+            >
+              Last 3 Months
+            </button>
+            <button
+              className="border-none px-3 py-1 hover:bg-gray-200 rounded-xl font-semibold text-text-xs text-gray-700"
+              onClick={() => applyPreset("last6Months")}
+            >
+              Last 6 Months
+            </button>
+          </section>
+        </DateRangePicker>
       </section>
       {/* Textarea */}
       <section className="flex flex-col gap-1">
