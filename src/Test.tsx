@@ -44,11 +44,7 @@ import Breadcrumbs from "./components/Breadcrumbs";
 import { Link, useLocation } from "react-router-dom";
 import DateRangePicker from "./components/DateRangePicker";
 import { DateRange } from "react-day-picker";
-import {
-  format,
-  startOfToday,
-  subMonths,
-} from "date-fns";
+import { format, startOfToday, subMonths } from "date-fns";
 import CircularProgress from "./components/CircularProgress";
 import GlobalNavigation from "./components/GlobalNavigation";
 import Slider from "./components/Slider";
@@ -57,8 +53,6 @@ import Accordion, {
   AccordionItem,
   AccordionTrigger,
 } from "./components/Accordion";
-import MenuDropdown, { MenuItem, MenuSubItem } from "./components/MenuItem";
-import ListItem from "./components/ListItem";
 import TextInputWithLabel from "./components/TextInputWithLabel";
 import Spinner from "./components/Spinner";
 import OTPInput from "./components/OTPInput";
@@ -66,10 +60,21 @@ import FileSelector from "./components/FileSelector";
 import Drawer from "./components/Drawer";
 import Callout from "./components/Callout";
 import MultipleDatePicker from "./components/MultipleDatePicker";
+import SplitButton from "./components/SplitButton";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./components/DropdownMenu";
 
 interface Option {
-  label: string;
-  value: string;
+  label: string | number;
+  value: string | number;
+}
+interface DropdownOption {
+  label: string | number;
+  value: string | number;
+  info?: string;
+  addInfo?: string;
+  tooltipContent?: string;
+  disabledOption?: boolean;
+  labelTextColor?: string;
 }
 
 const GlobalNavigationComponent = () => {
@@ -122,10 +127,6 @@ const Test = () => {
     }
   };
 
-  const [multiSelect, setMultiSelect] = useState<Option[]>([]);
-
-  const [singleSelect, setSingleSelect] = useState<Option[]>([]);
-
   const ImageSrc =
     "https://images.unsplash.com/photo-1732157582696-b5cb6c3d73bd?q=80&w=3087&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
@@ -145,7 +146,7 @@ const Test = () => {
       info: "Modals",
       addInfo: "Be a direct child descendent of the modal.",
       tooltipContent: "hjsghjwg",
-      disabledOption: true
+      disabledOption: true,
     },
     {
       label: "banana",
@@ -165,11 +166,25 @@ const Test = () => {
     { label: "mango", value: "mango" },
   ];
 
-  const [dropdownMenuOption, setDropdownMenuOption] = useState<Option[]>([]);
+  // dropdown
+
+  const [multiSelect, setMultiSelect] = useState<Option[]>([]);
+
+  const [singleSelect, setSingleSelect] = useState<Option[]>([]);
+
+  const [dropdownMenuOption, setDropdownMenuOption] = useState<
+    DropdownOption[]
+  >([]);
 
   const [dropdownMenuOptionTwo, setDropdownMenuOptionTwo] = useState<Option[]>(
     []
   );
+
+  const handleReset = () => {
+    setMultiSelect([]);
+    setSingleSelect([]);
+    alert("Reset button clicked");
+  };
 
   // tabs
   const [value, setValue] = useState("1");
@@ -181,7 +196,6 @@ const Test = () => {
   const [tags, setTags] = useState<string[]>([]);
   const [otp, setOtp] = useState("");
 
-
   // modal
   const [showModal, setShowModal] = useState(false);
 
@@ -189,7 +203,8 @@ const Test = () => {
   const [open, setOpen] = useState(false);
   // progress bar
   const [progress, setProgress] = useState(0);
-
+  // accordion
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // sidebar
   const [collapsed, setCollapsed] = useState(true);
@@ -243,8 +258,6 @@ const Test = () => {
       console.log("Selected files:", Array.from(e.target.files));
     }
   };
-
-
 
   // Stepper
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -379,9 +392,101 @@ const Test = () => {
         },
         {
           label: "Setting 2",
-
           href: "/setting2",
           icon: <RiCircleFill size={18} />,
+        },
+      ],
+    },
+  ];
+
+  const navWithSubMenuItems = [
+    {
+      label: "Pages",
+      items: [
+        {
+          label: "Home",
+          href: "/",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Team",
+          icon: <RiAlertFill size={18} />,
+          subItems: [
+            {
+              label: "Subteam 1",
+              // href: "/pages/team/sub1",
+              // icon: <RiCircleFill size={16} />,
+            },
+            {
+              label: "Subteam 2",
+              // href: "/pages/team/sub2",
+              // icon: <RiCircleFill size={16} />,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      label: "Dashboard",
+      items: [
+        {
+          label: "Analytics",
+          href: "/dashboard/analytics",
+          icon: <RiCircleFill size={18} />,
+        },
+        {
+          label: "Reports",
+          icon: <RiAlertFill size={18} />,
+          subItems: [
+            {
+              label: "Monthly",
+              href: "/dashboard/reports/monthly",
+              icon: <RiCircleFill size={16} />,
+            },
+            {
+              label: "Yearly",
+              icon: <RiCircleFill size={16} />,
+              subItems: [
+                {
+                  label: "2023",
+                  href: "/dashboard/reports/yearly/2023",
+                  icon: <RiCircleFill size={14} />,
+                },
+                {
+                  label: "2024",
+                  href: "/dashboard/reports/yearly/2024",
+                  icon: <RiCircleFill size={14} />,
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: "Reports",
+          icon: <RiAlertFill size={18} />,
+          subItems: [
+            {
+              label: "Monthly",
+              href: "/dashboard/reports/monthly",
+              icon: <RiCircleFill size={16} />,
+            },
+            {
+              label: "Yearly",
+              icon: <RiCircleFill size={16} />,
+              subItems: [
+                {
+                  label: "2023",
+                  href: "/dashboard/reports/yearly/2023",
+                  icon: <RiCircleFill size={14} />,
+                },
+                {
+                  label: "2024",
+                  href: "/dashboard/reports/yearly/2024",
+                  icon: <RiCircleFill size={14} />,
+                },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -435,7 +540,6 @@ const Test = () => {
   const [openPosition, setOpenPosition] = useState<DrawerPosition>(undefined);
 
   const positions: DrawerPosition[] = ["top", "right", "bottom", "left"];
-
 
   // single date picker
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
@@ -1443,45 +1547,6 @@ const Test = () => {
           </Accordion>
         </div>
       </section>
-      {/* Menu Items */}
-      <section>
-        <h1 className="text-display-sm text-primary-600">MenuItems:</h1>
-        <MenuDropdown
-          className=""
-          trigger={
-            <ListItem
-              as="button"
-              title="Products"
-              icon={<RiAddLine size={20} />}
-              className="w-fit bg-primary-100 hover:bg-primary-200 rounded-full border border-primary-400"
-            />
-          }
-        >
-          <Link
-            to="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygULcmljayBuIHJvbGw%3D"
-            target="_blank"
-          >
-            <MenuSubItem label="Inertia" />
-          </Link>
-          <MenuItem content={<h6>Blaze</h6>}>
-            <MenuSubItem label="Flames" onClick={() => alert("clicked")} />
-            <MenuSubItem label="Blaze" onClick={() => alert("click")} />
-            <MenuSubItem label="Admin" onClick={() => alert("click")} />
-          </MenuItem>
-          <Link
-            to="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygULcmljayBuIHJvbGw%3D"
-            target="_blank"
-          >
-            <MenuSubItem label="Qiwi" />
-          </Link>
-          <Link
-            to="https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygULcmljayBuIHJvbGw%3D"
-            target="_blank"
-          >
-            <MenuSubItem label="Audit" />
-          </Link>
-        </MenuDropdown>
-      </section>
       {/* Global Navigation */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Global Navigation:</h1>
@@ -1525,6 +1590,109 @@ const Test = () => {
         </div>
       </section>
       {/* Dropdown  */}
+      <h1 className="text-display-sm text-primary-600">Dropdown</h1>
+      <section className="flex items-start gap-10">
+        <div>
+          <h1 className="">Dropdown with icon</h1>
+          <DropdownWithIcon
+            options={multiOptions}
+            selected={multiSelect}
+            setSelected={setMultiSelect}
+            search={true}
+            multiple={true}
+            dropdownText={`Selected ${multiSelect?.length} items`}
+            width="200px"
+            trigger={
+              <RiFilterLine
+                className="hover:bg-gray-200 rounded"
+                cursor="pointer"
+                size={14}
+              />
+            }
+          />
+        </div>
+        <div>
+          <h1>Dropdown with icon</h1>
+          <DropdownWithIcon
+            options={multiOptions}
+            selected={multiSelect}
+            setSelected={setMultiSelect}
+            search={true}
+            multiple={true}
+            width="100px"
+            trigger={<span>dropdown</span>}
+            onReset={handleReset}
+          />
+        </div>
+        <div>
+          <h1 className="text-lg">Multiple Dropdown</h1>
+          <Dropdown
+            options={[
+              { label: "High", value: "High", disabledOption: true },
+              { label: "Medium", value: "Medium" },
+              { label: "Low", value: "Low" },
+              { label: "High", value: "High" },
+              { label: "Medium", value: "Medium" },
+              { label: "Low", value: "Low" },
+              { label: "High", value: "High" },
+              { label: "Medium", value: "Medium" },
+              { label: "Low", value: "Low" },
+            ]}
+            selected={multiSelect}
+            setSelected={setMultiSelect}
+            width="300px"
+            icon={<RiGlobalLine size={16} />}
+            dropdownText="Test Test"
+            multiple
+            search
+            position="bottom"
+            onApply={() => {
+              alert("Apply button clicked");
+            }}
+            onReset={handleReset}
+          />
+        </div>
+        <div>
+          <h1 className="text-lg">Single Dropdown Language</h1>
+          <Dropdown
+            options={singleOptions}
+            selected={singleSelect}
+            icon={<RiGlobalLine size={16} />}
+            setSelected={setSingleSelect}
+            dropdownText="single text"
+            info="info"
+          />
+        </div>
+        <div>
+          <h1 className="text-lg">Disabled Dropdown</h1>
+          <Dropdown
+            options={singleOptions}
+            selected={singleSelect}
+            setSelected={setSingleSelect}
+            multiple={false}
+            info="info"
+            disabled={true}
+          />
+        </div>
+        <div className="ml-10">
+          <DropdownWithIcon
+            options={multiOptions}
+            selected={multiSelect}
+            setSelected={setMultiSelect}
+            search={true}
+            multiple={true}
+            width="100px"
+            position="right"
+            trigger={
+              <RiFilterLine
+                className="hover:bg-gray-200 rounded"
+                cursor="pointer"
+                size={14}
+              />
+            }
+          />
+        </div>
+      </section>
       <section className="flex gap-6 items-center">
         <h1 className="text-lg">Dropdown with icon</h1>
         <Dropdown
@@ -1539,6 +1707,19 @@ const Test = () => {
           onApply={() => {
             alert("Apply button clicked");
           }}
+          footerAction={
+            <div className="flex justify-end items-center">
+              <Button
+                size="sm"
+                className="h-[30px]"
+                onClick={() => {
+                  alert("Apply button clicked");
+                }}
+              >
+                Custom Action
+              </Button>
+            </div>
+          }
         />
         <DropdownWithIcon
           options={multiOptions}
@@ -1559,6 +1740,19 @@ const Test = () => {
           onApply={() => {
             alert("Apply button clicked");
           }}
+          footerAction={
+            <div className="flex justify-end items-center">
+              <Button
+                size="sm"
+                className="h-[30px]"
+                onClick={() => {
+                  alert("Apply button clicked");
+                }}
+              >
+                Custom Action
+              </Button>
+            </div>
+          }
         />
       </section>
       <section className="flex gap-10 my-5">
@@ -1600,7 +1794,6 @@ const Test = () => {
             setSelected={setMultiSelect}
             width="300px"
             icon={<RiGlobalLine size={16} />}
-            dropDownTooltip={true}
             dropdownFooter={true}
             position="bottom"
             onApply={() => {
@@ -1618,7 +1811,7 @@ const Test = () => {
             // search={true}
             multiple={false}
             info="info"
-          // dropDownTooltip={true}
+            // dropDownTooltip={true}
           />
         </div>
         <div>
@@ -1724,6 +1917,44 @@ const Test = () => {
             </TabPanel>
           </TabsContainer>
         </section>
+
+        <section>
+          <TabsContainer
+            value={value}
+            position="vertical"
+            className="flex gap-4"
+          >
+            <TabList
+              onChange={handleTabChange}
+              ariaLabel="Vertical tabs example"
+              position="vertical"
+              className="w-48"
+            >
+              <Tab
+                label="Item One"
+                value="1"
+                onChange={handleTabChange}
+                selectedTabValue={value}
+                position="vertical"
+              />
+              <Tab
+                label="Item Two"
+                value="2"
+                onChange={handleTabChange}
+                selectedTabValue={value}
+                position="vertical"
+              />
+            </TabList>
+            <div className="flex-1">
+              <TabPanel value="1" currentValue={value}>
+                Item One Content
+              </TabPanel>
+              <TabPanel value="2" currentValue={value}>
+                Item Two Content
+              </TabPanel>
+            </div>
+          </TabsContainer>
+        </section>
         <section className="my-5">
           <h1 className="text-lg">Tab with box variant</h1>
           <TabsContainer value={value}>
@@ -1731,6 +1962,46 @@ const Test = () => {
               onChange={handleTabChange}
               ariaLabel="lab API tabs example"
               box={true}
+            >
+              <Tab
+                label="Item One"
+                value="1"
+                content="(12)"
+                icon={<RiSearch2Line size={16} />}
+                onChange={handleTabChange}
+                selectedTabValue={value}
+              />
+              <Tab
+                label="Item Two"
+                value="2"
+                onChange={handleTabChange}
+                selectedTabValue={value}
+              />
+              <Tab
+                label="Item Three"
+                value="3"
+                onChange={handleTabChange}
+                selectedTabValue={value}
+              />
+            </TabList>
+            <TabPanel value="1" currentValue={value}>
+              Item One Content
+            </TabPanel>
+            <TabPanel value="2" currentValue={value}>
+              Item Two Content
+            </TabPanel>
+            <TabPanel value="3" currentValue={value}>
+              Item Three Content
+            </TabPanel>
+          </TabsContainer>
+        </section>
+        <section className="my-5">
+          <h1 className="text-lg">Tab with pill variant</h1>
+          <TabsContainer value={value}>
+            <TabList
+              onChange={handleTabChange}
+              ariaLabel="lab API tabs example"
+              pill={true}
             >
               <Tab
                 label="Item One"
@@ -1973,6 +2244,130 @@ const Test = () => {
           Left
         </Tooltip>
       </section>
+
+      <section className="space-y-5">
+        <h1 className="text-display-sm text-primary-600">Accordion:</h1>
+        <div className="space-y-2">
+          <h2>Accordion Single</h2>
+          <Accordion type="single" collapsible className="w-full space-y-2">
+            <AccordionItem value="item-1">
+              <AccordionTrigger defaultOpen={true}>
+                <p className="">
+                  {" "}
+                  What is your favorite template from BRIX Templates?
+                </p>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="p-6 border">
+                  {` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.`}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger defaultOpen={true}>
+                Is it styled?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It comes with default styles that match the other components'
+              aesthetic.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger defaultOpen={true}>
+                Is it animated?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It's animated by default, but you can disable it if you
+              prefer.`}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+        <div className="space-y-2">
+          <h2>Accordion Multiple</h2>
+          <Accordion type="multiple" collapsible className="w-full space-y-2">
+            <AccordionItem value="item-1">
+              <AccordionTrigger
+                className="text-yellow-500"
+                triggerIcon={<RiAlertFill />}
+              >
+                What is your favorite template from BRIX Templates?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-2">
+              <AccordionTrigger>Is it styled?</AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It comes with default styles that match the other components'
+              aesthetic.`}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="item-3">
+              <AccordionTrigger defaultOpen={true}>
+                Is it animated?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Yes. It's animated by default, but you can disable it if you
+              prefer.`}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+        <h1>Collapse all / Open all:-</h1>
+        <div className="my-5">
+          <section className="my-5 flex gap-4 items-center">
+            <Button onClick={() => setIsExpanded(!isExpanded)}>
+              {isExpanded ? "Collapse All" : "Expand All"}
+            </Button>
+          </section>
+
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full space-y-2"
+            expanded={isExpanded}
+          >
+            <AccordionItem value="item-1">
+              <AccordionTrigger defaultOpen={true}>
+                <p className="">
+                  What is your favorite template from BRIX Templates?
+                </p>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="p-6 border">
+                  {` Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.`}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-2">
+              <AccordionTrigger defaultOpen={true}>
+                Is it easy to customize the templates?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Yes, all our templates are built with customization in mind. They use modern CSS and are structured for easy modifications.`}
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-3">
+              <AccordionTrigger defaultOpen={true}>
+                Are the templates responsive?
+              </AccordionTrigger>
+              <AccordionContent>
+                {` Absolutely! All BRIX Templates are fully responsive and work perfectly on desktop, tablet, and mobile devices.`}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
       {/* skeleton */}
       <section className="my-5">
         <h1 className="text-display-sm text-primary-600">Skeleton:</h1>
@@ -2097,8 +2492,8 @@ const Test = () => {
           placeholder="Select Range"
           startMonth={new Date(new Date().getFullYear() - 10, 12)}
           position="bottom-left"
-        // min={3}
-        // max={10}
+          // min={3}
+          // max={10}
         />
         <h1 className="text-primary-500 font-semibold text-display-xs">
           Date Range Picker with presets
@@ -2199,13 +2594,13 @@ const Test = () => {
       <div className="relative flex gap-3 bg-white">
         <section className=" bg-white">
           <Sidebar collapsed={collapsed} setCollapsed={setCollapsed}>
-            <Sidebar.Header collapsed={collapsed} setCollapsed={setCollapsed}>
+            <Sidebar.Header dense={true}>
               <span onClick={() => setCollapsed((prev) => !prev)}>Logo</span>
             </Sidebar.Header>
             <Sidebar.Menu
               scroll
               collapsed={collapsed}
-              setCollapsed={setCollapsed}
+              // setCollapsed={setCollapsed}
               navItems={navItems}
             />
             <Sidebar.Footer
@@ -2236,6 +2631,83 @@ const Test = () => {
             corporis.
           </p>
         </section>
+      </div>
+      <h1 className="text-primary-500 font-medium text-3xl">Sidebar(Dense)</h1>
+      <Sidebar dense={true} collapsed={collapsed} setCollapsed={setCollapsed}>
+        <Sidebar.Header dense={true}>
+          <span onClick={() => setCollapsed((prev) => !prev)}>Logo</span>
+        </Sidebar.Header>
+
+        <Sidebar.Menu
+          dense={true}
+          scroll
+          collapsed={collapsed}
+          navItems={navWithSubMenuItems}
+        />
+
+        <Sidebar.Footer
+          dense={true}
+          collapsed={collapsed}
+          setCollapsed={setCollapsed}
+          navItems={footerItems}
+        >
+          <Divider className="mb-3" />
+          <Button
+            className="w-full"
+            variant="outlined"
+            intent="default-outlined"
+            startIcon={<RiLogoutBoxRLine size={20} />}
+          >
+            {!collapsed ? "" : "Logout"}
+          </Button>
+        </Sidebar.Footer>
+      </Sidebar>
+
+      <div className="flex gap-10 items-center mt-10">
+        <SplitButton compact>
+          <Button className="rounded-r-none">Split Button Compact</Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                startIcon={<RiAddLine />}
+                className="rounded-l-none border-l border-l-primary-200"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48" align="right">
+              <DropdownMenuLabel>Save Options</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Save as draft</DropdownMenuItem>
+              <DropdownMenuItem>Save and publish</DropdownMenuItem>
+              <DropdownMenuItem>Save as template</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SplitButton>
+        <SplitButton>
+          <Button
+            variant="outlined"
+            intent="default-outlined"
+            className="rounded-r-none"
+          >
+            Split Button
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Button
+                variant="outlined"
+                intent="default-outlined"
+                startIcon={<RiAddLine />}
+                className="rounded-l-none border-l border-l-gray-300"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48" align="left">
+              <DropdownMenuLabel>Save Options</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>Save as draft</DropdownMenuItem>
+              <DropdownMenuItem>Save and publish</DropdownMenuItem>
+              <DropdownMenuItem>Save as template</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </SplitButton>
       </div>
       {/* Callout */}
       <section className="my-5 space-y-4">
@@ -2355,13 +2827,13 @@ const Test = () => {
           </Link>
           <Link
             to="/pages/dashboard"
-          // style={{ textDecoration: "none", color: "inherit" }}
+            // style={{ textDecoration: "none", color: "inherit" }}
           >
             Dashboard
           </Link>
           <Link
             to="/pages/team"
-          // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
+            // className="bg-gray-200 text-gray-700 px-2 py-1 rounded-full"
           >
             Team
           </Link>

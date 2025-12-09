@@ -1,12 +1,14 @@
-import React, { useState } from "react";
-import { cn } from "../utils";
+"use client";
+import React, { useState, useEffect } from "react";
 import { RiArrowDownSLine } from "@remixicon/react";
+import { cn } from "../utils";
 
 type AccordionProps = {
   type?: "single" | "multiple";
   collapsible?: boolean;
   className?: string;
   children: React.ReactNode;
+  expanded?: boolean;
 };
 
 export default function Accordion({
@@ -14,6 +16,7 @@ export default function Accordion({
   collapsible = true,
   className,
   children,
+  expanded,
 }: AccordionProps) {
   const [openItems, setOpenItems] = useState<string[]>(() => {
     const defaultOpen: string[] = [];
@@ -30,6 +33,25 @@ export default function Accordion({
     });
     return defaultOpen;
   });
+
+  // Handle expanded prop changes
+  useEffect(() => {
+    if (expanded !== undefined) {
+      if (expanded) {
+        // Open all items
+        const allValues: string[] = [];
+        React.Children.forEach(children, (child) => {
+          if (React.isValidElement(child)) {
+            allValues.push((child.props as AccordionItemProps).value);
+          }
+        });
+        setOpenItems(allValues);
+      } else {
+        // Collapse all items
+        setOpenItems([]);
+      }
+    }
+  }, [expanded, children]);
 
   const handleToggle = (value: string) => {
     if (type === "single") {
@@ -96,9 +118,9 @@ export function AccordionItem({
   return (
     <div
       className={cn(
-        "bg-white rounded-lg shadow transition-all duration-300 ease-in-out",
-        disabled ? "opacity-50 pointer-events-none select-none" : "",
-        isOpen ? "border border-gray-300" : "border",
+        "bg-white rounded-lg shadow transition-all duration-300 ease-in-out border",
+        disabled && "opacity-50 pointer-events-none select-none",
+        isOpen && "border-gray-300",
         className
       )}
     >
@@ -127,14 +149,12 @@ export function AccordionItem({
             role="region"
             aria-labelledby={headerId}
             className={cn(
-              "grid transition-all duration-300 ease-in-out",
-              isOpen
-                ? "grid-rows-[1fr] opacity-100"
-                : "grid-rows-[0fr] opacity-0"
+              "transition-all duration-300 ease-in-out overflow-hidden",
+              isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
             )}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="overflow-hidden">{children[1]}</div>
+            <div className="p-3.5">{children[1]}</div>
           </div>
         </>
       ) : (
@@ -162,16 +182,17 @@ export function AccordionTrigger({
     <div
       className={cn(
         "flex p-3.5 text-lg rounded-lg bg-white hover:bg-gray-50 justify-between items-center font-semibold transition-all delay-150 ease-in",
-        isOpen ? "bg-gray-100" : "",
+        isOpen && "bg-gray-100",
         className
       )}
     >
       {children}
       <span
         className={cn(
-          "transition-transform duration-300 transform",
+          "transition-transform duration-300",
           isOpen ? "rotate-180" : "rotate-0"
         )}
+        aria-hidden="true"
       >
         {triggerIcon}
       </span>
@@ -180,19 +201,9 @@ export function AccordionTrigger({
 }
 
 type AccordionContentProps = {
-  isOpen?: boolean;
   children: React.ReactNode;
 };
 
-export function AccordionContent({ isOpen, children }: AccordionContentProps) {
-  return (
-    <div
-      className={cn(
-        "w-full font-normal px-3.5 pb-3.5 text-sm overflow-hidden transition-all duration-500 ease-in",
-        !isOpen ? "max-h-full opacity-100" : "max-h-0 opacity-0"
-      )}
-    >
-      {children}
-    </div>
-  );
+export function AccordionContent({ children }: AccordionContentProps) {
+  return <div className="text-gray-700">{children}</div>;
 }

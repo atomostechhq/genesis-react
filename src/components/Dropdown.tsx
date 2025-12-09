@@ -1,4 +1,5 @@
-import {
+"use client";
+import React, {
   useEffect,
   useState,
   useMemo,
@@ -7,20 +8,15 @@ import {
   useRef,
   useImperativeHandle,
 } from "react";
-import {
-  RiArrowDownSLine,
-  RiSearchLine,
-  RiErrorWarningLine,
-} from "@remixicon/react";
+import { RiArrowDownSLine, RiSearchLine } from "@remixicon/react";
+import { cn } from "../utils";
 import Input from "./Input";
 import Label from "./Label";
 import Checkbox from "./Checkbox";
-import Tooltip from "./Tooltip";
-import { cn } from "../utils";
 
 type Option = {
-  label: string;
-  value: string;
+  label: string | number;
+  value: string | number;
   info?: string;
   addInfo?: string;
   tooltipContent?: string;
@@ -29,8 +25,8 @@ type Option = {
 };
 
 interface MenuItemProps {
-  label?: string;
-  value: string;
+  label?: string | number;
+  value: string | number;
   children?: React.ReactNode;
 }
 
@@ -52,10 +48,10 @@ interface DropdownProps {
   addInfo?: string | number;
   tooltipContent?: string;
   width?: string;
-  dropDownTooltip?: boolean | undefined;
   dropdownFooter?: boolean | undefined;
   disabled?: boolean;
   labelTextColor?: string;
+  footerAction?: React.ReactNode;
 }
 
 const defaultRenderItem = (option: Option) => {
@@ -78,11 +74,11 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       position = "top",
       width,
       info,
-      dropDownTooltip = false,
       dropdownFooter = false,
       onApply,
       disabled = false,
       onReset,
+      footerAction,
     },
     ref
   ) => {
@@ -104,9 +100,12 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
 
     const memoizedFilteredOptions = useMemo(() => {
       if (!search) return filteredOptions;
-      return filteredOptions.filter((option) =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+      return filteredOptions.filter((option) => {
+        if (typeof option.label === "string") {
+          return option.label.toLowerCase().includes(searchQuery.toLowerCase());
+        }
+        return option.label.toString().includes(searchQuery.toLowerCase());
+      });
     }, [search, searchQuery, filteredOptions]);
 
     const handleSearchChange = useCallback(
@@ -207,7 +206,9 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           }}
           className={cn(
             "w-full hover:bg-gray-50 py-2 px-[14px] rounded-lg flex justify-between items-center text-gray-900 bg-gray-25 text-text-sm cursor-pointer",
-            dropdownMenu ? "border border-gray-800" : "border border-gray-200",
+            dropdownMenu
+              ? "border border-primary-600"
+              : "border border-gray-200",
             disabled && "bg-gray-300 hover:bg-gray-300 cursor-not-allowed"
           )}
         >
@@ -232,8 +233,11 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           className={cn(
             "max-h-0 opacity-0 overflow-hidden shadow-sm mt-1 rounded absolute text-[16px] bg-white z-[1000] w-full transition-all duration-75 delay-100 ease-in",
             position === "top" ? "top-10" : "bottom-10",
+            dropdownMenu
+              ? "border border-primary-600"
+              : "border border-gray-200",
             dropdownMenu &&
-              "max-h-[320px] opacity-[1] transition-all ease-in duration-150"
+              "max-h-[360px] h-fit opacity-[1] transition-all ease-in duration-150"
           )}
         >
           {search && (
@@ -244,7 +248,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
               aria-label="Search options"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="rounded rounded-b-none text-gray-800 bg-white w-full h-[35px] pl-3"
+              className="rounded rounded-b-none text-gray-800 bg-white w-full h-[35px] pl-3 border-none"
               endIcon={<RiSearchLine size={18} />}
             />
           )}
@@ -271,7 +275,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           <section className="max-h-[200px] transition-all duration-75 delay-100 ease-in-out overflow-y-scroll">
             {options
               ? memoizedFilteredOptions?.map((option, i) => (
-                  <div key={i}>
+                  <React.Fragment key={i}>
                     {multiple ? (
                       <Label
                         className={cn(
@@ -291,8 +295,8 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                                   (item) => item.value === option.value
                                 ) ?? false
                               }
-                              disabled={option?.disabledOption}
                               onChange={() => handleCheckboxChange(option)}
+                              disabled={option?.disabledOption}
                             />
                             <div className="flex items-center gap-1">
                               <div
@@ -308,11 +312,11 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                               >
                                 {renderItem(option)}
                               </div>
-                              {dropDownTooltip && (
+                              {/* {dropDownTooltip && (
                                 <DropdownTooltip
                                   tooltipContent={option?.tooltipContent}
                                 />
-                              )}
+                              )} */}
                             </div>
                           </div>
                           <span className="text-gray-500">{option?.info}</span>
@@ -338,33 +342,29 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                           !option?.disabledOption && toggleOption(option)
                         }
                       >
-                        <div className="flex items-center gap-1">
-                          <span
-                            style={{
-                              color: option?.disabledOption
-                                ? "#D1D5DB"
-                                : option.labelTextColor,
-                            }}
-                            className={cn(
-                              "break-words",
-                              option?.disabledOption && "text-gray-300"
-                            )}
-                          >
-                            {renderItem(option)}
-                          </span>
-                          {dropDownTooltip && (
-                            <DropdownTooltip
-                              tooltipContent={option?.tooltipContent}
-                            />
+                        <div
+                          style={{
+                            color: option?.disabledOption
+                              ? "#D1D5DB"
+                              : option.labelTextColor,
+                          }}
+                          className={cn(
+                            "break-words",
+                            option?.disabledOption && "text-gray-300"
                           )}
+                        >
+                          {renderItem(option)}
                         </div>
                         <span className="text-gray-500">{info}</span>
                       </Label>
                     )}
-                  </div>
+                  </React.Fragment>
                 ))
               : children}
           </section>
+          {footerAction && (
+            <div className="py-2 mt-1 px-2 border-t">{footerAction}</div>
+          )}
           {dropdownFooter && (
             <DropdownFooter
               setDropdownMenu={setDropdownMenu}
@@ -381,28 +381,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ label, children }) => {
   return <p className="break-all">{label || children}</p>;
 };
 
-interface DropdownTooltipProps {
-  tooltipContent?: string | undefined;
-}
-
-const DropdownTooltip: React.FC<DropdownTooltipProps> = ({
-  tooltipContent,
-}) => {
-  const content = tooltipContent || "";
-  return content ? (
-    <Tooltip position="right" content={content}>
-      <RiErrorWarningLine color="#98A2B3" size={14} />
-    </Tooltip>
-  ) : null;
-};
-
 interface DropdownFooterProps {
   onApply?: (() => void) | undefined;
   setDropdownMenu?: (value: boolean) => void;
 }
 
 export const DropdownFooter: React.FC<DropdownFooterProps> = ({
-  // onReset,
   onApply,
   setDropdownMenu,
 }) => {

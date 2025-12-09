@@ -8,16 +8,15 @@ import React, {
   useRef,
   useImperativeHandle,
 } from "react";
-import { RiErrorWarningLine, RiSearchLine } from "@remixicon/react";
+import { RiSearchLine } from "@remixicon/react";
+import { cn } from "../utils";
 import Input from "./Input";
 import Label from "./Label";
 import Checkbox from "./Checkbox";
-import Tooltip from "./Tooltip";
-import { cn } from "../utils";
 
 type Option = {
-  label: string;
-  value: string;
+  label: string | number;
+  value: string | number;
   info?: string;
   addInfo?: string;
   tooltipContent?: string;
@@ -26,8 +25,8 @@ type Option = {
 };
 
 interface MenuItemProps {
-  label?: string;
-  value: string;
+  label?: string | number;
+  value: string | number;
   children?: React.ReactNode;
 }
 
@@ -56,10 +55,10 @@ interface DropdownProps {
   addInfo?: string | number;
   tooltipContent?: string;
   width?: string;
-  dropDownTooltip?: boolean | undefined;
   dropdownFooter?: boolean;
   disabled?: boolean;
   labelTextColor?: string;
+  footerAction?: React.ReactNode;
 }
 
 const defaultRenderItem = (option: Option) => {
@@ -82,11 +81,11 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
       position = "top",
       width,
       info,
-      dropDownTooltip = false,
       dropdownFooter = false,
       onApply,
       disabled = false,
       onReset,
+      footerAction,
     },
     ref
   ) => {
@@ -221,6 +220,9 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           tabIndex={-1}
           className={cn(
             "max-h-0 opacity-0 overflow-hidden shadow-sm mt-1 rounded absolute text-[16px] bg-white z-[1000] w-full transition-all duration-75 delay-100 ease-in",
+            dropdownMenu
+              ? "border border-primary-600"
+              : "border border-gray-200",
             position === "top"
               ? "top-10"
               : position === "bottom"
@@ -231,7 +233,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
               ? "right-[90%]"
               : "top-10",
             dropdownMenu &&
-              "max-h-[320px] opacity-[1] transition-all ease-in duration-150"
+              "max-h-[360px] h-fit opacity-[1] transition-all ease-in duration-150"
           )}
           style={{
             width: width,
@@ -247,7 +249,7 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
               aria-label="Search options"
               value={searchQuery}
               onChange={handleSearchChange}
-              className="rounded rounded-b-none text-gray-800 bg-white w-full h-[35px] pl-3"
+              className="rounded rounded-b-none text-gray-800 bg-white w-full h-[35px] pl-3 border-none"
               endIcon={<RiSearchLine size={18} />}
             />
           )}
@@ -315,11 +317,11 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                               >
                                 {renderItem(option)}
                               </div>
-                              {dropDownTooltip && (
+                              {/* {dropDownTooltip && (
                                 <DropdownTooltip
                                   tooltipContent={option?.tooltipContent}
                                 />
-                              )}
+                              )} */}
                             </div>
                           </div>
                           <span className="text-gray-500">{option?.info}</span>
@@ -367,11 +369,11 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                           )}
                         >
                           {renderItem(option)}
-                          {dropDownTooltip && (
+                          {/* {dropDownTooltip && (
                             <DropdownTooltip
                               tooltipContent={option?.tooltipContent}
                             />
-                          )}
+                          )} */}
                         </div>
                         <span className="text-gray-500">{info}</span>
                       </Label>
@@ -380,7 +382,9 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
                 ))
               : children}
           </section>
-          {/* {dropdownFooter && <DropdownFooter onApply={onApply} />} */}
+          {footerAction && (
+            <div className="py-2 mt-1 px-2 border-t">{footerAction}</div>
+          )}
           {dropdownFooter && (
             <DropdownFooter
               setDropdownMenu={setDropdownMenu}
@@ -397,26 +401,12 @@ export const MenuItem: React.FC<MenuItemProps> = ({ label, children }) => {
   return <p className="break-all">{label || children}</p>;
 };
 
-interface DropdownTooltipProps {
-  tooltipContent?: string | undefined;
-}
-
-const DropdownTooltip: React.FC<DropdownTooltipProps> = ({
-  tooltipContent,
-}) => {
-  return tooltipContent ? (
-    <Tooltip position="right" content={tooltipContent}>
-      <RiErrorWarningLine color="#98A2B3" size={14} />
-    </Tooltip>
-  ) : null;
-};
-
 const DropdownFooter: React.FC<DropdownFooterProps> = ({
   onApply,
   setDropdownMenu,
 }) => {
   return (
-    <div className="flex justify-between border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
+    <div className="flex justify-end border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
       <button
         type="button"
         className="text-primary-600 hover:text-primary-700"

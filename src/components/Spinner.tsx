@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "../utils";
 
 interface SpinnerProps {
@@ -35,7 +36,7 @@ const Spinner = ({ size = "md", color = "primary" }: SpinnerProps) => {
     if (color.startsWith('#')) {
       return {
         c1: color,
-        c2: `${color}80`
+        c2: `${color}80` 
       };
     }
     return colorVars.primary;

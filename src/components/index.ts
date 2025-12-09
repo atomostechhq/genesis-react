@@ -43,5 +43,3 @@ export {
   AccordionItem,
   AccordionTrigger,
 } from "./Accordion";
-export { default as MenuDropdown, MenuItem, MenuSubItem } from "./MenuItem";
-export { default as ListItem } from "./ListItem";
