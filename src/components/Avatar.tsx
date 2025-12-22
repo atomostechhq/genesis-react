@@ -74,7 +74,8 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>((props, ref) => {
         "relative -z-10 ",
         rounded && "rounded-full",
         border && "border border-gray-200",
-        disabled && "opacity-50 pointer-events-none select-none"
+        disabled && "opacity-50 pointer-events-none select-none",
+        onClick && "cursor-pointer"
       )}
       style={{
         borderColor: borderColor,

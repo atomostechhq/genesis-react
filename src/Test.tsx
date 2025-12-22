@@ -64,8 +64,7 @@ import Drawer from "./components/Drawer";
 import Callout from "./components/Callout";
 import MultipleDatePicker from "./components/MultipleDatePicker";
 import SplitButton from "./components/SplitButton";
-import {
-  DropdownMenu,
+import DropdownMenu, {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
@@ -77,8 +76,7 @@ import {
 } from "./components/DropdownMenu";
 import TreeView from "./components/TreeView";
 import Typography from "./components/Typography";
-import {
-  Card,
+import Card, {
   CardAction,
   CardContent,
   CardDescription,
@@ -964,7 +962,7 @@ const Test = () => {
           </div>
         </section>
       </div>
-          {/* cards */}
+      {/* cards */}
       <div className="space-y-5">
         <Card>
           <CardHeader>
@@ -1475,6 +1473,7 @@ const Test = () => {
               rounded: true,
               border: true,
               borderWidth: "2px",
+              onClick: () => alert("clicked"),
               borderColor: "var(--primary-500)",
             },
             {
@@ -1632,7 +1631,7 @@ const Test = () => {
           >
             <GlobalNavigationComponent />
           </GlobalNavigation>
-          <GlobalNavigation
+          {/* <GlobalNavigation
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             postion="top-left"
@@ -1640,8 +1639,8 @@ const Test = () => {
             className="max-w-[270px] p-4 flex flex-col gap-4 justify-center items-center"
           >
             <GlobalNavigationComponent />
-          </GlobalNavigation>
-          <GlobalNavigation
+          </GlobalNavigation> */}
+          {/* <GlobalNavigation
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             postion="bottom-right"
@@ -1649,8 +1648,8 @@ const Test = () => {
             className="max-w-[270px] p-4 flex flex-col gap-4 justify-center items-center"
           >
             <GlobalNavigationComponent />
-          </GlobalNavigation>
-          <GlobalNavigation
+          </GlobalNavigation> */}
+          {/* <GlobalNavigation
             isOpen={isOpen}
             setIsOpen={setIsOpen}
             postion="top-right"
@@ -1658,7 +1657,7 @@ const Test = () => {
             className="max-w-[270px] p-4 flex flex-col gap-4 justify-center items-center"
           >
             <GlobalNavigationComponent />
-          </GlobalNavigation>
+          </GlobalNavigation> */}
         </div>
       </section>
       {/* Dropdown  */}
