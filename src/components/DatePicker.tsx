@@ -1,4 +1,11 @@
-import { useRef, useState, useEffect, Dispatch, SetStateAction, ReactNode } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  ReactNode,
+} from "react";
 import { format } from "date-fns";
 import { DayPicker, DropdownProps, PropsSingle } from "react-day-picker";
 import { RiCalendarLine } from "@remixicon/react";
@@ -129,7 +136,6 @@ const DatePicker = ({
     return format(date, dateFormat || "dd/MM/yyyy");
   };
 
-
   function CustomSelectDropdown(props: DropdownProps) {
     const { options, value, onChange } = props;
 
@@ -184,7 +190,7 @@ const DatePicker = ({
         <div
           tabIndex={-1}
           className={cn(
-            "text-[16px] shadow-sm border bg-white rounded-md",
+            "text-[16px] shadow-sm border border-primary-600 bg-white rounded-md",
             "mt-1 mx-auto z-[1000] transition-all absolute duration-75 delay-100 ease-in-out",
             {
               "bottom-11 right-0": position === "top-right",
