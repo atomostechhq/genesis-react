@@ -3,25 +3,17 @@ import React, { useRef, useState } from "react";
 import {
   RiDeleteBin6Line,
   RiRefreshLine,
-  RiFileLine,
-  RiImageLine,
-  RiVideoLine,
-  RiFileZipLine,
   RiCheckLine,
   RiCloseLine,
-  RiFilePdf2Line,
-  RiFilePpt2Line,
-  RiFileWord2Line,
-  RiFileExcel2Line,
-  RiMusic2Line,
   RiEyeLine,
 } from "@remixicon/react";
 import Spinner from "./Spinner";
-import { cn } from "../utils";
 import Label from "./Label";
 import Button from "./Button";
+import { cn } from "../utils";
+import { defaultGetFileIcon } from "../fileIcons";
 
-const fileSvg = () => {
+const FileSvg = () => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -73,72 +65,6 @@ export interface ImageUploadControlledProps {
   disabled?: boolean;
 }
 
-// Default file icon function (MATCHED with getIconForMimeType)
-const defaultGetFileIcon = (fileName: string, fileType: string) => {
-  const extension = fileName.split(".").pop()?.toLowerCase() || "";
-
-  // IMAGE FILES
-  if (
-    fileType.startsWith("image/") ||
-    ["jpg", "jpeg", "png", "gif", "svg", "webp", "bmp"].includes(extension)
-  ) {
-    return <RiImageLine className="w-6 h-6 text-white" />;
-  }
-
-  // AUDIO FILES
-  if (
-    fileType.startsWith("audio/") ||
-    ["mp3", "wav", "ogg", "m4a"].includes(extension)
-  ) {
-    return <RiMusic2Line className="w-6 h-6 text-white" />;
-  }
-
-  // VIDEO FILES
-  if (
-    fileType.startsWith("video/") ||
-    ["mp4", "avi", "mkv", "mov", "wmv"].includes(extension)
-  ) {
-    return <RiVideoLine className="w-6 h-6 text-white" />;
-  }
-
-  // EXCEL / SPREADSHEET FILES
-  if (
-    fileType.includes("excel") ||
-    ["xls", "xlsx", "csv", "txt", "ods"].includes(extension)
-  ) {
-    return <RiFileExcel2Line className="w-6 h-6 text-white" />;
-  }
-
-  // WORD DOCUMENTS
-  if (
-    fileType.includes("word") ||
-    ["doc", "docx", "odt", "xml"].includes(extension)
-  ) {
-    return <RiFileWord2Line className="w-6 h-6 text-white" />;
-  }
-
-  // POWERPOINT FILES
-  if (["pptx", "pptm", "xps", "ppsx"].includes(extension)) {
-    return <RiFilePpt2Line className="w-6 h-6 text-white" />;
-  }
-
-  // ZIP / ARCHIVE FILES
-  if (
-    fileType.includes("zip") ||
-    ["zip", "rar", "7z", "tar", "gz"].includes(extension)
-  ) {
-    return <RiFileZipLine className="w-6 h-6 text-white" />;
-  }
-
-  // PDF FILES
-  if (fileType === "application/pdf" || extension === "pdf") {
-    return <RiFilePdf2Line className="w-6 h-6 text-white" />;
-  }
-
-  // DEFAULT ICON
-  return <RiFileLine className="w-6 h-6 text-white" />;
-};
-
 export default function ImageUploadControlled({
   items,
   onAddFiles,
@@ -153,7 +79,7 @@ export default function ImageUploadControlled({
   className = "",
   hintText,
   showSizeText = true,
-  getFileIcon = defaultGetFileIcon,
+  getFileIcon = defaultGetFileIcon, 
   autoUpload = true,
   disabled,
 }: ImageUploadControlledProps) {
@@ -323,10 +249,8 @@ export default function ImageUploadControlled({
       if (url) URL.revokeObjectURL(url);
       localPreviews.current.delete(id);
     }
-
     // Clean up progress tracking
     uploadProgress.current.delete(id);
-
     // Call external onDelete handler if provided
     if (onDelete) {
       onDelete(id);
@@ -349,7 +273,6 @@ export default function ImageUploadControlled({
     e.target.value = "";
   };
 
-  // Simple drag handlers
   const handleDragOver = (e: React.DragEvent<HTMLLabelElement>) => {
     e.preventDefault();
     if (!disabled) setIsDragging(true);
@@ -460,13 +383,8 @@ export default function ImageUploadControlled({
               className="flex items-center gap-4 bg-white max-w-[564px] w-full p-4 rounded-lg border border-gray-200"
             >
               <div className="w-14 h-14 flex-shrink-0 rounded-md overflow-hidden relative">
-                {/* <img
-                  src=
-                  className="absolute inset-0 w-full h-full object-contain"
-                  alt="file"
-                /> */}
-                {fileSvg()}
-                <div className="relative z-10 mt-2 -ml-[2px] flex items-center justify-center w-full h-full text-white">
+                <FileSvg />
+                <div className="relative z-10 -top-11 right-3 flex items-center justify-center w-full h-full text-white">
                   {fileIcon}
                 </div>
               </div>
@@ -597,6 +515,3 @@ export default function ImageUploadControlled({
     </div>
   );
 }
-
-// Export the default file icon function for reuse
-export { defaultGetFileIcon };

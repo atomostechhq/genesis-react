@@ -84,6 +84,9 @@ import Card, {
   CardHeader,
   CardTitle,
 } from "./components/Card";
+import ImageUploadControlled, {
+  UploadItem,
+} from "./components/RazorPayFileUpload";
 
 interface Option {
   label: string | number;
@@ -234,7 +237,6 @@ const Test = () => {
   // sidebar
   const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
-  const currentPath = location.pathname;
   // single file upload
   const [selectedSingleFiles, setSelectedSingleFiles] = useState<File[]>([]);
 
@@ -281,6 +283,72 @@ const Test = () => {
   const handleMultipleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       console.log("Selected files:", Array.from(e.target.files));
+    }
+  };
+
+  // new file upload with progress
+  const [items, setItems] = useState<UploadItem[]>([]);
+
+  const handleAddFiles = (files: File[]) => {
+    const newItems: UploadItem[] = files.map((file) => ({
+      id: Math.random().toString(36).slice(2),
+      file,
+      name: file.name,
+      size: file.size,
+      progress: 0,
+      status: "idle",
+    }));
+
+    setItems((prev) => [...prev, ...newItems]);
+  };
+
+  const handleUpdateItem = (id: string, updates: Partial<UploadItem>) => {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+    );
+  };
+
+  // const handleUpload = async (
+  //   file: File,
+  //   onProgress: (progress: number) => void
+  // ) => {
+  //   // Simulate upload with progress
+  //   for (let progress = 0; progress <= 100; progress += 10) {
+  //     await new Promise((resolve) => setTimeout(resolve, 200));
+  //     onProgress(progress);
+  //   }
+  //   // Return the file URL (in real app, this would be from your API)
+  //   return URL.createObjectURL(file);
+  // };
+
+  const handleUpload = async (
+    file: File,
+    onProgress: (progress: number) => void
+  ) => {
+    // Simulate progress
+    for (let progress = 0; progress <= 100; progress += 10) {
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      onProgress(progress);
+    }
+
+    // ---- ⚠️ Random failure simulation ----
+    const shouldFail = Math.random() < 0.3; // 30% chance to fail
+    if (shouldFail) {
+      throw new Error("Upload failed. Please try again.");
+    }
+
+    // Success
+    return URL.createObjectURL(file);
+  };
+
+  const handleDelete = (id: string) => {
+    setItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handlePreview = (id: string) => {
+    const item = items.find((item) => item.id === id);
+    if (item && item.previewUrl) {
+      window.open(item.previewUrl, "_blank");
     }
   };
 
@@ -2216,8 +2284,8 @@ const Test = () => {
         </Notice>
       </section>
       {/* File Upload */}
-      <section className="max-w-lg space-y-3">
-        <h1 className="text-display-sm text-primary-600">File Upload</h1>
+      <section className="max-w-lg my-5">
+        <h1 className="text-display-sm text-primary-600">File Upload New</h1>
         <FileUpload
           id="single"
           selectedFile={selectedSingleFiles}
@@ -2261,6 +2329,21 @@ const Test = () => {
           onChange={handleMultipleChange}
         />
       </section>
+      <div className="w-full mx-auto">
+        <h1 className="text-xl font-bold mb-4">File Upload</h1>
+        <ImageUploadControlled
+          items={items}
+          onAddFiles={handleAddFiles}
+          onUpdateItem={handleUpdateItem}
+          onDelete={handleDelete}
+          onUpload={handleUpload}
+          onPreview={handlePreview}
+          multiple={true}
+          accept="image/*, .pdf, .doc, .docx, .xlsx, .mp3"
+          maxSizeMB={15}
+          hintText="Drag and drop files or click to upload"
+        />
+      </div>
       {/* Tooltip */}
       <section className="flex items-center gap-5 my-5">
         <h1 className="text-display-sm text-primary-600">Tooltip:</h1>
