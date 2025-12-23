@@ -32,7 +32,11 @@ const DropdownContext = React.createContext<DropdownContextType | null>(null);
 // ─────────────────────────────
 // Root DropdownMenu
 // ─────────────────────────────
-export function DropdownMenu({ children }: { children: React.ReactNode }) {
+export default function DropdownMenu({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const triggerRef = useRef<HTMLDivElement>(null);
