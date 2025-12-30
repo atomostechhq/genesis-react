@@ -1,21 +1,7 @@
 {
   "name": "@atomos_tech/genesis-react",
-  "version": "0.0.12-alpha",
   "private": false,
-  "description": "test",
-  "keywords": [
-    "test"
-  ],
-  "homepage": "https://github.com/atomostechhq/genesis-react#readme",
-  "bugs": {
-    "url": "https://github.com/atomostechhq/genesis-react/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/atomostechhq/genesis-react.git"
-  },
-  "license": "ISC",
-  "author": "riya",
+  "version": "1.0.2",
   "type": "module",
   "exports": {
     ".": {
