@@ -43,7 +43,7 @@ export interface UploadItem {
   previewUrl?: string;
 }
 
-export interface ImageUploadControlledProps {
+export interface FileUploadControlProps {
   items: UploadItem[];
   onAddFiles: (files: File[]) => void;
   onUpdateItem?: (id: string, updates: Partial<UploadItem>) => void;
@@ -65,7 +65,7 @@ export interface ImageUploadControlledProps {
   disabled?: boolean;
 }
 
-export default function ImageUploadControlled({
+export default function FileUploadControl({
   items,
   onAddFiles,
   onUpdateItem,
@@ -82,7 +82,7 @@ export default function ImageUploadControlled({
   getFileIcon = defaultGetFileIcon, 
   autoUpload = true,
   disabled,
-}: ImageUploadControlledProps) {
+}: FileUploadControlProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const localPreviews = useRef<Map<string, string>>(new Map());

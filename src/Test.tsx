@@ -86,7 +86,7 @@ import Card, {
 } from "./components/Card";
 import ImageUploadControlled, {
   UploadItem,
-} from "./components/RazorPayFileUpload";
+} from "./components/FileUploadControl";
 
 interface Option {
   label: string | number;
@@ -170,7 +170,6 @@ const Test = () => {
       value: "apple",
       info: "Modals",
       addInfo: "Be a direct child descendent of the modal.",
-      tooltipContent: "hjsghjwg",
       disabledOption: true,
     },
     {
@@ -1699,33 +1698,6 @@ const Test = () => {
           >
             <GlobalNavigationComponent />
           </GlobalNavigation>
-          {/* <GlobalNavigation
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            postion="top-left"
-            trigger={<Avatar type="text" border rounded text="John Doe" />}
-            className="max-w-[270px] p-4 flex flex-col gap-4 justify-center items-center"
-          >
-            <GlobalNavigationComponent />
-          </GlobalNavigation> */}
-          {/* <GlobalNavigation
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            postion="bottom-right"
-            trigger={<Avatar type="text" border rounded text="John Doe" />}
-            className="max-w-[270px] p-4 flex flex-col gap-4 justify-center items-center"
-          >
-            <GlobalNavigationComponent />
-          </GlobalNavigation> */}
-          {/* <GlobalNavigation
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            postion="top-right"
-            trigger={<Avatar type="text" border rounded text="John Doe" />}
-            className="max-w-[270px] p-4 flex flex-col gap-4 justify-center items-center"
-          >
-            <GlobalNavigationComponent />
-          </GlobalNavigation> */}
         </div>
       </section>
       {/* Dropdown  */}
@@ -1741,6 +1713,7 @@ const Test = () => {
             multiple={true}
             dropdownText={`Selected ${multiSelect?.length} items`}
             width="200px"
+            height="100px"
             trigger={
               <RiFilterLine
                 className="hover:bg-gray-200 rounded"
@@ -1780,6 +1753,7 @@ const Test = () => {
             selected={multiSelect}
             setSelected={setMultiSelect}
             width="300px"
+            height="100px"
             icon={<RiGlobalLine size={16} />}
             dropdownText="Test Test"
             multiple

@@ -19,7 +19,6 @@ type Option = {
   value: string | number;
   info?: string;
   addInfo?: string;
-  tooltipContent?: string;
   disabledOption?: boolean;
   labelTextColor?: string;
 };
@@ -46,12 +45,12 @@ interface DropdownProps {
   position?: "top" | "bottom";
   info?: string | number;
   addInfo?: string | number;
-  tooltipContent?: string;
   width?: string;
   dropdownFooter?: boolean | undefined;
   disabled?: boolean;
   labelTextColor?: string;
   footerAction?: React.ReactNode;
+  height?: string;
 }
 
 const defaultRenderItem = (option: Option) => {
@@ -79,6 +78,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
       disabled = false,
       onReset,
       footerAction,
+      height = "200px",
     },
     ref
   ) => {
@@ -205,7 +205,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
             }
           }}
           className={cn(
-            "w-full hover:bg-gray-50 py-2 px-[14px] rounded-lg flex justify-between items-center text-gray-900 bg-gray-25 text-text-sm cursor-pointer",
+            "w-full hover:bg-gray-50 py-2 px-[14px] rounded-lg flex justify-between items-center text-gray-900 bg-gray-25 text-sm cursor-pointer",
             dropdownMenu
               ? "border border-primary-600"
               : "border border-gray-200",
@@ -231,7 +231,7 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
           aria-multiselectable={multiple}
           aria-labelledby={`${id}-label`}
           className={cn(
-            "max-h-0 opacity-0 overflow-hidden shadow-sm mt-1 rounded absolute text-[16px] bg-white z-[1000] w-full transition-all duration-75 delay-100 ease-in",
+            "max-h-0 opacity-0 overflow-hidden shadow-sm mt-1 rounded absolute text-sm bg-white z-[1000] w-full transition-all duration-75 delay-100 ease-in",
             position === "top" ? "top-10" : "bottom-10",
             dropdownMenu
               ? "border border-primary-600"
@@ -258,21 +258,24 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                 type="button"
                 aria-label="Select all"
                 onClick={handleSelectAll}
-                className="text-text-sm  hover:text-primary-700 text-primary-600 cursor-pointer"
+                className="text-sm  hover:text-primary-700 text-primary-600 cursor-pointer"
               >
                 Select all
               </button>
               <button
                 aria-label="Reset"
                 type="button"
-                className="text-text-sm text-warning-500 hover:text-warning-600"
+                className="text-sm text-warning-500 hover:text-warning-600"
                 onClick={handleReset}
               >
                 Reset
               </button>
             </section>
           )}
-          <section className="max-h-[200px] transition-all duration-75 delay-100 ease-in-out overflow-y-scroll">
+          <section
+            style={{ maxHeight: height }}
+            className="z-[1000] transition-all duration-75 delay-100 ease-in-out overflow-y-scroll"
+          >
             {options
               ? memoizedFilteredOptions?.map((option, i) => (
                   <React.Fragment key={i}>
@@ -312,16 +315,11 @@ const Dropdown = forwardRef<HTMLDivElement, DropdownProps>(
                               >
                                 {renderItem(option)}
                               </div>
-                              {/* {dropDownTooltip && (
-                                <DropdownTooltip
-                                  tooltipContent={option?.tooltipContent}
-                                />
-                              )} */}
                             </div>
                           </div>
                           <span className="text-gray-500">{option?.info}</span>
                         </section>
-                        <span className="pt-[2px] text-text-sm text-gray-500">
+                        <span className="pt-[2px] text-sm text-gray-500">
                           {option?.addInfo}
                         </span>
                       </Label>
@@ -391,7 +389,7 @@ export const DropdownFooter: React.FC<DropdownFooterProps> = ({
   setDropdownMenu,
 }) => {
   return (
-    <div className="flex justify-end border-t border-gray-200 px-[14px] py-[8px] text-text-sm">
+    <div className="flex justify-end border-t border-gray-200 px-[14px] py-[8px] text-sm">
       <button
         type="button"
         className="text-primary-600 hover:text-primary-700"
