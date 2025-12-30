@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* .test {
-  border: 1px solid red;
-} */
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -215,4 +211,126 @@ input[type="number"] {
 /* Handle on hover */
 .customScroll::-webkit-scrollbar-thumb:hover {
   background: #98a2b3;
+}
+
+.spinner {
+  --spinner-color-1: var(--primary-500);
+  --spinner-color-2: var(--primary-200);
+
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(
+        0deg,
+        var(--spinner-color-1) 30%,
+        transparent 30% 70%,
+        var(--spinner-color-1) 70%
+      )
+      50% / 8% 100%,
+    linear-gradient(
+        90deg,
+        var(--spinner-color-2) 30%,
+        transparent 30% 70%,
+        var(--spinner-color-2) 70%
+      )
+      50% / 100% 8%;
+  background-repeat: no-repeat;
+  animation: l23 2s infinite steps(12);
+  position: relative;
+}
+
+.spinner::before,
+.spinner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  opacity: 0.915;
+  transform: rotate(30deg);
+}
+
+.spinner::after {
+  opacity: 0.83;
+  transform: rotate(60deg);
+}
+
+@keyframes l23 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+/* date picker */
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: #eaecf0;
+  border-radius: 5px;
+}
+.rdp-button:focus-visible:not([disabled]) {
+  color: black;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid var(--primary-400);
+}
+.rdp-root {
+  padding: 8px;
+  --rdp-accent-color: var(--primary-600);
+  --rdp-accent-background-color: #f0f0f0;
+}
+.rdp-day_button {
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  font-size: 14px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 30px;
+  height: 30px;
+  border: var(--primary-600);
+  border-radius: 5px;
+}
+.rdp-selected .rdp-day_button {
+  border: none;
+  color: white;
+}
+
+.rdp-day {
+  width: 10px;
+  height: 10px;
+}
+.rdp-day_button:hover {
+  background-color: var(--primary-400);
+  color: white;
+}
+.rdp-weekday {
+  font-size: 14px;
+}
+.rdp-weekdays {
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+.rdp-day.rdp-today {
+  font-weight: 700;
+}
+.rdp-day.rdp-outside {
+  color: #98a2b3;
+}
+.rdp-caption_label {
+  display: none;
+}
+.rdp-day.rdp-disabled {
+  opacity: 50%;
+  color: #98a2b3;
+  pointer-events: none;
+  user-select: none;
+}
+.rdp-day.rdp-selected.rdp-range_start > .rdp-day_button,
+.rdp-day.rdp-selected.rdp-range_end > .rdp-day_button {
+  color: #fff;
+}
+
+/* Selects the <button> inside the <td> that matches all required classes */
+.rdp-day.rdp-selected.rdp-range_middle .rdp-day_button {
+  color: black !important;
 }

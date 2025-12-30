@@ -1,40 +1,43 @@
-import React, { ReactNode, useCallback } from "react";
+import React, { ReactNode, useState, useEffect, useCallback } from "react";
 import { cn } from "../utils";
 import { Link, useLocation } from "react-router-dom";
 import Divider from "./Divider";
+import { RiArrowDownSLine, RiArrowRightSLine } from "@remixicon/react";
+
+// -------------------- Types --------------------
+
+interface NavItem {
+  label: string;
+  href?: string;
+  icon?: React.ReactElement;
+  subItems?: NavItem[];
+}
 
 interface SidebarProps {
   children: React.ReactNode;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
   scroll?: boolean;
+  dense?: boolean;
   navItems?: {
     label: string;
-    items: {
-      label: string;
-      href: string;
-      icon?: React.ReactElement;
-    }[];
+    items: NavItem[];
   }[];
 }
 
 interface SidebarHeaderProps {
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
   children: ReactNode;
+  dense?: boolean;
 }
 
+// Remove setCollapsed from SidebarMenuProps since it's not used in the Menu component
 interface SidebarMenuProps {
   collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
   scroll?: boolean;
+  dense?: boolean;
   navItems?: {
     label: string;
-    items: {
-      label: string;
-      href: string;
-      icon?: React.ReactElement;
-    }[];
+    items: NavItem[];
   }[];
 }
 
@@ -44,20 +47,18 @@ interface FooterProps {
   setCollapsed: (collapsed: boolean) => void;
   navItems?: {
     label: string;
-    items: {
-      label: string;
-      href: string;
-      icon?: React.ReactElement;
-    }[];
+    items: NavItem[];
   }[];
+  dense?: boolean;
 }
 
-// Sidebar component
+// -------------------- Sidebar --------------------
+
 const Sidebar: React.FC<SidebarProps> & {
   Header: React.FC<SidebarHeaderProps>;
   Menu: React.FC<SidebarMenuProps>;
   Footer: React.FC<FooterProps>;
-} = ({ children, collapsed, setCollapsed }) => {
+} = ({ children, collapsed, setCollapsed, dense = false }) => {
   const handleMouseEnter = useCallback(
     () => setCollapsed(true),
     [setCollapsed]
@@ -66,111 +67,212 @@ const Sidebar: React.FC<SidebarProps> & {
     () => setCollapsed(false),
     [setCollapsed]
   );
+
   return (
     <div
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       className={cn(
         "border border-gray-200 shadow-sm relative flex flex-col min-h-screen transition-all duration-300 ease-in-out cursor-pointer",
-        !collapsed ? "w-[80px] py-[21px] px-[17px]" : "w-[308px] py-[22px] px-6"
+        !collapsed
+          ? dense
+            ? "w-[76px] py-[19px] px-[15px]"
+            : "w-[80px] py-[21px] px-[17px]"
+          : dense
+          ? "w-[304px] py-[20px] px-5"
+          : "w-[308px] py-[22px] px-6"
       )}
     >
-      <div className="">{children}</div>
+      <div>{children}</div>
     </div>
   );
 };
 
-// SidebarHeader component
+// -------------------- SidebarHeader --------------------
+
 const SidebarHeader: React.FC<SidebarHeaderProps> = ({
-  collapsed,
-  setCollapsed,
   children,
+  dense = false,
 }) => {
   return (
-    <div
-      className={cn({
-        "z-20": true,
-      })}
-    >
-      <div className="flex justify-between items-center mb-4">
+    <div className={cn("z-20", dense ? "mb-3" : "mb-4")}>
+      <div className="flex justify-between items-center">
         <span className="whitespace-nowrap">{children}</span>
       </div>
     </div>
   );
 };
 
-// SidebarMenu component
+// -------------------- SidebarMenu --------------------
+
 const SidebarMenu: React.FC<SidebarMenuProps> = ({
   collapsed,
   navItems,
   scroll = false,
+  dense = false,
 }) => {
+  const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const location = useLocation();
   const currentPath = location.pathname;
 
-    // Calculate menu height based on footer items
-    const getMenuHeight = () => {
-      const footerItemsLength =
-        navItems?.reduce((acc, item) => acc + item.items.length, 0) || 0;
-      if (footerItemsLength <= 1) {
-        return "max-h-[80vh]";
-      } else if (footerItemsLength === 2) {
-        return "max-h-[70vh]";
-      } else {
-        return "max-h-[60vh]";
-      }
-    };
+  const toggleMenu = (label: string) => {
+    setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  // Close all submenus when sidebar collapses
+  useEffect(() => {
+    if (!collapsed) {
+      setOpenMenus({});
+    }
+  }, [collapsed]);
+
+  // Calculate menu height based on footer items
+  const getMenuHeight = () => {
+    const footerItemsLength =
+      navItems?.reduce((acc, item) => acc + item.items.length, 0) || 0;
+    if (footerItemsLength <= 1) {
+      return "max-h-[80vh]";
+    } else if (footerItemsLength === 2) {
+      return "max-h-[70vh]";
+    } else {
+      return "max-h-[60vh]";
+    }
+  };
+
+  const renderMenuItems = (items: NavItem[], level = 0) => {
+    return (
+      <ul className={level > 0 ? "ml-5 border-l border-gray-200" : ""}>
+        {items?.map((item, index) => {
+          const hasSubItems = item.subItems && item.subItems.length > 0;
+          const isActive = item.href === currentPath;
+          const isOpen = openMenus[item.label];
+          const paddingLeft =
+            level === 0
+              ? dense
+                ? "10px"
+                : "12px"
+              : `${level * 5 + (dense ? 10 : 12)}px`;
+
+          return (
+            <li key={index}>
+              {hasSubItems ? (
+                <div
+                  className={cn(
+                    "flex items-center justify-between rounded-md cursor-pointer transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden",
+                    dense ? "px-3 py-1.5 mb-1" : "px-3 py-2 mb-[6px]",
+                    isActive ? "bg-primary-600 text-white" : "text-gray-700",
+                    isOpen ? "bg-gray-100" : "",
+                    "hover:bg-gray-100",
+                    level > 0 ? "text-sm font-medium" : ""
+                  )}
+                  style={{ paddingLeft }}
+                  onClick={() => {
+                    if (collapsed) {
+                      toggleMenu(item.label);
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-2">
+                    {item.icon && level === 0 && (
+                      <span className={dense ? "text-xs" : "text-text-sm"}>
+                        {item.icon}
+                      </span>
+                    )}
+                    <span
+                      className={cn(
+                        !collapsed ? "opacity-0" : "",
+                        "transition-opacity duration-200"
+                      )}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
+                  {collapsed && hasSubItems && (
+                    <span>
+                      {isOpen ? (
+                        <RiArrowDownSLine
+                          size={dense ? 16 : 18}
+                          color="#475467"
+                        />
+                      ) : (
+                        <RiArrowRightSLine
+                          size={dense ? 16 : 18}
+                          color="#475467"
+                        />
+                      )}
+                    </span>
+                  )}
+                </div>
+              ) : (
+                <Link
+                  to={item.href || "#"}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md cursor-pointer transition-colors duration-300 whitespace-nowrap overflow-hidden",
+                    "hover:bg-gray-100",
+                    dense ? "px-3 py-1 mb-1" : "px-3 py-2 mb-[6px]",
+                    isActive
+                      ? "bg-primary-600 hover:bg-primary-700 text-white"
+                      : "text-gray-700",
+                    level > 0 ? "text-sm font-medium" : "font-semibold"
+                  )}
+                >
+                  {item.icon && level === 0 && (
+                    <span className={dense ? "text-xs" : "text-text-sm"}>
+                      {item.icon}
+                    </span>
+                  )}
+                  <span
+                    className={cn(
+                      !collapsed ? "opacity-0" : "",
+                      "transition-opacity duration-200"
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              )}
+
+              {hasSubItems && isOpen && collapsed && (
+                <div className={dense ? "mt-0.5" : "mt-1"}>
+                  {renderMenuItems(item.subItems!, level + 1)}
+                </div>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  };
 
   return (
     <nav
-      aria-label="Sidebar navigation"
       className={cn(
         getMenuHeight(),
-        "",
         scroll && collapsed ? "overflow-y-auto customScroll" : "overflow-hidden"
       )}
     >
-      <ul className="my-2 flex flex-col gap-2 items-stretch">
+      <ul
+        className={cn(
+          "flex flex-col gap-2 items-stretch",
+          dense ? "my-1.5" : "my-2"
+        )}
+      >
         {navItems?.map((parentItem, parentIndex) => (
           <li
             key={parentIndex}
             className="flex flex-col gap-3 mb-1 whitespace-nowrap overflow-hidden"
           >
             <p
-              className={cn({
-                "text-[14px] text-gray-500": true,
-                "w-[37px] text-ellipsis invisible whitespace-nowrap overflow-hidden":
-                  !collapsed,
-              })}
+              className={cn(
+                "text-gray-500 font-medium",
+                dense ? "text-[12px]" : "text-[14px]",
+                !collapsed ? "opacity-0" : "",
+                "transition-opacity duration-200"
+              )}
             >
               {parentItem.label}
             </p>
-
-            <ul>
-              {parentItem?.items.map((item, index) => (
-                <li key={index}>
-                  <Link
-                    className={cn({
-                      "hover:bg-gray-100 px-3 py-2 flex items-center mb-[6px] cursor-pointer rounded-md transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden":
-                        true,
-                      "text-white bg-primary-600": currentPath === item.href,
-                      "text-gray-700": currentPath !== item.href,
-                      "hover:bg-primary-600": currentPath === item.href,
-                    })}
-                    to={item.href} // React Router DOM `to` prop
-                  >
-                    <div
-                      className={`flex items-center gap-2 whitespace-nowrap`}
-                    >
-                      <span className="text-text-sm"> {item.icon}</span>
-                      <span className={cn(!collapsed ? "opacity-0" : "")}>
-                        {item.label}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            {renderMenuItems(parentItem.items)}
           </li>
         ))}
       </ul>
@@ -178,22 +280,26 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
   );
 };
 
-// Footer component
-const Footer: React.FC<FooterProps> = ({
+// -------------------- Footer --------------------
+
+const SidebarFooter: React.FC<FooterProps> = ({
   children,
   setCollapsed,
   collapsed,
   navItems,
+  dense = false,
 }) => {
-  const location = useLocation(); // React Router hook to get the current path
+  const location = useLocation();
   const currentPath = location.pathname;
 
   return (
     <div
       className={cn({
-        "absolute bottom-0 max-h-[230px] overflow-auto bg-white z-10 py-3 w-[85%]":
-          true,
-        "w-[55%]": !collapsed,
+        "absolute bottom-0 overflow-auto bg-white z-10": true,
+        "max-h-[226px] py-2.5 w-[85%]": dense,
+        "max-h-[230px] py-3 w-[85%]": !dense,
+        "w-[53%]": !collapsed && dense,
+        "w-[55%]": !collapsed && !dense,
       })}
       onClick={() => setCollapsed(true)}
     >
@@ -204,7 +310,12 @@ const Footer: React.FC<FooterProps> = ({
       )}
       {navItems && navItems.length > 0 && (
         <nav className="flex-grow w-full">
-          <ul className="my-2 flex flex-col gap-2 items-stretch">
+          <ul
+            className={cn(
+              "flex flex-col gap-2 items-stretch",
+              dense ? "my-1.5" : "my-2"
+            )}
+          >
             {navItems?.map((parentItem, parentIndex) => (
               <li
                 key={parentIndex}
@@ -212,37 +323,54 @@ const Footer: React.FC<FooterProps> = ({
               >
                 <p
                   className={cn({
-                    "text-[14px] text-gray-500": true,
-                    "w-[37px] text-ellipsis text-white whitespace-nowrap overflow-hidden":
-                      !collapsed,
+                    "text-gray-500": true,
+                    "text-[12px]": dense,
+                    "text-[14px]": !dense,
+                    "w-[35px] text-ellipsis invisible whitespace-nowrap overflow-hidden":
+                      !collapsed && dense,
+                    "w-[37px] text-ellipsis invisible whitespace-nowrap overflow-hidden":
+                      !collapsed && !dense,
                   })}
                 >
                   {parentItem.label}
                 </p>
-                <ul>
-                  {parentItem?.items.map((item, index) => (
-                    <li key={index}>
-                      <Link
-                        className={cn({
-                          "hover:bg-gray-100 px-3 py-2 flex items-center mb-[6px] cursor-pointer rounded-md transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden":
-                            true,
-                          "text-white bg-primary-600":
-                            currentPath === item.href,
-                          "text-gray-700": currentPath !== item.href,
-                          "hover:bg-primary-600": currentPath === item.href,
-                        })}
-                        to={item.href} // React Router DOM's `to` prop
-                      >
-                        <div className="flex items-center gap-2 whitespace-nowrap">
-                          <span className="text-text-sm">{item.icon}</span>
-                          <span className={cn(!collapsed ? "opacity-0" : "")}>
-                            {item.label}
-                          </span>
-                        </div>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                {
+                  <ul>
+                    {parentItem?.items?.map((item, index) => {
+                      const isActive = item.href === currentPath;
+                      return (
+                        <li key={index}>
+                          <Link
+                            className={cn({
+                              "hover:bg-gray-100 flex items-center cursor-pointer rounded-md transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden":
+                                true,
+                              "px-2 py-1.5 mb-1": dense,
+                              "px-3 py-2 mb-[6px]": !dense,
+                              "text-white bg-primary-600": isActive,
+                              "text-gray-700": !isActive,
+                              "hover:bg-primary-600": isActive,
+                            })}
+                            to={item.href || "#"}
+                          >
+                            <div className="flex items-center gap-2 whitespace-nowrap">
+                              <span className={dense ? "text-xs" : "text-text-sm"}>
+                                {item.icon}
+                              </span>
+                              <span
+                                className={cn(
+                                  !collapsed ? "opacity-0" : "",
+                                  "transition-opacity duration-200"
+                                )}
+                              >
+                                {item.label}
+                              </span>
+                            </div>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                }
               </li>
             ))}
           </ul>
@@ -255,6 +383,6 @@ const Footer: React.FC<FooterProps> = ({
 
 Sidebar.Header = SidebarHeader;
 Sidebar.Menu = SidebarMenu;
-Sidebar.Footer = Footer;
+Sidebar.Footer = SidebarFooter;
 
 export default Sidebar;

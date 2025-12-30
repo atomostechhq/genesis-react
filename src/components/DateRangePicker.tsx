@@ -24,81 +24,88 @@ interface DateRangePickerProps {
   handleRangeSelect?: (range: DateRange | undefined) => void;
   handleApply?: () => void;
   handleReset?: () => void;
+  disabled?: boolean;
   disabledCalendar?: { before: Date } | { after: Date };
   children?: ReactNode;
   position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
   apply?: boolean;
+  hideWeekdays?: boolean;
+  endMonth?: Date | undefined;
+  startMonth?: Date | undefined;
+  timeZone?: string | undefined;
   rangeFormat?: string;
   placeholder?: string;
+  max?: number | undefined;
+  min?: number | undefined;
 }
 
-const css = `
-.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
-    background-color: #EAECF0;
-    border-radius: 5px;
-}
-.rdp-button:focus-visible:not([disabled]){
-    color:black;
-    background:white;
-    border-radius: 5px;
-    border: 1px solid var(--primary-400);
-}
-.rdp-root {
-    padding:8px;
-    --rdp-accent-color: var(--primary-600);
-    --rdp-accent-background-color: #f0f0f0;
-}
-.rdp-day_button {
-    background: none;
-    cursor: pointer;
-    color: inherit;
-    font-size:14px;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    width:30px;
-    height:30px;
-    border: var(--primary-600);
-    border-radius: 5px;
-}
-.rdp-selected .rdp-day_button {
-     border: none;
-     color:white
-}
-.rdp-day{
-     width: 10px;
-     height:10px;
+// const css = `
+// .rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+//     background-color: #EAECF0;
+//     border-radius: 5px;
+// }
+// .rdp-button:focus-visible:not([disabled]){
+//     color:black;
+//     background:white;
+//     border-radius: 5px;
+//     border: 1px solid var(--primary-400);
+// }
+// .rdp-root {
+//     padding:8px;
+//     --rdp-accent-color: var(--primary-600);
+//     --rdp-accent-background-color: #f0f0f0;
+// }
+// .rdp-day_button {
+//     background: none;
+//     cursor: pointer;
+//     color: inherit;
+//     font-size:14px;
+//     justify-content: center;
+//     align-items: center;
+//     display: flex;
+//     width:30px;
+//     height:30px;
+//     border: var(--primary-600);
+//     border-radius: 5px;
+// }
+// .rdp-selected .rdp-day_button {
+//      border: none;
+//      color:white
+// }
+// .rdp-day{
+//      width: 10px;
+//      height:10px;
 
-}
-.rdp-weekday{
-    font-size:14px;
-}
-.rdp-weekdays {
-    margin-top:5px;
-    margin-bottom:25px;
-}
-.rdp-day.rdp-today {
-  font-weight:700;
-}
-.rdp-day.rdp-outside{
-  color: #98A2B3;
-}
-.rdp-caption_label{
-  display: none;
-}
-.rdp-selected .rdp-day_button {
-    color: #000;
-}
-.rdp-day.rdp-selected.rdp-range_start > .rdp-day_button, .rdp-day.rdp-selected.rdp-range_end > .rdp-day_button{
-    color:#fff;
-}
-.rdp-day.rdp-disabled {
-  opacity:50%;
-  color: #98A2B3;
-  pointer-events: none;
-  user-select:none;
-}
-`;
+// }
+// .rdp-weekday{
+//     font-size:14px;
+// }
+// .rdp-weekdays {
+//     margin-top:5px;
+//     margin-bottom:25px;
+// }
+// .rdp-day.rdp-today {
+//   font-weight:700;
+// }
+// .rdp-day.rdp-outside{
+//   color: #98A2B3;
+// }
+// .rdp-caption_label{
+//   display: none;
+// }
+// .rdp-selected .rdp-day_button {
+//     color: #000;
+// }
+// .rdp-day.rdp-selected.rdp-range_start > .rdp-day_button, .rdp-day.rdp-selected.rdp-range_end > .rdp-day_button{
+//     color:#fff;
+// }
+// .rdp-day.rdp-disabled {
+//   opacity:50%;
+//   color: #98A2B3;
+//   pointer-events: none;
+//   user-select:none;
+// }
+// `;
 
 const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   (
@@ -116,6 +123,13 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
       },
       placeholder,
       rangeFormat,
+      disabled,
+      endMonth,
+      hideWeekdays,
+      startMonth,
+      timeZone = "Asia/Kolkata",
+      max,
+      min,
     },
     ref
   ) => {
@@ -219,6 +233,7 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
             placeholder={placeholder ?? "DD/MM/YYYY - DD/MM/YYYY"}
             className="main-shadow w-full"
             readOnly
+            disabled={disabled}
             value={formatDateRange(rangeFormat ?? "dd/MM/yyyy", selectedRange)}
             onClick={handleButtonClick}
           />
@@ -226,7 +241,7 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         {isPopperOpen && (
           <div
             className={cn(
-              "shadow-md rounded-md p-3 flex gap-5 justify-center items-start",
+              "shadow-md rounded-md p-3 border border-primary-600 flex gap-5 justify-center items-start",
               "mt-1 h-[330px] absolute bg-white z-[1000] transition-all duration-75 delay-100 ease-in-out",
               position === "top-left" && "bottom-11 left-0",
               position === "top-right" && "bottom-11 right-0",
@@ -242,16 +257,25 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
               </div>
             )}
             <div className="flex flex-col h-full justify-between">
-              <style>{css}</style>
+              {/* <style>{css}</style> */}
               <DayPicker
                 mode="range"
                 selected={selectedRange}
-                endMonth={new Date(new Date().getFullYear() + 100, 12)}
                 onSelect={handleRangeSelectInternal}
                 showOutsideDays
                 disabled={disabledCalendar}
                 components={{ Dropdown: CustomSelectDropdown }}
                 hideNavigation
+                hideWeekdays={hideWeekdays}
+                timeZone={timeZone}
+                startMonth={startMonth}
+                endMonth={
+                  endMonth
+                    ? endMonth
+                    : new Date(new Date().getFullYear() + 100, 12)
+                }
+                max={max}
+                min={min}
                 captionLayout="dropdown"
                 modifiersStyles={{
                   selected: {
@@ -260,7 +284,7 @@ const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                   },
                   range_middle: {
                     borderRadius: "0px",
-                    backgroundColor: "var(--primary-100)",
+                    backgroundColor: "var(--primary-200)",
                     color: "black",
                   },
                   range_start: {

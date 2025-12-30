@@ -1,5 +1,5 @@
-import { cn } from "../utils";
 import React from "react";
+import { cn } from "../utils";
 
 export type ProgressBarProps = {
   progress: number;
@@ -46,7 +46,7 @@ const ProgressBar = ({
         aria-valuemax={100}
       >
         <div
-          className={`${progressColor} h-full transition-all delay-1000 duration-700 rounded ease-in`}
+          className={`${progressColor} h-full transition-all delay-100 duration-300 rounded ease-in`}
           style={{ width: `${_progress}%` }}
         ></div>
       </div>

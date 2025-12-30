@@ -1,14 +1,14 @@
-import { cn } from "../utils";
 import { cva, VariantProps } from "class-variance-authority";
-import React, { LabelHTMLAttributes, ReactNode } from "react";
+import { LabelHTMLAttributes, ReactNode } from "react";
+import { cn } from "../utils";
 
 interface LabelProps
   extends LabelHTMLAttributes<HTMLLabelElement>,
-    VariantProps<typeof labelVariants> {
+  VariantProps<typeof labelVariants> {
   htmlFor?: string;
   children: ReactNode;
   required?: boolean;
-  disabled?:boolean;
+  disabled?: boolean;
 }
 
 const labelVariants = cva("flex item-start", {
@@ -36,11 +36,29 @@ const Label = ({
   return (
     <label
       htmlFor={htmlFor}
-      className={cn("cursor-pointer",labelVariants({ className, size }),disabled === true ? "opacity-30 select-none":"opacity-100")}
+      className={cn(
+        "cursor-pointer",
+        labelVariants({ className, size }),
+        disabled === true
+          ? "opacity-30 select-none pointer-events-none"
+          : "opacity-100"
+      )}
+      aria-disabled={disabled}
       {...props}
     >
-      {children}
-      <span className={cn(required === true ? "block text-red-500":"hidden")}>*</span>
+      <span className="flex items-center gap-1">
+        {children}
+        {required && (
+          <span
+            aria-label="required field"
+            role="presentation"
+            className="text-red-500"
+            aria-hidden="true"
+          >
+            *
+          </span>
+        )}
+      </span>
     </label>
   );
 };

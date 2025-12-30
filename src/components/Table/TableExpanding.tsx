@@ -1,14 +1,9 @@
+"use client";
 import React, { useState } from "react";
 import { RiArrowDownSLine } from "@remixicon/react";
 import Pagination from "../Pagination";
 import { tableData } from "./table";
-import Table, {
-  TableBody,
-  TableDataCell,
-  TableHead,
-  TableHeadCell,
-  TableRow,
-} from "../TableComponents";
+import Table, { TableBody, TableDataCell, TableHead, TableHeadCell, TableRow } from "../TableComponents";
 import Chip from "../Chip";
 
 const TableExpanding = () => {
@@ -57,11 +52,10 @@ const TableExpanding = () => {
           {currentPageData?.map((data, index) => (
             <React.Fragment key={index}>
               <TableRow
-                className={`${
-                  expandedRows?.includes(data.id) && expandedRows?.length > 0
+                className={`${expandedRows?.includes(data.id) && expandedRows?.length > 0
                     ? "bg-gray-200"
                     : ""
-                }`}
+                  }`}
                 onClick={() => toggleRowExpansion(data.id)}
               >
                 <TableDataCell>

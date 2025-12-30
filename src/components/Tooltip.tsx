@@ -1,6 +1,6 @@
-import { cn } from "../utils";
 import { VariantProps, cva } from "class-variance-authority";
 import { HTMLAttributes, ReactNode } from "react";
+import { cn } from "../utils";
 import React from "react";
 
 const tooltipVariants = cva(
@@ -8,12 +8,26 @@ const tooltipVariants = cva(
   {
     variants: {
       position: {
-        top: "bottom-[calc(100%+0px)] group-hover:translate-y-0 delay-1000 translate-y-[-10px]",
+        top: "bottom-[calc(100%+8px)] group-hover:translate-y-0 delay-1000 translate-y-[-10px]",
         right:
-          "top-1/2 -translate-y-1/2 left-[calc(100%+0px)] group-hover:translate-x-0 translate-x-[-10px]",
+          "top-1/2 -translate-y-1/2 left-[calc(100%+8px)] group-hover:translate-x-0 translate-x-[-10px]",
         bottom:
-          "top-[calc(100%+0px)] group-hover:translate-y-0 translate-y-[10px]",
-        left: "top-1/2 -translate-y-1/2 right-[calc(100%+0px)] group-hover:translate-x-0 translate-x-[10px]",
+          "top-[calc(100%+8px)] group-hover:translate-y-0 translate-y-[10px]",
+        left: "top-1/2 -translate-y-1/2 right-[calc(100%+8px)] group-hover:translate-x-0 translate-x-[10px]",
+      },
+    },
+  }
+);
+
+const arrowVariants = cva(
+  "absolute w-0 h-0 border-transparent border-solid",
+  {
+    variants: {
+      position: {
+        top: "top-full left-5 -translate-x-1/2 border-t-white border-t-[6px] border-x-[6px] border-x-transparent border-b-0",
+        right: "right-full top-1/2 -translate-y-1/2 border-r-white border-r-[6px] border-y-[6px] border-y-transparent border-l-0",
+        bottom: "bottom-full left-4 -translate-x-1/2 border-b-white border-b-[6px] border-x-[6px] border-x-transparent border-t-0",
+        left: "left-full top-1/2 -translate-y-1/2 border-l-white border-l-[6px] border-y-[6px] border-y-transparent border-r-0",
       },
     },
   }
@@ -35,11 +49,12 @@ const Tooltip: React.FC<TooltipProps> = ({
   ...props
 }) => {
   return (
-    <div {...props} className="relative cursor-pointer text-sm group">
+    <div {...props} className="relative cursor-pointer text-sm group w-fit">
       <div>{children}</div>
-      <span className={cn(tooltipVariants({ position }), className)}>
+      <div className={cn(tooltipVariants({ position }), className)}>
         {content}
-      </span>
+        <div className={cn(arrowVariants({ position }))} />
+      </div>
     </div>
   );
 };
