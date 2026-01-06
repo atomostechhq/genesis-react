@@ -1,8 +1,8 @@
 import React, { ButtonHTMLAttributes, ReactNode } from "react";
-import { cva, VariantProps } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../utils";
 
-interface ButtonProps
+export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   children?: ReactNode;
@@ -13,7 +13,7 @@ interface ButtonProps
   type?: "submit" | "reset" | "button";
 }
 
-const buttonVariants = cva(
+export const buttonVariants = cva(
   "rounded-lg disabled:select-none font-semibold cursor-pointer transition-colors duration-300 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2",
   {
     variants: {

@@ -8,6 +8,7 @@ export { default as Avatar } from "./Avatar";
 export { default as AvatarGroup } from "./AvatarGroup";
 export { default as BreadCrumb } from "./Breadcrumbs";
 export { default as Button } from "./Button";
+export type { ButtonProps } from './Button';
 export { default as Callout } from "./Callout";
 export {
   default as Card,
