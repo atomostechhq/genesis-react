@@ -201,7 +201,7 @@ const Test = () => {
   >([]);
 
   const [dropdownMenuOptionTwo, setDropdownMenuOptionTwo] = useState<Option[]>(
-    []
+    [],
   );
 
   const handleReset = () => {
@@ -250,7 +250,7 @@ const Test = () => {
 
   const handleDeleteFileSingle = (index: number) => {
     setSelectedSingleFiles((prevFiles) =>
-      prevFiles.filter((_, i) => i !== index)
+      prevFiles.filter((_, i) => i !== index),
     );
   };
 
@@ -303,7 +303,7 @@ const Test = () => {
 
   const handleUpdateItem = (id: string, updates: Partial<UploadItem>) => {
     setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, ...updates } : item))
+      prev.map((item) => (item.id === id ? { ...item, ...updates } : item)),
     );
   };
 
@@ -322,7 +322,7 @@ const Test = () => {
 
   const handleUpload = async (
     file: File,
-    onProgress: (progress: number) => void
+    onProgress: (progress: number) => void,
   ) => {
     // Simulate progress
     for (let progress = 0; progress <= 100; progress += 10) {
@@ -647,7 +647,7 @@ const Test = () => {
   };
 
   const applyPreset = (
-    preset: "today" | "last1Months" | "last3Months" | "last6Months"
+    preset: "today" | "last1Months" | "last3Months" | "last6Months",
   ) => {
     let fromDate;
     const toDate = new Date(); // End date is always today
@@ -725,6 +725,9 @@ const Test = () => {
         </section>
         <section className="flex items-center gap-4">
           <h1>Size:</h1>
+          <Button variant="filled" intent={"success"} size="xs">
+            Size xs
+          </Button>
           <Button variant="filled" intent={"default"} size="sm">
             Size sm
           </Button>

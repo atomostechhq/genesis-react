@@ -1,8 +1,10 @@
 import { cn } from "../utils";
 import { InputHTMLAttributes, forwardRef } from "react";
 
-interface InputProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+interface InputProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   size?: "sm" | "lg";
   startIcon?: JSX.Element;
   endIcon?: JSX.Element;
@@ -17,6 +19,7 @@ interface InputProps
     | "tel"
     | "search"
     | "time";
+  innerClassName?: string | undefined;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
@@ -32,9 +35,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       id,
       "aria-label": ariaLabel,
       "aria-describedby": ariaDescribedby,
+      innerClassName,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <div
@@ -43,11 +47,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           size === "sm"
             ? "w-[320px] h-10"
             : size === "lg"
-            ? "w-[313px] h-11"
-            : "w-full h-10",
+              ? "w-[313px] h-11"
+              : "w-full h-10",
           error &&
             "border-error-500 hover:border-error-600 focus-within:border-error-500 focus-within:hover:border-error-500",
-          className
+          className,
         )}
       >
         {startIcon && (
@@ -56,7 +60,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               "group-hover:text-gray-600 group-focus-within:text-gray-600",
               disabled && "text-gray-900",
-              error && "text-error-500"
+              error && "text-error-500",
             )}
           >
             {startIcon}
@@ -73,7 +77,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           aria-disabled={disabled}
           className={cn(
             "w-full text-sm focus:outline-none focus:ring-offset-0 bg-transparent disabled:text-gray-900 placeholder:text-gray-500 group-hover:placeholder:text-gray-500 rounded-md",
-            size
+            size,
+            innerClassName,
           )}
         />
         {endIcon && (
@@ -81,7 +86,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-hidden="true"
             className={cn(
               "group-hover:text-gray-600 group-focus-within:text-gray-600",
-              disabled && "text-gray-900"
+              disabled && "text-gray-900",
+              error && "text-error-500",
             )}
           >
             {endIcon}
@@ -89,7 +95,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = "Input";
