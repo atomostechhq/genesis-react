@@ -1,28 +1,41 @@
-import React, { ReactNode, useState, useEffect, useCallback } from "react";
-import { cn } from "../utils";
+import React, {
+  ReactNode,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { Link, useLocation } from "react-router-dom";
-import Divider from "./Divider";
 import { RiArrowDownSLine, RiArrowRightSLine } from "@remixicon/react";
+import { cn } from "../utils";
+import Divider from "./Divider";
 
 // -------------------- Types --------------------
 
-interface NavItem {
+export interface NavItem {
   label: string;
+  /** Route or URL. Absolute URLs (http, https, mailto, tel) open as normal links. */
   href?: string;
   icon?: React.ReactElement;
   subItems?: NavItem[];
+  /** Run an action instead of navigating (used when there is no href). */
+  onClick?: () => void;
+  disabled?: boolean;
+  /** Only highlight on an exact path match (default also matches nested routes). */
+  exact?: boolean;
+}
+
+export interface NavGroup {
+  label: string;
+  items: NavItem[];
 }
 
 interface SidebarProps {
   children: React.ReactNode;
+  /** NOTE: `collapsed === true` means the sidebar is EXPANDED (hovered/focused). */
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
-  scroll?: boolean;
   dense?: boolean;
-  navItems?: {
-    label: string;
-    items: NavItem[];
-  }[];
 }
 
 interface SidebarHeaderProps {
@@ -30,27 +43,137 @@ interface SidebarHeaderProps {
   dense?: boolean;
 }
 
-// Remove setCollapsed from SidebarMenuProps since it's not used in the Menu component
 interface SidebarMenuProps {
   collapsed: boolean;
   scroll?: boolean;
   dense?: boolean;
-  navItems?: {
-    label: string;
-    items: NavItem[];
-  }[];
+  navItems?: NavGroup[];
 }
 
 interface FooterProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
-  navItems?: {
-    label: string;
-    items: NavItem[];
-  }[];
+  navItems?: NavGroup[];
   dense?: boolean;
 }
+
+// -------------------- Helpers --------------------
+
+const isExternal = (href?: string) =>
+  !!href && /^(https?:|mailto:|tel:|\/\/)/i.test(href);
+
+const normalizePath = (p: string) =>
+  p.split(/[?#]/)[0].replace(/\/+$/, "") || "/";
+
+/** Exact match, or nested-route match (/accounts matches /accounts/123). */
+const isPathActive = (item: NavItem, pathname: string) => {
+  const { href } = item;
+  if (!pathname || !href || href === "#" || isExternal(href)) return false;
+  const target = normalizePath(href);
+  const current = normalizePath(pathname);
+  if (item.exact || target === "/") return current === target;
+  return current === target || current.startsWith(`${target}/`);
+};
+
+const hasActiveDescendant = (item: NavItem, pathname: string): boolean =>
+  !!item.subItems?.some(
+    (sub) => isPathActive(sub, pathname) || hasActiveDescendant(sub, pathname)
+  );
+
+/** Drop groups with no items so empty headings never render. */
+const useVisibleGroups = (navItems?: NavGroup[]) =>
+  useMemo(
+    () => (navItems ?? []).filter((group) => group?.items?.length > 0),
+    [navItems]
+  );
+
+/** Label that fades out while the sidebar is in its narrow (icon-only) state. */
+const FadingText: React.FC<{ show: boolean; children: ReactNode }> = ({
+  show,
+  children,
+}) => (
+  <span
+    className={cn(!show ? "opacity-0" : "", "transition-opacity duration-200")}
+  >
+    {children}
+  </span>
+);
+
+/** A single clickable entry (no sub-items). Shared by the menu and the footer. */
+const NavLeaf: React.FC<{
+  item: NavItem;
+  level?: number;
+  isActive: boolean;
+  collapsed: boolean;
+  dense: boolean;
+}> = ({ item, level = 0, isActive, collapsed, dense }) => {
+  const className = cn(
+    "flex items-center gap-2 rounded-md cursor-pointer transition-colors duration-300 whitespace-nowrap overflow-hidden",
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-600",
+    dense ? "px-3 py-1 mb-1" : "px-3 py-2 mb-[6px]",
+    isActive
+      ? "bg-primary-600 hover:bg-primary-700 text-white"
+      : "text-gray-700 hover:bg-gray-100",
+    level > 0 ? "text-sm font-medium" : "font-semibold",
+    item.disabled ? "opacity-50 pointer-events-none" : ""
+  );
+
+  const content = (
+    <>
+      {item.icon && level === 0 && (
+        <span className={dense ? "text-xs" : "text-text-sm"}>{item.icon}</span>
+      )}
+      <FadingText show={collapsed}>{item.label}</FadingText>
+    </>
+  );
+
+  // Tooltip so labels stay discoverable in the icon-only state
+  const title = !collapsed ? item.label : undefined;
+
+  if (!item.href && item.onClick) {
+    return (
+      <button
+        type="button"
+        title={title}
+        disabled={item.disabled}
+        onClick={item.onClick}
+        className={cn(className, "w-full text-left")}
+      >
+        {content}
+      </button>
+    );
+  }
+
+  if (isExternal(item.href)) {
+    return (
+      <a
+        href={item.href}
+        title={title}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-disabled={item.disabled}
+        className={className}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <Link
+      to={item.href || "#"}
+      title={title}
+      aria-current={isActive ? "page" : undefined}
+      aria-disabled={item.disabled}
+      tabIndex={item.disabled ? -1 : undefined}
+      onClick={item.onClick}
+      className={className}
+    >
+      {content}
+    </Link>
+  );
+};
 
 // -------------------- Sidebar --------------------
 
@@ -59,21 +182,24 @@ const Sidebar: React.FC<SidebarProps> & {
   Menu: React.FC<SidebarMenuProps>;
   Footer: React.FC<FooterProps>;
 } = ({ children, collapsed, setCollapsed, dense = false }) => {
-  const handleMouseEnter = useCallback(
-    () => setCollapsed(true),
-    [setCollapsed]
-  );
-  const handleMouseLeave = useCallback(
-    () => setCollapsed(false),
-    [setCollapsed]
-  );
+  const handleExpand = useCallback(() => setCollapsed(true), [setCollapsed]);
+  const handleShrink = useCallback(() => setCollapsed(false), [setCollapsed]);
 
   return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+    <aside
+      onMouseEnter={handleExpand}
+      onMouseLeave={handleShrink}
+      onFocus={handleExpand}
+      onBlur={(e) => {
+        // Only shrink when focus leaves the sidebar entirely
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          handleShrink();
+        }
+      }}
       className={cn(
-        "border border-gray-200 shadow-sm relative flex flex-col min-h-screen transition-all duration-300 ease-in-out cursor-pointer",
+        // Fixed-height flex column: header and footer keep their size,
+        // the menu in between takes the remaining space and scrolls.
+        "border border-gray-200 shadow-sm relative flex flex-col h-screen overflow-hidden transition-all duration-300 ease-in-out cursor-pointer",
         !collapsed
           ? dense
             ? "w-[76px] py-[19px] px-[15px]"
@@ -83,8 +209,9 @@ const Sidebar: React.FC<SidebarProps> & {
           : "w-[308px] py-[22px] px-6"
       )}
     >
-      <div>{children}</div>
-    </div>
+      {/* min-h-0 lets this flex child shrink so the menu can scroll */}
+      <div className="flex flex-col flex-1 min-h-0">{children}</div>
+    </aside>
   );
 };
 
@@ -95,7 +222,7 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   dense = false,
 }) => {
   return (
-    <div className={cn("z-20", dense ? "mb-3" : "mb-4")}>
+    <div className={cn("z-20 shrink-0", dense ? "mb-3" : "mb-4")}>
       <div className="flex justify-between items-center">
         <span className="whitespace-nowrap">{children}</span>
       </div>
@@ -108,44 +235,36 @@ const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 const SidebarMenu: React.FC<SidebarMenuProps> = ({
   collapsed,
   navItems,
-  scroll = false,
+  scroll = true,
   dense = false,
 }) => {
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const { pathname } = useLocation();
+  const groups = useVisibleGroups(navItems);
 
-  const toggleMenu = (label: string) => {
-    setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
-  };
-
-  // Close all submenus when sidebar collapses
+  // When the sidebar shrinks, forget manual toggles so the next expand
+  // starts with only the active section open.
   useEffect(() => {
     if (!collapsed) {
       setOpenMenus({});
     }
   }, [collapsed]);
 
-  // Calculate menu height based on footer items
-  const getMenuHeight = () => {
-    const footerItemsLength =
-      navItems?.reduce((acc, item) => acc + item.items.length, 0) || 0;
-    if (footerItemsLength <= 1) {
-      return "max-h-[80vh]";
-    } else if (footerItemsLength === 2) {
-      return "max-h-[70vh]";
-    } else {
-      return "max-h-[60vh]";
-    }
-  };
-
-  const renderMenuItems = (items: NavItem[], level = 0) => {
+  const renderMenuItems = (
+    items: NavItem[],
+    level: number,
+    keyPrefix: string
+  ) => {
     return (
       <ul className={level > 0 ? "ml-5 border-l border-gray-200" : ""}>
-        {items?.map((item, index) => {
-          const hasSubItems = item.subItems && item.subItems.length > 0;
-          const isActive = item.href === currentPath;
-          const isOpen = openMenus[item.label];
+        {items.map((item, index) => {
+          // Unique per position, so duplicate labels never share open state
+          const key = `${keyPrefix}/${item.label}:${index}`;
+          const hasSubItems = !!item.subItems && item.subItems.length > 0;
+          const childActive = hasSubItems && hasActiveDescendant(item, pathname);
+          const isActive = isPathActive(item, pathname);
+          // Manual toggle wins; otherwise the section holding the active page is open
+          const isOpen = openMenus[key] ?? childActive;
           const paddingLeft =
             level === 0
               ? dense
@@ -154,21 +273,30 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
               : `${level * 5 + (dense ? 10 : 12)}px`;
 
           return (
-            <li key={index}>
+            <li key={key}>
               {hasSubItems ? (
-                <div
+                <button
+                  type="button"
+                  aria-expanded={collapsed ? isOpen : undefined}
+                  title={!collapsed ? item.label : undefined}
+                  disabled={item.disabled}
                   className={cn(
-                    "flex items-center justify-between rounded-md cursor-pointer transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden",
+                    "w-full text-left flex items-center justify-between rounded-md cursor-pointer transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden",
+                    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary-600",
                     dense ? "px-3 py-1.5 mb-1" : "px-3 py-2 mb-[6px]",
-                    isActive ? "bg-primary-600 text-white" : "text-gray-700",
+                    // Closed parent holding the active page stays highlighted
+                    (isActive || childActive) && !isOpen
+                      ? "bg-primary-600 text-white"
+                      : "text-gray-700 hover:bg-gray-100",
                     isOpen ? "bg-gray-100" : "",
-                    "hover:bg-gray-100",
-                    level > 0 ? "text-sm font-medium" : ""
+                    level > 0 ? "text-sm font-medium" : "",
+                    item.disabled ? "opacity-50 pointer-events-none" : ""
                   )}
                   style={{ paddingLeft }}
                   onClick={() => {
+                    // Only toggle while expanded
                     if (collapsed) {
-                      toggleMenu(item.label);
+                      setOpenMenus((prev) => ({ ...prev, [key]: !isOpen }));
                     }
                   }}
                 >
@@ -178,63 +306,37 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
                         {item.icon}
                       </span>
                     )}
-                    <span
-                      className={cn(
-                        !collapsed ? "opacity-0" : "",
-                        "transition-opacity duration-200"
-                      )}
-                    >
-                      {item.label}
-                    </span>
+                    <FadingText show={collapsed}>{item.label}</FadingText>
                   </div>
-                  {collapsed && hasSubItems && (
-                    <span>
+                  {collapsed && (
+                    <span aria-hidden="true">
                       {isOpen ? (
                         <RiArrowDownSLine
                           size={dense ? 16 : 18}
-                          color="#475467"
+                          color="currentColor"
                         />
                       ) : (
                         <RiArrowRightSLine
                           size={dense ? 16 : 18}
-                          color="#475467"
+                          color="currentColor"
                         />
                       )}
                     </span>
                   )}
-                </div>
+                </button>
               ) : (
-                <Link
-                  to={item.href || "#"}
-                  className={cn(
-                    "flex items-center gap-2 rounded-md cursor-pointer transition-colors duration-300 whitespace-nowrap overflow-hidden",
-                    "hover:bg-gray-100",
-                    dense ? "px-3 py-1 mb-1" : "px-3 py-2 mb-[6px]",
-                    isActive
-                      ? "bg-primary-600 hover:bg-primary-700 text-white"
-                      : "text-gray-700",
-                    level > 0 ? "text-sm font-medium" : "font-semibold"
-                  )}
-                >
-                  {item.icon && level === 0 && (
-                    <span className={dense ? "text-xs" : "text-text-sm"}>
-                      {item.icon}
-                    </span>
-                  )}
-                  <span
-                    className={cn(
-                      !collapsed ? "opacity-0" : "",
-                      "transition-opacity duration-200"
-                    )}
-                  >
-                    {item.label}
-                  </span>
-                </Link>
+                <NavLeaf
+                  item={item}
+                  level={level}
+                  isActive={isActive}
+                  collapsed={collapsed}
+                  dense={dense}
+                />
               )}
 
               {hasSubItems && isOpen && collapsed && (
                 <div className={dense ? "mt-0.5" : "mt-1"}>
-                  {renderMenuItems(item.subItems!, level + 1)}
+                  {renderMenuItems(item.subItems!, level + 1, key)}
                 </div>
               )}
             </li>
@@ -244,10 +346,14 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
     );
   };
 
+  if (groups.length === 0) return null;
+
   return (
     <nav
+      aria-label="Main navigation"
       className={cn(
-        getMenuHeight(),
+        // Fill the space between header and footer, then scroll inside it
+        "flex-1 min-h-0",
         scroll && collapsed ? "overflow-y-auto customScroll" : "overflow-hidden"
       )}
     >
@@ -257,9 +363,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
           dense ? "my-1.5" : "my-2"
         )}
       >
-        {navItems?.map((parentItem, parentIndex) => (
+        {groups.map((group, groupIndex) => (
           <li
-            key={parentIndex}
+            key={`${group.label}:${groupIndex}`}
             className="flex flex-col gap-3 mb-1 whitespace-nowrap overflow-hidden"
           >
             <p
@@ -270,9 +376,9 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
                 "transition-opacity duration-200"
               )}
             >
-              {parentItem.label}
+              {group.label}
             </p>
-            {renderMenuItems(parentItem.items)}
+            {renderMenuItems(group.items, 0, group.label)}
           </li>
         ))}
       </ul>
@@ -289,36 +395,50 @@ const SidebarFooter: React.FC<FooterProps> = ({
   navItems,
   dense = false,
 }) => {
-  const location = useLocation();
-  const currentPath = location.pathname;
+  const { pathname } = useLocation();
+  const groups = useVisibleGroups(navItems);
+  const hasItems = groups.length > 0;
+
+  // Nothing to show: render no footer at all (no padding, no divider)
+  if (!hasItems && !children) return null;
 
   return (
     <div
-      className={cn({
-        "absolute bottom-0 overflow-auto bg-white z-10": true,
-        "max-h-[226px] py-2.5 w-[85%]": dense,
-        "max-h-[230px] py-3 w-[85%]": !dense,
-        "w-[53%]": !collapsed && dense,
-        "w-[55%]": !collapsed && !dense,
-      })}
+      // Normal flex child (not absolute), so it can never cover the menu.
+      // Only the footer items scroll; `children` (e.g. logout) stays pinned.
+      // The cap is relative to the viewport so the menu always keeps some room.
+      className={cn(
+        "shrink-0 w-full flex flex-col bg-white z-10",
+        dense
+          ? "max-h-[min(226px,40vh)] pt-2.5 pb-0"
+          : "max-h-[min(230px,40vh)] pt-3 pb-0"
+      )}
       onClick={() => setCollapsed(true)}
     >
       {collapsed && (
-        <div className="shadow-md">
+        <div className="shadow-md shrink-0">
           <Divider />
         </div>
       )}
-      {navItems && navItems.length > 0 && (
-        <nav className="flex-grow w-full">
+
+      {hasItems && (
+        <nav
+          aria-label="Utility navigation"
+          className={cn(
+            // Same scrollbar behaviour as the main menu
+            "flex-1 min-h-0 w-full",
+            collapsed ? "overflow-y-auto customScroll" : "overflow-hidden"
+          )}
+        >
           <ul
             className={cn(
               "flex flex-col gap-2 items-stretch",
               dense ? "my-1.5" : "my-2"
             )}
           >
-            {navItems?.map((parentItem, parentIndex) => (
+            {groups.map((group, groupIndex) => (
               <li
-                key={parentIndex}
+                key={`${group.label}:${groupIndex}`}
                 className="flex flex-col gap-3 mb-1 whitespace-nowrap overflow-hidden"
               >
                 <p
@@ -332,51 +452,28 @@ const SidebarFooter: React.FC<FooterProps> = ({
                       !collapsed && !dense,
                   })}
                 >
-                  {parentItem.label}
+                  {group.label}
                 </p>
-                {
-                  <ul>
-                    {parentItem?.items?.map((item, index) => {
-                      const isActive = item.href === currentPath;
-                      return (
-                        <li key={index}>
-                          <Link
-                            className={cn({
-                              "hover:bg-gray-100 flex items-center cursor-pointer rounded-md transition-colors duration-300 font-semibold whitespace-nowrap overflow-hidden":
-                                true,
-                              "px-2 py-1.5 mb-1": dense,
-                              "px-3 py-2 mb-[6px]": !dense,
-                              "text-white bg-primary-600": isActive,
-                              "text-gray-700": !isActive,
-                              "hover:bg-primary-600": isActive,
-                            })}
-                            to={item.href || "#"}
-                          >
-                            <div className="flex items-center gap-2 whitespace-nowrap">
-                              <span className={dense ? "text-xs" : "text-text-sm"}>
-                                {item.icon}
-                              </span>
-                              <span
-                                className={cn(
-                                  !collapsed ? "opacity-0" : "",
-                                  "transition-opacity duration-200"
-                                )}
-                              >
-                                {item.label}
-                              </span>
-                            </div>
-                          </Link>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                }
+                <ul>
+                  {group.items.map((item, index) => (
+                    <li key={`${item.label}:${index}`}>
+                      <NavLeaf
+                        item={item}
+                        isActive={isPathActive(item, pathname)}
+                        collapsed={collapsed}
+                        dense={dense}
+                      />
+                    </li>
+                  ))}
+                </ul>
               </li>
             ))}
           </ul>
         </nav>
       )}
-      {children}
+
+      {/* Divider + logout: outside the scroll area, always visible */}
+      {children && <div className="shrink-0">{children}</div>}
     </div>
   );
 };
@@ -385,4 +482,5 @@ Sidebar.Header = SidebarHeader;
 Sidebar.Menu = SidebarMenu;
 Sidebar.Footer = SidebarFooter;
 
+export { SidebarHeader, SidebarMenu, SidebarFooter };
 export default Sidebar;
