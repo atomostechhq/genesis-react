@@ -17,7 +17,7 @@ import Label from "./Label";
 import Checkbox from "./Checkbox";
 import { cn } from "../utils";
 
-export type Option = {
+type Option = {
   label: string | number;
   value: string | number;
   info?: string;
@@ -40,19 +40,12 @@ interface DropdownFooterProps {
 
 interface DropdownProps {
   id?: string;
-  /**
-   * Complete option list. This component filters and virtualizes locally, so
-   * pass ALL options up front. For paginated or server-searched data, use the
-   * paginated dropdown instead. When omitted, `children` is rendered instead.
-   */
   options?: Option[];
   selected?: Option[];
   setSelected?: React.Dispatch<React.SetStateAction<Option[]>>;
   onApply?: () => void;
   onReset?: () => void;
   dropdownText?: string;
-  /** Accessible name for the trigger when `dropdownText` is not set (icon-only). */
-  triggerLabel?: string;
   search?: boolean;
   multiple?: boolean;
   renderItem?: (option: Option) => React.ReactNode;
@@ -360,7 +353,6 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
       search = false,
       multiple = false,
       dropdownText,
-      triggerLabel,
       renderItem = defaultRenderItem,
       children,
       trigger,
@@ -649,7 +641,6 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
           aria-haspopup="listbox"
           aria-expanded={dropdownMenu}
           aria-controls={`${id}-menu`}
-          aria-label={labelId ? undefined : triggerLabel}
           aria-labelledby={labelId}
           disabled={disabled}
           onClick={() => !disabled && setDropdownMenu((prev) => !prev)}
@@ -737,7 +728,6 @@ const DropdownWithIcon = forwardRef<HTMLDivElement, DropdownProps>(
             ref={scrollRef}
             role={options ? "listbox" : undefined}
             aria-multiselectable={options ? multiple : undefined}
-            aria-label={options && !labelId ? triggerLabel : undefined}
             aria-labelledby={options ? labelId : undefined}
             aria-busy={isStale}
             style={{ maxHeight: height, overflowAnchor: "none" }}
