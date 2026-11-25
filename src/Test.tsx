@@ -3462,38 +3462,6 @@ const Test = () => {
               </DropdownMenuSub>
             </DropdownMenuContent>
           </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="outlined">Wide Menu</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-80" align="end">
-              <DropdownMenuLabel>Wide Menu (320px)</DropdownMenuLabel>
-              <DropdownMenuItem>Profile with very long text</DropdownMenuItem>
-              <DropdownMenuItem>Settings with extra content</DropdownMenuItem>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  Invite users with long text
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>Email invitation</DropdownMenuItem>
-                  <DropdownMenuItem>Message invitation</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>More options...</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger>
-                  Invite users with long text
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem>Email invitation</DropdownMenuItem>
-                  <DropdownMenuItem>Message invitation</DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>More options...</DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
       </div>
 

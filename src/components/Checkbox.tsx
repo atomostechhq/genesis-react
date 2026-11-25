@@ -1,15 +1,6 @@
-import { HTMLAttributes, forwardRef } from "react";
-import { cva, type VariantProps } from "class-variance-authority";
+import React, { forwardRef } from "react";
 import { cn } from "../utils";
-
-interface CheckboxProps
-  extends Omit<HTMLAttributes<HTMLInputElement>, "size">,
-  VariantProps<typeof checkboxVariant> {
-  size?: "sm" | "lg" | "xl";
-  disabled?: boolean;
-  checked?: boolean;
-  children?: never;
-}
+import { cva, VariantProps } from "class-variance-authority";
 
 const checkboxVariant = cva(
   "peer relative cursor-pointer appearance-none rounded-[4px] border border-gray-300 transition-all checked:border-primary-600 checked:bg-primary-50 hover:bg-primary-50 disabled:opacity-30 disabled:pointer-events-none",
@@ -24,26 +15,33 @@ const checkboxVariant = cva(
     defaultVariants: {
       size: "lg",
     },
-  }
+  },
 );
 
+interface CheckboxProps
+  extends
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
+    VariantProps<typeof checkboxVariant> {
+  size?: "sm" | "lg" | "xl";
+}
+
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ disabled, checked, size, className, children, id, ...props }, ref) => {
+  ({ size, className, checked, onChange, readOnly, ...props }, ref) => {
+    const isControlled = checked !== undefined;
+    // Controlled with no handler: treat as read-only so React doesn't warn
+    const isReadOnly = readOnly ?? (isControlled && !onChange);
     return (
       <div className="inline-flex relative items-center">
         <input
-          type="checkbox"
           ref={ref}
-          id={id}
-          aria-checked={checked}
-          role="checkbox"
+          type="checkbox"
+          {...(isControlled ? { checked } : {})}
+          onChange={onChange}
+          readOnly={isReadOnly}
           {...props}
-          disabled={disabled}
-          checked={checked}
           className={cn(
-            "peer",
-            checkboxVariant({ className, size }),
-            "focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2"
+            checkboxVariant({ size, className }),
+            "focus-visible:ring-2 focus-visible:ring-primary-600 focus-visible:ring-offset-2",
           )}
         />
         <span
@@ -55,19 +53,17 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             className="w-2.5 h-2.5"
             viewBox="0 0 20 20"
             fill="currentColor"
-            stroke="currentColor"
-            strokeWidth="1"
           >
             <path
               fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293z"
               clipRule="evenodd"
-            ></path>
+            />
           </svg>
         </span>
       </div>
     );
-  }
+  },
 );
 
 Checkbox.displayName = "Checkbox";

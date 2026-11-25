@@ -19,77 +19,116 @@ interface FileUploadPreviewProps {
   onDelete?: (index: number) => void;
 }
 
-const getIconForMimeType = (file: File) => {
-  const fileName = typeof file === "string" ? file : file.name;
+const getIconForMimeType = (fileName: string) => {
   const extension = fileName.split(".").pop()?.toLowerCase();
 
   let iconComponent: JSX.Element;
   switch (extension) {
+    // Images
     case "jpg":
     case "jpeg":
     case "png":
     case "gif":
     case "svg":
     case "webp":
-      iconComponent = (
-        <RiImageLine className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+    case "bmp":
+    case "ico":
+    case "tif":
+    case "tiff":
+    case "heic":
+    case "heif":
+    case "avif":
+      iconComponent = <RiImageLine className="text-primary-600 w-12 h-12" />;
       break;
+
+    // Audio
     case "mp3":
     case "wav":
     case "ogg":
-      iconComponent = (
-        <RiMusic2Line className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+    case "m4a":
+    case "aac":
+    case "flac":
+    case "wma":
+    case "opus":
+    case "aiff":
+      iconComponent = <RiMusic2Line className="text-primary-600 w-12 h-12" />;
       break;
+
+    // Video
     case "mp4":
     case "avi":
     case "mkv":
-      iconComponent = (
-        <RiVideoLine className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+    case "mov":
+    case "wmv":
+    case "flv":
+    case "webm":
+    case "m4v":
+    case "mpg":
+    case "mpeg":
+    case "3gp":
+      iconComponent = <RiVideoLine className="text-primary-600 w-12 h-12" />;
       break;
+
+    // Spreadsheets / data
     case "xls":
     case "xlsx":
+    case "xlsm":
+    case "xlsb":
     case "csv":
+    case "tsv":
     case "txt":
     case "ods":
+    case "numbers":
       iconComponent = (
-        <RiFileExcel2Line className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
+        <RiFileExcel2Line className="text-primary-600 w-12 h-12" />
       );
       break;
+
+    // Documents
     case "doc":
     case "docx":
+    case "dot":
+    case "dotx":
     case "odt":
+    case "rtf":
+    case "pages":
     case "xml":
       iconComponent = (
-        <RiFileWord2Line className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
+        <RiFileWord2Line className="text-primary-600 w-12 h-12" />
       );
       break;
+
+    // Presentations
+    case "ppt":
     case "pptx":
     case "pptm":
-    case "xps":
+    case "pps":
     case "ppsx":
-      iconComponent = (
-        <RiFilePpt2Line className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+    case "potx":
+    case "odp":
+    case "key":
+    case "xps":
+      iconComponent = <RiFilePpt2Line className="text-primary-600 w-12 h-12" />;
       break;
+
+    // Archives
     case "rar":
     case "zip":
-      iconComponent = (
-        <RiFileZipLine className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+    case "7z":
+    case "tar":
+    case "gz":
+    case "tgz":
+    case "bz2":
+      iconComponent = <RiFileZipLine className="text-primary-600 w-12 h-12" />;
       break;
+
     case "pdf":
-      iconComponent = (
-        <RiFilePdf2Line className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+      iconComponent = <RiFilePdf2Line className="text-primary-600 w-12 h-12" />;
       break;
+
     default:
       // Return generic file icon
-      iconComponent = (
-        <RiFileLine className="text-primary-600 bg-primary-100 border-4 border-primary-50 w-8 h-8 p-1 rounded-full" />
-      );
+      iconComponent = <RiFileLine className="text-primary-600 w-12 h-12" />;
       break;
   }
   return iconComponent;
@@ -102,21 +141,18 @@ const FileUploadPreview = ({
   onDelete,
 }: FileUploadPreviewProps) => {
   return (
-    <div
-      key={index}
-      className="p-4 border border-gray-200 rounded-lg flex items-center justify-between gap-5"
-    >
+    <div className="px-4 py-3 border border-gray-300 rounded-lg flex items-center justify-between gap-5">
       <div className="flex items-center gap-2 w-full">
-        {getIconForMimeType(file)}
+        {getIconForMimeType(file.name)}
         <div className="flex flex-col gap-1 w-full">
-          <p className="text-sm line-clamp-2 break-all">
-            {typeof file === "string" ? file : file.name}{" "}
+          <p className="text-sm line-clamp-2 break-all text-gray-900 font-medium">
+            {file.name}
           </p>
           {children && <div className="w-full">{children}</div>}
         </div>
       </div>
       <button type="button" onClick={() => onDelete?.(index)}>
-        <RiDeleteBinLine className="text-gray-500 w-5 h-5 cursor-pointer" />
+        <RiDeleteBinLine className="text-error-500 w-5 h-5 cursor-pointer" />
       </button>
     </div>
   );
