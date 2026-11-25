@@ -2003,7 +2003,7 @@ const Test = () => {
             <TabList
               onChange={setTab}
               ariaLabel="Default tabs"
-              persist="localStorage"
+              persist="url"
               persistKey="tab"
             >
               <Tab
@@ -2031,7 +2031,11 @@ const Test = () => {
         <div className="my-5">
           <h1 className="text-lg">Horizontal · default · dense</h1>
           <TabsContainer value={tab}>
-            <TabList dense onChange={setTab} ariaLabel="Dense default tabs">
+            <TabList
+              dense
+              onChange={setTab}
+              ariaLabel="Dense default tabs"
+            >
               <Tab label="All" value="all" selectedTabValue={tab} />
               <Tab label="Paid" value="paid" selectedTabValue={tab} />
               <Tab label="Unpaid" value="unpaid" selectedTabValue={tab} />
