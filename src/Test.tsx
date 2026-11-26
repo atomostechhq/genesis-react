@@ -87,6 +87,7 @@ import Card, {
 import ImageUploadControlled, {
   UploadItem,
 } from "./components/FileUploadControl";
+import StepProgress from "./components/StepProgress";
 
 interface Option {
   label: string | number;
@@ -355,6 +356,9 @@ const Test = () => {
   // Stepper
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [isComplete, setIsComplete] = useState<boolean>(false);
+
+  // progress stepper
+  const [currentProgressStep, setCurrentProgressStep] = useState(1);
 
   const stepsConfig = [
     {
@@ -2031,11 +2035,7 @@ const Test = () => {
         <div className="my-5">
           <h1 className="text-lg">Horizontal · default · dense</h1>
           <TabsContainer value={tab}>
-            <TabList
-              dense
-              onChange={setTab}
-              ariaLabel="Dense default tabs"
-            >
+            <TabList dense onChange={setTab} ariaLabel="Dense default tabs">
               <Tab label="All" value="all" selectedTabValue={tab} />
               <Tab label="Paid" value="paid" selectedTabValue={tab} />
               <Tab label="Unpaid" value="unpaid" selectedTabValue={tab} />
@@ -2762,6 +2762,38 @@ const Test = () => {
       </section>
       {/* stepper */}
       <section>
+        <h1>Progress Stepper</h1>
+        <div className="max-w-xl mx-auto p-6">
+          <StepProgress
+            totalSteps={4}
+            currentStep={currentProgressStep}
+            showLabel
+            progressColor="bg-success-600"
+            ariaLabel="Checkout progress"
+            className="mb-4"
+            contentClassName="mt-6"
+          >
+            {currentProgressStep === 1 && <div>Step 1 content</div>}
+            {currentProgressStep === 2 && <div>Step 2 content</div>}
+            {currentProgressStep === 3 && <div>Step 3 content</div>}
+            {currentProgressStep === 4 && <div>Step 4 content</div>}
+          </StepProgress>
+
+          <div className="flex justify-between mt-6">
+            <Button
+              disabled={currentProgressStep === 1}
+              onClick={() => setCurrentProgressStep((s) => s - 1)}
+            >
+              Back
+            </Button>
+            <Button
+              disabled={currentProgressStep === 4}
+              onClick={() => setCurrentProgressStep((s) => s + 1)}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
         <h1 className="text-display-sm text-primary-600">Stepper:</h1>
         <div className="w-[50%] mx-auto">
           <Stepper
