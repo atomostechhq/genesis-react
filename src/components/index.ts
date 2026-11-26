@@ -63,6 +63,7 @@ export { default as Slider } from "./Slider";
 export { default as Spinner } from "./Spinner";
 export { default as SplitButton } from "./SplitButton";
 export { default as Stepper } from "./Stepper";
+export { default as StepProgress } from "./StepProgress";
 export {
   default as Table,
   TableHead,

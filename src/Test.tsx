@@ -2799,9 +2799,7 @@ const Test = () => {
           <Stepper
             stepsConfig={stepsConfig}
             currentStep={currentStep}
-            setCurrentStep={setCurrentStep}
             isComplete={isComplete}
-            setIsComplete={setIsComplete}
             // position="vertical"
             position="horizontal"
           />
@@ -2822,9 +2820,7 @@ const Test = () => {
           <Stepper
             stepsConfig={stepsConfig}
             currentStep={currentStep}
-            setCurrentStep={setCurrentStep}
             isComplete={isComplete}
-            setIsComplete={setIsComplete}
             position="vertical"
           />
           <section className="my-5 flex justify-end items-center gap-4">
